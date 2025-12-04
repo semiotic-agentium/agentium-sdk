@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2025 Semiotic AI, Inc.
+
+SPDX-License-Identifier: MIT
+-->
+
 # @semiotic-labs/agentium-sdk
 
 A TypeScript SDK to simplify interaction with the `/v1/identity/connect` API endpoint.
@@ -59,8 +65,6 @@ async function connectIdentityLocal() {
 connectIdentityLocal();
 ```
 
----
-
 ## For Developers
 
 ### Project Setup
@@ -70,6 +74,30 @@ connectIdentityLocal();
     ```bash
     npm install
     ```
+
+### REUSE Compliance
+
+This project follows the [REUSE Specification](https://reuse.software/spec/). To ensure compliance:
+
+1.  **Install REUSE Tool:** You'll need to install the `reuse` command-line tool globally via `pip`:
+    ```bash
+    pip install reuse
+    ```
+### Applying SPDX Headers
+
+To add or update SPDX license and copyright headers to all relevant files:
+
+```bash
+npm run reuse:write
+```
+
+### Verify Compliance
+
+To check if the project is fully REUSE compliant:
+
+```bash
+npm run reuse:check
+```
 
 ### Running Tests
 
