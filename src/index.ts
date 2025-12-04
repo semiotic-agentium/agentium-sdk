@@ -1,4 +1,4 @@
-import axios, { type AxiosInstance } from 'axios';
+import axios, { isAxiosError, type AxiosInstance } from 'axios';
 
 /**
  * Options for configuring the AgentiumClient.
@@ -37,11 +37,25 @@ export interface ConnectIdentityResponse {
 }
 
 /**
+ * Custom error class for API-related errors from the AgentiumClient.
+ */
+export class AgentiumApiError extends Error {
+  public readonly statusCode?: number;
+
+  constructor(message: string, statusCode?: number) {
+    super(message);
+    this.name = 'AgentiumApiError';
+    this.statusCode = statusCode;
+  }
+}
+
+/**
  * A client for interacting with the Agentium API.
  */
 export class AgentiumClient {
-  private axiosInstance: AxiosInstance;
+  private readonly axiosInstance: AxiosInstance;
   private readonly DEFAULT_BASE_URL = 'https://api.agentium.network';
+  private readonly CONNECT_PATH = '/v1/identity/connect';
 
   /**
    * Creates an instance of the AgentiumClient.
@@ -58,19 +72,22 @@ export class AgentiumClient {
    * Connects a Google identity to an Agentium identity.
    * @param googleToken - The JWT token obtained from Google Sign-In.
    * @returns A promise that resolves with the connection response, containing the user's DID and Privy ID.
-   * @throws Will throw an error if the API call fails.
+   * @throws {AgentiumApiError} Will throw a custom API error if the call fails.
    *  - **400 (Bad Request):** The request was malformed (e.g., missing `id_token`).
    *  - **401 (Unauthorized):** The provided JWT token is invalid or expired.
    *  - **500 (Internal Server Error):** An unexpected error occurred on the server.
    */
   async connectGoogleIdentity(googleToken: string): Promise<ConnectIdentityResponse> {
     try {
-      const response = await this.axiosInstance.post<ConnectIdentityResponse>('/v1/identity/connect', {
+      const response = await this.axiosInstance.post<ConnectIdentityResponse>(this.CONNECT_PATH, {
         id_token: googleToken,
       });
       return response.data;
     } catch (error) {
-      // Re-throw the error to allow the consumer to handle it.
+      if (isAxiosError(error)) {
+        throw new AgentiumApiError(error.message, error.response?.status);
+      }
+      // Re-throw other unexpected errors
       throw error;
     }
   }
