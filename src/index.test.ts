@@ -28,15 +28,15 @@ describe('AgentiumClient', () => {
 
   it('should accept a baseURL in the constructor and use default if not provided', () => {
     const axiosCreateSpy = vi.spyOn(axios, 'create');
-    
-    const defaultClient = new AgentiumClient();
+
+    new AgentiumClient(); // Just instantiate, no need to assign
     expect(axiosCreateSpy).toHaveBeenCalledWith({
       baseURL: 'https://api.agentium.network',
     });
     axiosCreateSpy.mockClear();
 
     const customURL = 'http://localhost:3000';
-    const customClient = new AgentiumClient({ baseURL: customURL });
+    new AgentiumClient({ baseURL: customURL }); // Just instantiate, no need to assign
     expect(axiosCreateSpy).toHaveBeenCalledWith({
       baseURL: customURL,
     });
@@ -46,10 +46,15 @@ describe('AgentiumClient', () => {
   it('should make a POST request to the default /v1/identity/connect endpoint', async () => {
     const client = new AgentiumClient();
     const googleToken = 'test-google-jwt';
-    const expectedResponse = { privy_user_id: '123', did: 'did:eth:abc', badge: { status: 'active' } };
+    const expectedResponse = {
+      privy_user_id: '123',
+      did: 'did:eth:abc',
+      badge: { status: 'active' },
+    };
 
-    mock.onPost('https://api.agentium.network/v1/identity/connect', { id_token: googleToken })
-        .reply(200, expectedResponse);
+    mock
+      .onPost('https://api.agentium.network/v1/identity/connect', { id_token: googleToken })
+      .reply(200, expectedResponse);
 
     const response = await client.connectGoogleIdentity(googleToken);
     expect(response).toEqual(expectedResponse);
@@ -59,10 +64,15 @@ describe('AgentiumClient', () => {
     const customBaseURL = 'http://localhost:8080';
     const client = new AgentiumClient({ baseURL: customBaseURL });
     const googleToken = 'test-custom-google-jwt';
-    const expectedResponse = { privy_user_id: '456', did: 'did:eth:def', badge: { status: 'inactive' } };
+    const expectedResponse = {
+      privy_user_id: '456',
+      did: 'did:eth:def',
+      badge: { status: 'inactive' },
+    };
 
-    mock.onPost(`${customBaseURL}/v1/identity/connect`, { id_token: googleToken })
-        .reply(200, expectedResponse);
+    mock
+      .onPost(`${customBaseURL}/v1/identity/connect`, { id_token: googleToken })
+      .reply(200, expectedResponse);
 
     const response = await client.connectGoogleIdentity(googleToken);
     expect(response).toEqual(expectedResponse);
@@ -72,8 +82,9 @@ describe('AgentiumClient', () => {
     const client = new AgentiumClient();
     const googleToken = 'invalid-token';
 
-    mock.onPost('https://api.agentium.network/v1/identity/connect', { id_token: googleToken })
-        .reply(400, { message: 'Bad Request' });
+    mock
+      .onPost('https://api.agentium.network/v1/identity/connect', { id_token: googleToken })
+      .reply(400, { message: 'Bad Request' });
 
     await expect(client.connectGoogleIdentity(googleToken)).rejects.toThrow(AgentiumApiError);
     await expect(client.connectGoogleIdentity(googleToken)).rejects.toMatchObject({

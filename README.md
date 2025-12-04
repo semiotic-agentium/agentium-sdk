@@ -43,7 +43,7 @@ import { AgentiumClient } from '@semiotic-labs/agentium-sdk';
 
 // Example for a local development server
 const localClient = new AgentiumClient({
-  baseURL: 'http://localhost:8080'
+  baseURL: 'http://localhost:8080',
 });
 
 async function connectIdentityLocal() {
