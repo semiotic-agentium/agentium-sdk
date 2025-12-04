@@ -1,4 +1,4 @@
-import { AgentiumClient } from './index';
+import { AgentiumClient, AgentiumApiError } from './index';
 import axios from 'axios';
 import MockAdapter from 'axios-mock-adapter';
 
@@ -26,21 +26,7 @@ describe('AgentiumClient', () => {
     expect(client.connectGoogleIdentity).toBeInstanceOf(Function);
   });
 
-  // Test should no longer expect 'Not Implemented' after actual implementation
-  // Keeping this for now as a placeholder, but it will be removed or updated soon.
-  it('connectGoogleIdentity should return a Promise (initial state)', async () => {
-    const client = new AgentiumClient();
-    // Expect a rejected promise due to unmocked API call, not 'Not Implemented'
-    // This test will be removed once actual API calls are mocked properly for all tests.
-    const promise = client.connectGoogleIdentity('some-token');
-    expect(promise).toBeInstanceOf(Promise);
-    // We expect it to fail if not mocked, but no specific message needed here, just that it's a promise.
-    // We'll rely on the more specific API call tests for actual behavior.
-    await expect(promise).rejects.not.toBeUndefined(); // Expect some rejection, not specific text
-  });
-
   it('should accept a baseURL in the constructor and use default if not provided', () => {
-    // Mock axios.create to inspect the baseURL passed
     const axiosCreateSpy = vi.spyOn(axios, 'create');
     
     const defaultClient = new AgentiumClient();
@@ -60,7 +46,7 @@ describe('AgentiumClient', () => {
   it('should make a POST request to the default /v1/identity/connect endpoint', async () => {
     const client = new AgentiumClient();
     const googleToken = 'test-google-jwt';
-    const expectedResponse = { privy_user_id: '123', did: 'did:eth:abc', badge: true };
+    const expectedResponse = { privy_user_id: '123', did: 'did:eth:abc', badge: { status: 'active' } };
 
     mock.onPost('https://api.agentium.network/v1/identity/connect', { id_token: googleToken })
         .reply(200, expectedResponse);
@@ -73,7 +59,7 @@ describe('AgentiumClient', () => {
     const customBaseURL = 'http://localhost:8080';
     const client = new AgentiumClient({ baseURL: customBaseURL });
     const googleToken = 'test-custom-google-jwt';
-    const expectedResponse = { privy_user_id: '456', did: 'did:eth:def', badge: false };
+    const expectedResponse = { privy_user_id: '456', did: 'did:eth:def', badge: { status: 'inactive' } };
 
     mock.onPost(`${customBaseURL}/v1/identity/connect`, { id_token: googleToken })
         .reply(200, expectedResponse);
@@ -82,14 +68,18 @@ describe('AgentiumClient', () => {
     expect(response).toEqual(expectedResponse);
   });
 
-  it('should handle API errors gracefully', async () => {
+  it('should handle API errors gracefully with a custom error', async () => {
     const client = new AgentiumClient();
     const googleToken = 'invalid-token';
-    const errorMessage = 'Request failed with status code 400';
 
     mock.onPost('https://api.agentium.network/v1/identity/connect', { id_token: googleToken })
-        .reply(400, { message: 'Bad Request' }); // Mock a 400 error
+        .reply(400, { message: 'Bad Request' });
 
-    await expect(client.connectGoogleIdentity(googleToken)).rejects.toThrow(errorMessage);
+    await expect(client.connectGoogleIdentity(googleToken)).rejects.toThrow(AgentiumApiError);
+    await expect(client.connectGoogleIdentity(googleToken)).rejects.toMatchObject({
+      name: 'AgentiumApiError',
+      statusCode: 400,
+      message: 'Request failed with status code 400',
+    });
   });
 });
