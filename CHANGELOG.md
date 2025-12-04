@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2025 Semiotic AI, Inc.
+
+SPDX-License-Identifier: MIT
+-->
+
 # Changelog
 
 ## [0.2.0](https://github.com/semiotic-agentium/agentium-sdk/compare/agentium-sdk-v0.1.0...agentium-sdk-v0.2.0) (2025-12-04)
