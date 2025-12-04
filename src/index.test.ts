@@ -41,7 +41,7 @@ describe('AgentiumClient', () => {
 
   it('should accept a baseURL in the constructor and use default if not provided', () => {
     // Mock axios.create to inspect the baseURL passed
-    const axiosCreateSpy = jest.spyOn(axios, 'create');
+    const axiosCreateSpy = vi.spyOn(axios, 'create');
     
     const defaultClient = new AgentiumClient();
     expect(axiosCreateSpy).toHaveBeenCalledWith({
