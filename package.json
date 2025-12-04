@@ -25,6 +25,12 @@
   },
   "keywords": [],
   "author": "",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "require": "./dist/index.js"
+    }
+  },
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/semiotic-agentium/agentium-sdk/issues"
