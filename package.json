@@ -24,6 +24,9 @@
     "url": "https://github.com/semiotic-agentium/agentium-sdk/issues"
   },
   "homepage": "https://github.com/semiotic-agentium/agentium-sdk#readme",
+  "engines": {
+    "node": ">=22.0.0"
+  },
   "devDependencies": {
     "@types/node": "^24.10.1",
     "axios-mock-adapter": "^2.1.0",
