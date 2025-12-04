@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.1](https://github.com/semiotic-agentium/agentium-sdk/compare/agentium-sdk-v0.2.0...agentium-sdk-v0.2.1) (2025-12-04)
+
+
+### Bug Fixes
+
+* add missing exports ([fe7a56a](https://github.com/semiotic-agentium/agentium-sdk/commit/fe7a56adc8cca3605a467108f2f51083d44e8a70))
+
 ## [0.2.0](https://github.com/semiotic-agentium/agentium-sdk/compare/agentium-sdk-v0.1.0...agentium-sdk-v0.2.0) (2025-12-04)
 
 
