@@ -1,52 +1,50 @@
 {
-  "name": "@semiotic-labs/agentium-sdk",
-  "version": "0.1.0",
-  "type": "module",
-  "description": "",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
-  "files": [
-    "dist"
-  ],
-  "scripts": {
-    "test": "vitest",
-    "build": "tsc",
-    "docs": "typedoc",
-    "lint": "eslint src/**/*.ts",
-    "format:check": "prettier --check .",
-    "format:write": "prettier --write .",
-    "check": "npm run lint && npm run format:check",
-    "reuse:check": "reuse lint",
-    "reuse:write": "reuse annotate --license MIT --copyright \"Semiotic AI, Inc.\" --year 2025 -r . --fallback-dot-license --skip-existing"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/semiotic-agentium/agentium-sdk.git"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/semiotic-agentium/agentium-sdk/issues"
-  },
-  "homepage": "https://github.com/semiotic-agentium/agentium-sdk#readme",
-  "engines": {
-    "node": ">=22.0.0"
-  },
-  "devDependencies": {
-    "@types/node": "^24.10.1",
-    "axios-mock-adapter": "^2.1.0",
-    "eslint": "^9.39.1",
-    "eslint-config-prettier": "^10.1.8",
-    "eslint-plugin-prettier": "^5.5.4",
-    "prettier": "^3.7.4",
-    "ts-node": "^10.9.2",
-    "typedoc": "^0.28.15",
-    "typescript": "^5.9.3",
-    "typescript-eslint": "^8.48.1",
-    "vitest": "^4.0.15"
-  },
-  "dependencies": {
-    "axios": "^1.13.2"
-  }
+	"name": "@semiotic-labs/agentium-sdk",
+	"version": "0.0.0",
+	"type": "module",
+	"description": "",
+	"main": "dist/index.js",
+	"types": "dist/index.d.ts",
+	"files": ["dist"],
+	"scripts": {
+		"test": "vitest",
+		"build": "tsc",
+		"docs": "typedoc",
+		"lint": "eslint src/**/*.ts",
+		"format:check": "prettier --check .",
+		"format:write": "prettier --write .",
+		"check": "npm run lint && npm run format:check",
+		"reuse:check": "reuse lint",
+		"reuse:write": "reuse annotate --license MIT --copyright \"Semiotic AI, Inc.\" --year 2025 -r . --fallback-dot-license --skip-existing"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/semiotic-agentium/agentium-sdk.git"
+	},
+	"keywords": [],
+	"author": "",
+	"license": "MIT",
+	"bugs": {
+		"url": "https://github.com/semiotic-agentium/agentium-sdk/issues"
+	},
+	"homepage": "https://github.com/semiotic-agentium/agentium-sdk#readme",
+	"engines": {
+		"node": ">=22.0.0"
+	},
+	"devDependencies": {
+		"@types/node": "^24.10.1",
+		"axios-mock-adapter": "^2.1.0",
+		"eslint": "^9.39.1",
+		"eslint-config-prettier": "^10.1.8",
+		"eslint-plugin-prettier": "^5.5.4",
+		"prettier": "^3.7.4",
+		"ts-node": "^10.9.2",
+		"typedoc": "^0.28.15",
+		"typescript": "^5.9.3",
+		"typescript-eslint": "^8.48.1",
+		"vitest": "^4.0.15"
+	},
+	"dependencies": {
+		"axios": "^1.13.2"
+	}
 }
