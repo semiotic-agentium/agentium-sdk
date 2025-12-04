@@ -16,5 +16,10 @@
   "bugs": {
     "url": "https://github.com/semiotic-agentium/agentium-sdk/issues"
   },
-  "homepage": "https://github.com/semiotic-agentium/agentium-sdk#readme"
+  "homepage": "https://github.com/semiotic-agentium/agentium-sdk#readme",
+  "devDependencies": {
+    "@types/node": "^24.10.1",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.3"
+  }
 }
