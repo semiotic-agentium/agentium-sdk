@@ -83,6 +83,7 @@ This project follows the [REUSE Specification](https://reuse.software/spec/). To
     ```bash
     pip install reuse
     ```
+
 ### Applying SPDX Headers
 
 To add or update SPDX license and copyright headers to all relevant files:
