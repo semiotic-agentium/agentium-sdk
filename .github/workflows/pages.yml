@@ -77,16 +77,17 @@ jobs:
           user_name: 'github-actions[bot]'
           user_email: 'github-actions[bot]@users.noreply.github.com'
 
-      - name: Create redirect file
+      - name: Create redirect and .nojekyll file
         run: |
-          mkdir -p redirect_dir
-          echo '<meta http-equiv="refresh" content="0; url=./latest/" />' > redirect_dir/index.html
+          mkdir -p root_files
+          echo '<meta http-equiv="refresh" content="0; url=./latest/" />' > root_files/index.html
+          touch root_files/.nojekyll
 
-      - name: Deploy redirect file
+      - name: Deploy root files
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./redirect_dir
+          publish_dir: ./root_files
           keep_files: true
           user_name: 'github-actions[bot]'
           user_email: 'github-actions[bot]@users.noreply.github.com'
