@@ -44,7 +44,7 @@ export interface ConnectIdentityResponse {
  * Custom error class for API-related errors from the AgentiumClient.
  */
 export class AgentiumApiError extends Error {
-  public readonly statusCode?: number;
+  public readonly statusCode: number | undefined;
 
   constructor(message: string, statusCode?: number) {
     super(message);
