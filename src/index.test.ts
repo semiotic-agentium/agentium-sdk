@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2025 Semiotic AI, Inc.
+//
+// SPDX-License-Identifier: MIT
+
 import { AgentiumClient, AgentiumApiError } from './index';
 import axios from 'axios';
 import MockAdapter from 'axios-mock-adapter';
