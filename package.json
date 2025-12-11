@@ -6,11 +6,13 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": [
-    "dist"
+    "dist",
+    "packages/agentium-wasm/pkg"
   ],
   "scripts": {
     "test": "vitest",
-    "build": "tsc",
+    "build:wasm": "cd packages/agentium-wasm && wasm-pack build --target web --scope semiotic-labs",
+    "build": "npm run build:wasm && tsc",
     "docs": "typedoc",
     "lint": "eslint src/**/*.ts",
     "format:check": "prettier --check .",
@@ -53,6 +55,7 @@
     "vitest": "^4.0.15"
   },
   "dependencies": {
+    "@semiotic-labs/agentium-wasm": "file:./packages/agentium-wasm/pkg",
     "axios": "^1.13.2"
   }
 }
