@@ -70,3 +70,4 @@ package-lock.json
 /lib/
 docs/
 *.org
+packages/agentium-wasm/target
