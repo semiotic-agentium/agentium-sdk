@@ -8,4 +8,6 @@ mod types;
 mod vc;
 
 pub use error::VcError;
-pub use types::{DecodedClaims, JwtClaims, KeyPair, MembershipClaims, VerificationResult};
+pub use types::{
+    CredentialSubject, Issuer, JwtClaims, KeyPair, VerifiableCredential, VerificationResult,
+};
