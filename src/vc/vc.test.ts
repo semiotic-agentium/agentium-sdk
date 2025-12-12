@@ -38,10 +38,10 @@ describe('VC Module', () => {
       expect(result.valid).toBe(true);
       expect(result.error).toBeUndefined();
       expect(result.claims).toBeDefined();
-      expect(result.claims?.issuer).toBe(fixture.did);
-      expect(result.claims?.subject).toBe(fixture.subject);
-      expect(result.claims?.membership.member_id).toBe(fixture.memberId);
-      expect(result.claims?.membership.status).toBe(fixture.status);
+      expect(result.claims?.vc.issuer.id).toBe(fixture.did);
+      expect(result.claims?.sub).toBe(fixture.subjectDid);
+      expect(result.claims?.vc.credentialSubject.id).toBe(fixture.subjectDid);
+      expect(result.claims?.vc.credentialSubject.enrollmentTime).toBe(fixture.enrollmentTime);
     });
 
     it('should reject JWT signed with wrong key', async () => {
@@ -142,7 +142,7 @@ describe('VC Module', () => {
 
     it('should throw when no verification methods exist', () => {
       const client = new AgentiumClient();
-      const emptyDidDoc = { id: 'did:web:example.com', verification_method: [] };
+      const emptyDidDoc = { id: 'did:web:example.com', verificationMethod: [] };
 
       expect(() => client.extractPublicKeyJwk(emptyDidDoc)).toThrow(AgentiumApiError);
     });
@@ -162,7 +162,7 @@ describe('VC Module', () => {
       const result = await client.verifyCredential(fixture.jwt, false);
 
       expect(result.valid).toBe(true);
-      expect(result.claims?.issuer).toBe('did:web:api.agentium.network');
+      expect(result.claims?.vc.issuer.id).toBe('did:web:api.agentium.network');
     });
 
     it('should handle DID document fetch failure', async () => {
@@ -275,7 +275,7 @@ describe('VC Module', () => {
       const result = await client.fetchIssuerDidDocument();
 
       expect(result.id).toBe('did:web:api.agentium.network');
-      expect(result.verification_method).toHaveLength(1);
+      expect(result.verificationMethod).toHaveLength(1);
     });
 
     it('should throw on fetch failure', async () => {

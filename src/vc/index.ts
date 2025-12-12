@@ -3,8 +3,9 @@
 // SPDX-License-Identifier: MIT
 
 export type {
-  MembershipClaims,
-  DecodedClaims,
+  CredentialSubject,
+  VerifiableCredential,
+  VcJwtClaims,
   VerificationResult,
   DidDocument,
   VerificationMethod,

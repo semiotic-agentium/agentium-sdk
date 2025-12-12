@@ -132,17 +132,15 @@ fn verify_jwt_impl(jwt: &str, public_key_jwk: &str, check_expiration: bool) -> V
         }
     }
 
-    tracing::debug!(issuer = %claims.iss, subject = %claims.sub, "JWT verification successful");
+    tracing::debug!(
+        issuer = %claims.vc.issuer.id,
+        subject = %claims.sub,
+        "JWT verification successful"
+    );
 
     VerificationResult {
         valid: true,
-        claims: Some(DecodedClaims {
-            issuer: claims.iss,
-            subject: claims.sub,
-            expires_at: claims.exp,
-            issued_at: claims.iat,
-            membership: claims.membership,
-        }),
+        claims: Some(claims),
         error: None,
     }
 }
@@ -157,31 +155,39 @@ fn get_public_key_impl(private_key_jwk: &str) -> Result<String, VcError> {
 mod tests {
     use super::*;
 
+    /// Issue a W3C-compliant JWT-VC for testing
     fn issue_jwt(
-        issuer: &str,
-        subject: &str,
-        member_id: &str,
-        status: &str,
+        issuer_did: &str,
+        subject_did: &str,
+        enrollment_time: &str,
         private_key_jwk: &str,
-        expires_in_hours: Option<u32>,
+        expires_in_hours: Option<i32>,
     ) -> Result<String, VcError> {
         use base64::Engine;
 
         let key: JWK = serde_json::from_str(private_key_jwk)?;
 
-        let now = chrono::Utc::now().timestamp();
+        let now = chrono::Utc::now();
         let hours = expires_in_hours.unwrap_or(24) as i64;
-        let exp = now + (hours * 3600);
+        let exp = now.timestamp() + (hours * 3600);
 
+        // Build W3C VC structure matching backend SSI output
         let claims = JwtClaims {
-            iss: issuer.to_string(),
-            sub: subject.to_string(),
-            exp,
-            iat: now,
-            membership: MembershipClaims {
-                member_id: member_id.to_string(),
-                status: status.to_string(),
+            vc: VerifiableCredential {
+                context: vec!["https://www.w3.org/2018/credentials/v1".to_string()],
+                credential_type: vec!["VerifiableCredential".to_string()],
+                issuer: Issuer {
+                    id: issuer_did.to_string(),
+                },
+                issuance_date: enrollment_time.to_string(),
+                credential_subject: CredentialSubject {
+                    id: subject_did.to_string(),
+                    enrollment_time: enrollment_time.to_string(),
+                },
             },
+            sub: subject_did.to_string(),
+            exp,
+            iat: now.timestamp(),
         };
 
         let claims_json = serde_json::to_string(&claims)?;
@@ -259,13 +265,13 @@ mod tests {
     #[test]
     fn test_sign_and_verify() {
         let keypair = generate_keypair_impl().unwrap();
+        let enrollment_time = "2024-01-15T10:30:00Z";
 
-        // Issue JWT
+        // Issue JWT with W3C VC structure
         let jwt = issue_jwt(
             "did:web:test.example",
-            "user123",
-            "member-456",
-            "active",
+            "did:pkh:eip155:1:0x1234567890abcdef",
+            enrollment_time,
             &keypair.private_jwk,
             Some(24),
         )
@@ -282,10 +288,16 @@ mod tests {
         assert!(result.error.is_none());
 
         let claims = result.claims.unwrap();
-        assert_eq!(claims.issuer, "did:web:test.example");
-        assert_eq!(claims.subject, "user123");
-        assert_eq!(claims.membership.member_id, "member-456");
-        assert_eq!(claims.membership.status, "active");
+        assert_eq!(claims.vc.issuer.id, "did:web:test.example");
+        assert_eq!(claims.sub, "did:pkh:eip155:1:0x1234567890abcdef");
+        assert_eq!(
+            claims.vc.credential_subject.id,
+            "did:pkh:eip155:1:0x1234567890abcdef"
+        );
+        assert_eq!(
+            claims.vc.credential_subject.enrollment_time,
+            enrollment_time
+        );
     }
 
     #[test]
@@ -295,9 +307,8 @@ mod tests {
 
         let jwt = issue_jwt(
             "did:web:test.example",
-            "user123",
-            "member-456",
-            "active",
+            "did:pkh:eip155:1:0x1234567890abcdef",
+            "2024-01-15T10:30:00Z",
             &issuer_keypair.private_jwk,
             Some(24),
         )

@@ -5,6 +5,7 @@
 use serde::{Deserialize, Serialize};
 use wasm_bindgen::JsValue;
 use zeroize::Zeroize;
+
 /// Key pair containing both private and public JWK
 #[derive(Serialize, Deserialize, Zeroize)]
 pub struct KeyPair {
@@ -23,28 +24,62 @@ impl TryFrom<KeyPair> for JsValue {
     }
 }
 
-/// Membership credential claims
+// ─────────────────────────────────────────────────────────────────────────────
+// W3C Verifiable Credential Types (aligned with backend SSI implementation)
+// ─────────────────────────────────────────────────────────────────────────────
+
+/// Credential subject containing user identity and enrollment info.
+/// Matches backend's MembershipCredentialSubject.
 #[derive(Serialize, Deserialize, Clone, Debug)]
-pub struct MembershipClaims {
-    /// Privy user ID or wallet address
-    pub member_id: String,
-    /// Membership status (e.g., "active")
-    pub status: String,
+pub struct CredentialSubject {
+    /// User's DID (did:pkh)
+    pub id: String,
+    /// Enrollment timestamp (ISO 8601 format)
+    #[serde(rename = "enrollmentTime")]
+    pub enrollment_time: String,
 }
 
-/// JWT claims structure for membership VCs
-#[derive(Serialize, Deserialize)]
+/// Issuer structure (can be string or object with id)
+#[derive(Serialize, Deserialize, Clone, Debug)]
+pub struct Issuer {
+    /// Issuer DID
+    pub id: String,
+}
+
+/// W3C Verifiable Credential structure.
+/// Backend issues VCs using SSI library with this structure.
+#[derive(Serialize, Deserialize, Clone, Debug)]
+pub struct VerifiableCredential {
+    /// JSON-LD context
+    #[serde(rename = "@context")]
+    pub context: Vec<String>,
+    /// Credential types
+    #[serde(rename = "type")]
+    pub credential_type: Vec<String>,
+    /// Issuer DID (as object with id)
+    pub issuer: Issuer,
+    /// Issuance date (ISO 8601 format)
+    #[serde(rename = "issuanceDate")]
+    pub issuance_date: String,
+    /// Credential subject with user info
+    #[serde(rename = "credentialSubject")]
+    pub credential_subject: CredentialSubject,
+}
+
+/// JWT claims structure for W3C VC (as issued by backend).
+/// The VC is nested under the 'vc' claim per JWT-VC spec.
+/// Returned directly from verification - matches backend exactly.
+#[derive(Serialize, Deserialize, Clone, Debug)]
 pub struct JwtClaims {
-    /// Issuer (e.g., "did:web:agentium.xyz")
-    pub(crate) iss: String,
-    /// Subject (user identifier)
-    pub(crate) sub: String,
+    /// The Verifiable Credential
+    pub vc: VerifiableCredential,
+    /// Subject (user DID)
+    pub sub: String,
     /// Expiration time (Unix timestamp)
-    pub(crate) exp: i64,
-    /// Issued at (Unix timestamp)
-    pub(crate) iat: i64,
-    /// Custom membership claims
-    pub(crate) membership: MembershipClaims,
+    pub exp: i64,
+    /// Issued at (Unix timestamp, optional)
+    #[serde(default)]
+    pub iat: i64,
 }
 
 /// Result of JWT verification
@@ -52,8 +87,8 @@ pub struct JwtClaims {
 pub struct VerificationResult {
     /// Whether the signature is valid
     pub valid: bool,
-    /// Decoded claims if valid
-    pub claims: Option<DecodedClaims>,
+    /// JWT claims if valid (matches backend structure exactly)
+    pub claims: Option<JwtClaims>,
     /// Error message if invalid
     pub error: Option<String>,
 }
@@ -75,14 +110,4 @@ impl TryFrom<VerificationResult> for JsValue {
     fn try_from(value: VerificationResult) -> Result<Self, Self::Error> {
         Ok(serde_wasm_bindgen::to_value(&value)?)
     }
-}
-
-/// Decoded JWT claims
-#[derive(Serialize, Deserialize)]
-pub struct DecodedClaims {
-    pub issuer: String,
-    pub subject: String,
-    pub expires_at: i64,
-    pub issued_at: i64,
-    pub membership: MembershipClaims,
 }

@@ -5,10 +5,11 @@
 /**
  * Test helpers for VC integration tests.
  * Uses jose library for Ed25519 JWT signing.
+ * Generates W3C-compliant VCs matching backend SSI implementation.
  */
 
 import * as jose from 'jose';
-import type { DidDocument, MembershipClaims, JsonWebKey } from './types.js';
+import type { DidDocument, CredentialSubject, VerifiableCredential, JsonWebKey } from './types.js';
 
 /**
  * Test keypair with JWK strings (matching WASM output format).
@@ -19,13 +20,15 @@ export interface TestKeyPair {
 }
 
 /**
- * Options for issuing a test JWT.
+ * Options for issuing a test JWT-VC.
  */
 export interface IssueJwtOptions {
-  issuer: string;
-  subject: string;
-  memberId: string;
-  status: string;
+  /** Issuer DID (e.g., did:web:api.agentium.network) */
+  issuerDid: string;
+  /** Subject DID (e.g., did:pkh:eip155:1:0x...) */
+  subjectDid: string;
+  /** Enrollment time (ISO 8601 format) */
+  enrollmentTime?: string;
   privateJwk: string;
   /** Hours until expiration (default: 24). Use negative for expired JWTs. */
   expiresInHours?: number;
@@ -53,10 +56,17 @@ export async function generateTestKeypair(): Promise<TestKeyPair> {
 }
 
 /**
- * Issue a test JWT-VC with membership claims.
+ * Issue a W3C-compliant JWT-VC matching backend SSI structure.
  */
 export async function issueTestJwt(options: IssueJwtOptions): Promise<string> {
-  const { issuer, subject, memberId, status, privateJwk, expiresInHours = 24, kid } = options;
+  const {
+    issuerDid,
+    subjectDid,
+    enrollmentTime = new Date().toISOString(),
+    privateJwk,
+    expiresInHours = 24,
+    kid,
+  } = options;
 
   const jwk = JSON.parse(privateJwk) as jose.JWK;
   const privateKey = await jose.importJWK(jwk, 'EdDSA');
@@ -64,17 +74,26 @@ export async function issueTestJwt(options: IssueJwtOptions): Promise<string> {
   const now = Math.floor(Date.now() / 1000);
   const exp = now + expiresInHours * 3600;
 
-  const membership: MembershipClaims = {
-    member_id: memberId,
-    status: status,
+  // Build W3C VC structure matching backend SSI output
+  const credentialSubject: CredentialSubject = {
+    id: subjectDid,
+    enrollmentTime: enrollmentTime,
   };
 
-  let builder = new jose.SignJWT({
-    membership,
+  const vc: VerifiableCredential = {
+    '@context': ['https://www.w3.org/2018/credentials/v1'],
+    type: ['VerifiableCredential'],
+    issuer: { id: issuerDid },
+    issuanceDate: enrollmentTime,
+    credentialSubject: credentialSubject,
+  };
+
+  // JWT claims with nested VC (W3C JWT-VC format)
+  const builder = new jose.SignJWT({
+    vc,
   })
     .setProtectedHeader({ alg: 'EdDSA', typ: 'JWT', ...(kid ? { kid } : {}) })
-    .setIssuer(issuer)
-    .setSubject(subject)
+    .setSubject(subjectDid)
     .setIssuedAt(now)
     .setExpirationTime(exp);
 
@@ -83,6 +102,7 @@ export async function issueTestJwt(options: IssueJwtOptions): Promise<string> {
 
 /**
  * Generate a DID document for testing.
+ * Uses camelCase field names matching W3C spec and backend.
  */
 export function generateTestDidDocument(
   did: string,
@@ -94,7 +114,7 @@ export function generateTestDidDocument(
 
   return {
     id: did,
-    verification_method: [
+    verificationMethod: [
       {
         id: fullKeyId,
         type: 'JsonWebKey2020',
@@ -111,17 +131,15 @@ export function generateTestDidDocument(
  */
 export async function createTestFixture(options?: {
   did?: string;
-  subject?: string;
-  memberId?: string;
-  status?: string;
+  subjectDid?: string;
+  enrollmentTime?: string;
   keyId?: string;
   expiresInHours?: number;
 }) {
   const {
     did = 'did:web:test.example',
-    subject = 'user-123',
-    memberId = 'member-456',
-    status = 'active',
+    subjectDid = 'did:pkh:eip155:1:0x1234567890abcdef',
+    enrollmentTime = new Date().toISOString(),
     keyId = 'key-1',
     expiresInHours = 24,
   } = options ?? {};
@@ -130,10 +148,9 @@ export async function createTestFixture(options?: {
   const didDocument = generateTestDidDocument(did, keypair.publicJwk, keyId);
 
   const jwt = await issueTestJwt({
-    issuer: did,
-    subject,
-    memberId,
-    status,
+    issuerDid: did,
+    subjectDid,
+    enrollmentTime,
     privateJwk: keypair.privateJwk,
     expiresInHours,
     kid: `${did}#${keyId}`,
@@ -144,8 +161,7 @@ export async function createTestFixture(options?: {
     didDocument,
     jwt,
     did,
-    subject,
-    memberId,
-    status,
+    subjectDid,
+    enrollmentTime,
   };
 }

@@ -335,7 +335,7 @@ export class AgentiumClient {
    * @throws {AgentiumApiError} If no matching public key is found
    */
   extractPublicKeyJwk(didDocument: DidDocument, kid?: string): string {
-    const methods = didDocument.verification_method;
+    const methods = didDocument.verificationMethod;
 
     if (!methods || methods.length === 0) {
       throw new AgentiumApiError('No verification methods found in DID document');

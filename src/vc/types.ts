@@ -3,29 +3,47 @@
 // SPDX-License-Identifier: MIT
 
 /**
- * Membership credential claims embedded in JWT-VC.
+ * Credential subject containing user identity and enrollment info.
+ * Matches backend's MembershipCredentialSubject.
  */
-export interface MembershipClaims {
-  /** Privy user ID or wallet address */
-  member_id: string;
-  /** Membership status (e.g., "active") */
-  status: string;
+export interface CredentialSubject {
+  /** User's DID (did:pkh) */
+  id: string;
+  /** Enrollment timestamp (ISO 8601 format) */
+  enrollmentTime: string;
 }
 
 /**
- * Decoded JWT claims after successful verification.
+ * W3C Verifiable Credential structure.
+ * Backend issues VCs using SSI library with this structure.
  */
-export interface DecodedClaims {
-  /** Issuer DID (e.g., "did:web:api.agentium.network") */
-  issuer: string;
-  /** Subject identifier (user) */
-  subject: string;
+export interface VerifiableCredential {
+  /** JSON-LD context */
+  '@context': string[];
+  /** Credential types */
+  type: string[];
+  /** Issuer DID (as object with id) */
+  issuer: { id: string };
+  /** Issuance date (ISO 8601 format) */
+  issuanceDate: string;
+  /** Credential subject with user info */
+  credentialSubject: CredentialSubject;
+}
+
+/**
+ * JWT claims structure for W3C VC (as issued by backend).
+ * The VC is nested under the 'vc' claim per JWT-VC spec.
+ * This is returned directly from verification - matches backend exactly.
+ */
+export interface VcJwtClaims {
+  /** The Verifiable Credential */
+  vc: VerifiableCredential;
+  /** Subject (user DID) */
+  sub: string;
   /** Expiration time (Unix timestamp) */
-  expires_at: number;
-  /** Issued at time (Unix timestamp) */
-  issued_at: number;
-  /** Membership claims */
-  membership: MembershipClaims;
+  exp: number;
+  /** Issued at time (Unix timestamp, optional) */
+  iat?: number;
 }
 
 /**
@@ -34,21 +52,20 @@ export interface DecodedClaims {
 export interface VerificationResult {
   /** Whether the signature is valid and claims passed validation */
   valid: boolean;
-  /** Decoded claims if verification succeeded */
-  claims?: DecodedClaims | undefined;
+  /** JWT claims if verification succeeded (matches backend structure exactly) */
+  claims?: VcJwtClaims | undefined;
   /** Error message if verification failed */
   error?: string | undefined;
 }
 
 /**
  * W3C DID Document structure (subset of fields we need).
- * Note: Backend returns snake_case field names.
  */
 export interface DidDocument {
   /** DID identifier (e.g., "did:web:api.agentium.network") */
   id: string;
-  /** Verification methods containing public keys (snake_case from backend) */
-  verification_method: VerificationMethod[];
+  /** Verification methods containing public keys (camelCase per W3C spec) */
+  verificationMethod: VerificationMethod[];
   /** Authentication method references */
   authentication?: string[];
 }
