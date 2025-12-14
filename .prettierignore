@@ -7,3 +7,7 @@ dist
 docs
 package-lock.json
 CHANGELOG.md
+packages/*/pkg
+test-wasmi/target
+test-wasmi/*/pkg
+*.md
