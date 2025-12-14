@@ -7,6 +7,7 @@ export type {
   VerifiableCredential,
   VcJwtClaims,
   VerificationResult,
+  VerificationError,
   DidDocument,
   VerificationMethod,
   JsonWebKey,

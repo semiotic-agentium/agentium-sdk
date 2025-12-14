@@ -5,7 +5,6 @@
 import axios, { isAxiosError, type AxiosInstance } from 'axios';
 import { verifyJwt } from './wasm.js';
 import type { VcStorage, VerificationResult, DidDocument, JwtHeader } from './vc/index.js';
-import { isWasmVcError } from './vc/index.js';
 
 // Re-export VC module types and utilities
 export * from './vc/index.js';
@@ -391,15 +390,14 @@ export class AgentiumClient {
     }
   }
 
-  /**
+/**
    * Verifies a JWT-VC against the issuer's public key.
    * Extracts the key ID from the JWT header, fetches the DID document,
    * finds the matching public key, and uses WASM for Ed25519 verification.
    *
    * @param jwt - The JWT-VC to verify
    * @param checkExpiration - Whether to check expiration (default: true, VCs expire in 24h)
-   * @returns Verification result with validity status and decoded claims
-   * @throws {WasmVcError} Propagates structured errors from the WASM verifier `{ code, message, data? }`.
+   * @returns Verification result with validity status, decoded claims, and structured error if invalid
    */
   async verifyCredential(jwt: string, checkExpiration?: boolean): Promise<VerificationResult> {
     // Extract kid from JWT header to find the correct key
@@ -434,11 +432,15 @@ export class AgentiumClient {
       return result;
     } catch (error) {
       // Silent failure per spec - log but don't throw
+      // Note: verifyJwt no longer throws; this only catches fetch/DID errors
       console.warn('[Agentium] VC fetch/verify error:', error);
-      if (isWasmVcError(error)) {
-        return { valid: false, error: `${error.code}: ${error.message}` };
-      }
-      return { valid: false, error: String(error) };
+      return {
+        valid: false,
+        error: {
+          code: 'VERIFICATION_FAILED',
+          message: error instanceof Error ? error.message : String(error),
+        },
+      };
     }
   }
 }

@@ -45,9 +45,11 @@ pub fn verify_jwt(
     public_key_jwk: &str,
     check_expiration: Option<bool>,
 ) -> Result<JsValue, JsValue> {
-    verify_jwt_impl(jwt, public_key_jwk, check_expiration.unwrap_or(true))
-        .map_err(JsValue::from)
-        .and_then(|res| res.try_into())
+    let result = match verify_jwt_impl(jwt, public_key_jwk, check_expiration.unwrap_or(true)) {
+        Ok(res) => res,
+        Err(err) => VerificationResult::from_error(err.into()),
+    };
+    result.try_into()
 }
 
 /// Extract public key from a private JWK

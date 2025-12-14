@@ -53,10 +53,10 @@ export function initLogging(): void {
  * @param jwt - The JWT string to verify (compact format: header.payload.signature)
  * @param publicKeyJwk - The public key as JWK JSON string
  * @param checkExpiration - Whether to check if the JWT has expired (default: true)
- * @returns Verification result with validity status and decoded claims if valid
- * @throws {WasmVcError} If verification fails. Error shape: `{ code, message, data? }`.
- * Codes: `JWT_EXPIRED` (with `data.expiredAt`), `INVALID_JWT_FORMAT`, `INVALID_JWK`,
- * `VERIFICATION_FAILED`, `CLAIMS_VALIDATION`, `SERIALIZATION_ERROR`, `DECODE_ERROR`, `KEY_GENERATION`, `SIGNING_FAILED`.
+ * @returns Verification result with validity status, decoded claims if valid, and structured error if invalid.
+ *          On failure: `{ valid: false, error: { code, message, data? } }`.
+ *          Error codes: `JWT_EXPIRED` (with `data.expiredAt`), `INVALID_JWT_FORMAT`, `INVALID_JWK`,
+ *          `VERIFICATION_FAILED`, `CLAIMS_VALIDATION`, `SERIALIZATION_ERROR`, `DECODE_ERROR`.
  */
 export async function verifyJwt(
   jwt: string,
