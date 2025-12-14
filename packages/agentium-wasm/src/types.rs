@@ -24,10 +24,6 @@ impl TryFrom<KeyPair> for JsValue {
     }
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// W3C Verifiable Credential Types (aligned with backend SSI implementation)
-// ─────────────────────────────────────────────────────────────────────────────
-
 /// Credential subject containing user identity and enrollment info.
 /// Matches backend's MembershipCredentialSubject.
 #[derive(Serialize, Deserialize, Clone, Debug)]
