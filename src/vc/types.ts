@@ -119,3 +119,37 @@ export interface KeyPair {
   /** Public JWK (safe to share) */
   public_jwk: string;
 }
+
+// ─────────────────────────────────────────────────────────────────────────────
+// WASM error object shape returned by VcError -> JsValue mapping
+// ─────────────────────────────────────────────────────────────────────────────
+export type VcErrorCode =
+  | 'JWT_EXPIRED'
+  | 'INVALID_JWT_FORMAT'
+  | 'INVALID_JWK'
+  | 'VERIFICATION_FAILED'
+  | 'CLAIMS_VALIDATION'
+  | 'SERIALIZATION_ERROR'
+  | 'DECODE_ERROR'
+  | 'KEY_GENERATION'
+  | 'SIGNING_FAILED';
+
+export interface JwtExpiredError {
+  code: 'JWT_EXPIRED';
+  message: string;
+  data: { expiredAt: string };
+}
+
+export interface GenericVcError {
+  code: Exclude<VcErrorCode, 'JWT_EXPIRED'>;
+  message: string;
+  data?: undefined;
+}
+
+export type WasmVcError = JwtExpiredError | GenericVcError;
+
+export function isWasmVcError(e: unknown): e is WasmVcError {
+  if (typeof e !== 'object' || e === null) return false;
+  const anyE = e as { code?: unknown; message?: unknown };
+  return typeof anyE.code === 'string' && typeof anyE.message === 'string';
+}

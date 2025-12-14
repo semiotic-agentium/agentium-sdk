@@ -12,6 +12,9 @@ export type {
   JsonWebKey,
   JwtHeader,
   KeyPair,
+  VcErrorCode,
+  WasmVcError,
 } from './types.js';
+export { isWasmVcError } from './types.js';
 
 export { type VcStorage, createBrowserStorage, createMemoryStorage } from './storage.js';
