@@ -81,9 +81,7 @@ fn verify_jwt_impl(
 
     let parts: Vec<&str> = jwt.split('.').collect();
     if parts.len() != 3 {
-        return Err(VcError::InvalidJwk(
-            "Invalid JWT format: missing sections".to_string(),
-        ));
+        return Err(VcError::InvalidJwtFormat("missing sections".to_string()));
     }
 
     use base64::Engine;
