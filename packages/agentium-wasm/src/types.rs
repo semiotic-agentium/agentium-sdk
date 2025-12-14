@@ -6,6 +6,8 @@ use serde::{Deserialize, Serialize};
 use wasm_bindgen::JsValue;
 use zeroize::Zeroize;
 
+use crate::error::JsErrorObj;
+
 /// Key pair containing both private and public JWK
 #[derive(Serialize, Deserialize, Zeroize)]
 pub struct KeyPair {
@@ -78,24 +80,52 @@ pub struct JwtClaims {
     pub iat: i64,
 }
 
+/// Structured error info for verification failures
+#[derive(Serialize, Deserialize, Clone, Debug)]
+pub struct VerificationError {
+    pub code: String,
+    pub message: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub data: Option<serde_json::Value>,
+}
+
+impl<'a> From<JsErrorObj<'a>> for VerificationError {
+    fn from(obj: JsErrorObj<'a>) -> Self {
+        Self {
+            code: obj.code.to_string(),
+            message: obj.message,
+            data: obj.data,
+        }
+    }
+}
+
+impl From<crate::VcError> for VerificationError {
+    fn from(err: crate::VcError) -> Self {
+        let obj: JsErrorObj<'static> = err.into();
+        obj.into()
+    }
+}
+
 /// Result of JWT verification
 #[derive(Serialize, Deserialize)]
 pub struct VerificationResult {
     /// Whether the signature is valid
     pub valid: bool,
     /// JWT claims if valid (matches backend structure exactly)
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub claims: Option<JwtClaims>,
-    /// Error message if invalid
-    pub error: Option<String>,
+    /// Structured error if invalid
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub error: Option<VerificationError>,
 }
 
 impl VerificationResult {
-    /// Create an error result with a contextual message
-    pub fn error(msg: impl Into<String>) -> Self {
+    /// Create an error result from a structured error
+    pub fn from_error(err: VerificationError) -> Self {
         Self {
             valid: false,
             claims: None,
-            error: Some(msg.into()),
+            error: Some(err),
         }
     }
 }

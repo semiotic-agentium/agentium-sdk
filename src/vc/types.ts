@@ -47,6 +47,18 @@ export interface VcJwtClaims {
 }
 
 /**
+ * Structured error returned in VerificationResult when verification fails.
+ */
+export interface VerificationError {
+  /** Stable error code */
+  code: VcErrorCode;
+  /** Human-readable error message */
+  message: string;
+  /** Optional metadata (e.g., expiredAt for JWT_EXPIRED) */
+  data?: { expiredAt?: string } | undefined;
+}
+
+/**
  * Result of JWT-VC verification from WASM module.
  */
 export interface VerificationResult {
@@ -54,8 +66,8 @@ export interface VerificationResult {
   valid: boolean;
   /** JWT claims if verification succeeded (matches backend structure exactly) */
   claims?: VcJwtClaims | undefined;
-  /** Error message if verification failed */
-  error?: string | undefined;
+  /** Structured error if verification failed */
+  error?: VerificationError | undefined;
 }
 
 /**

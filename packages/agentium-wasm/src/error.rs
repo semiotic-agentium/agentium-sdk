@@ -45,6 +45,36 @@ pub struct JsErrorObj<'a> {
     pub data: Option<serde_json::Value>,
 }
 
+impl From<VcError> for JsErrorObj<'static> {
+    fn from(err: VcError) -> Self {
+        use VcError::*;
+        let (code, message, data) = match err {
+            JwtExpired(exp) => (
+                "JWT_EXPIRED",
+                format!("JWT expired at {exp}"),
+                Some(serde_json::json!({ "expiredAt": exp })),
+            ),
+            InvalidJwtFormat(s) => (
+                "INVALID_JWT_FORMAT",
+                format!("Invalid JWT format: {s}"),
+                None,
+            ),
+            InvalidJwk(s) => ("INVALID_JWK", s, None),
+            VerificationFailed(s) => ("VERIFICATION_FAILED", s, None),
+            ClaimsValidation(s) => ("CLAIMS_VALIDATION", s, None),
+            Serialization(e) => ("SERIALIZATION_ERROR", e.to_string(), None),
+            DecodeError(e) => ("DECODE_ERROR", e.to_string(), None),
+            KeyGeneration(e) => ("KEY_GENERATION", e.to_string(), None),
+            SigningFailed(e) => ("SIGNING_FAILED", e.to_string(), None),
+        };
+        JsErrorObj {
+            code,
+            message,
+            data,
+        }
+    }
+}
+
 impl From<VcError> for JsValue {
     fn from(err: VcError) -> Self {
         use VcError::*;

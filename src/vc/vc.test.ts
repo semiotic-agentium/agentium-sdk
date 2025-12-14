@@ -46,7 +46,8 @@ describe('VC Module', () => {
       const result = await verifyJwt(fixture.jwt, wrongKeypair.publicJwk, false);
 
       expect(result.valid).toBe(false);
-      expect(result.error).toContain('Signature verification failed');
+      expect(result.error?.code).toBe('VERIFICATION_FAILED');
+      expect(result.error?.message).toContain('Signature verification failed');
     });
 
     it('should reject expired JWT when expiration check is enabled', async () => {
@@ -55,7 +56,8 @@ describe('VC Module', () => {
       const result = await verifyJwt(fixture.jwt, fixture.keypair.publicJwk, true);
 
       expect(result.valid).toBe(false);
-      expect(result.error).toContain('expired');
+      expect(result.error?.code).toBe('JWT_EXPIRED');
+      expect(result.error?.message).toContain('expired');
     });
 
     it('should accept expired JWT when expiration check is disabled', async () => {
@@ -72,7 +74,7 @@ describe('VC Module', () => {
       const result = await verifyJwt('not.a.valid.jwt.format', fixture.keypair.publicJwk, false);
 
       expect(result.valid).toBe(false);
-      expect(result.error).toBeDefined();
+      expect(result.error?.code).toBe('INVALID_JWT_FORMAT');
     });
 
     it('should reject JWT with invalid base64 encoding', async () => {
@@ -81,6 +83,7 @@ describe('VC Module', () => {
       const result = await verifyJwt('invalid!!!.base64.here', fixture.keypair.publicJwk, false);
 
       expect(result.valid).toBe(false);
+      expect(result.error).toBeDefined();
     });
   });
 
@@ -190,7 +193,8 @@ describe('VC Module', () => {
       const result = await client.verifyCredential(fixture.jwt, false);
 
       expect(result.valid).toBe(false);
-      expect(result.error).toContain('Signature verification failed');
+      expect(result.error?.code).toBe('VERIFICATION_FAILED');
+      expect(result.error?.message).toContain('Signature verification failed');
     });
   });
 
