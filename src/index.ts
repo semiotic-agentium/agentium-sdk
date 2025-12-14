@@ -391,7 +391,7 @@ export class AgentiumClient {
     }
   }
 
-/**
+  /**
    * Verifies a JWT-VC against the issuer's public key.
    * Extracts the key ID from the JWT header, fetches the DID document,
    * finds the matching public key, and uses WASM for Ed25519 verification.
