@@ -54,6 +54,9 @@ export function initLogging(): void {
  * @param publicKeyJwk - The public key as JWK JSON string
  * @param checkExpiration - Whether to check if the JWT has expired (default: true)
  * @returns Verification result with validity status and decoded claims if valid
+ * @throws {WasmVcError} If verification fails. Error shape: `{ code, message, data? }`.
+ * Codes: `JWT_EXPIRED` (with `data.expiredAt`), `INVALID_JWT_FORMAT`, `INVALID_JWK`,
+ * `VERIFICATION_FAILED`, `CLAIMS_VALIDATION`, `SERIALIZATION_ERROR`, `DECODE_ERROR`, `KEY_GENERATION`, `SIGNING_FAILED`.
  */
 export async function verifyJwt(
   jwt: string,
@@ -68,6 +71,7 @@ export async function verifyJwt(
  * Generate a new Ed25519 key pair.
  *
  * @returns Key pair with private and public JWK strings
+ * @throws {WasmVcError} If key generation or serialization fails.
  */
 export async function generateKeypair(): Promise<KeyPair> {
   await ensureWasmReady();
@@ -79,6 +83,7 @@ export async function generateKeypair(): Promise<KeyPair> {
  *
  * @param privateKeyJwk - The private key as JWK JSON string
  * @returns The public key as JWK JSON string
+ * @throws {WasmVcError} If the private key JWK is invalid or serialization fails.
  */
 export async function getPublicKey(privateKeyJwk: string): Promise<string> {
   await ensureWasmReady();
