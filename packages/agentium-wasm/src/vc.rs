@@ -45,8 +45,9 @@ pub fn verify_jwt(
     public_key_jwk: &str,
     check_expiration: Option<bool>,
 ) -> Result<JsValue, JsValue> {
-    let result = verify_jwt_impl(jwt, public_key_jwk, check_expiration.unwrap_or(true));
-    result.try_into()
+    verify_jwt_impl(jwt, public_key_jwk, check_expiration.unwrap_or(true))
+        .map_err(JsValue::from)
+        .and_then(|res| res.try_into())
 }
 
 /// Extract public key from a private JWK
@@ -71,29 +72,22 @@ fn generate_keypair_impl() -> Result<KeyPair, VcError> {
     })
 }
 
-fn verify_jwt_impl(jwt: &str, public_key_jwk: &str, check_expiration: bool) -> VerificationResult {
-    let key: JWK = match serde_json::from_str(public_key_jwk) {
-        Ok(k) => k,
-        Err(e) => {
-            tracing::error!(error=%e, "Invalid JWK");
-            return VerificationResult::error(format!("Invalid JWK: {}", e));
-        }
-    };
+fn verify_jwt_impl(
+    jwt: &str,
+    public_key_jwk: &str,
+    check_expiration: bool,
+) -> Result<VerificationResult, VcError> {
+    let key: JWK = serde_json::from_str(public_key_jwk)?;
 
     let parts: Vec<&str> = jwt.split('.').collect();
     if parts.len() != 3 {
-        tracing::error!("Invalid JWT format: missing sections");
-        return VerificationResult::error("Invalid JWT format: expected 3 parts");
+        return Err(VcError::InvalidJwk(
+            "Invalid JWT format: missing sections".to_string(),
+        ));
     }
 
     use base64::Engine;
-    let signature = match base64::engine::general_purpose::URL_SAFE_NO_PAD.decode(parts[2]) {
-        Ok(s) => s,
-        Err(e) => {
-            tracing::error!(error = %e, "Invalid JWT signature encoding");
-            return VerificationResult::error(format!("Invalid JWT signature encoding: {e}"));
-        }
-    };
+    let signature = base64::engine::general_purpose::URL_SAFE_NO_PAD.decode(parts[2])?;
 
     let signing_input = format!("{}.{}", parts[0], parts[1]);
     let algorithm = key.get_algorithm().unwrap_or(ssi::jwk::Algorithm::EdDSA);
@@ -102,24 +96,14 @@ fn verify_jwt_impl(jwt: &str, public_key_jwk: &str, check_expiration: bool) -> V
         ssi::claims::jws::verify_bytes(algorithm, signing_input.as_bytes(), &key, &signature)
     {
         tracing::error!(error = %e, "Signature verification failed");
-        return VerificationResult::error(format!("Signature verification failed: {e}"));
+        return Err(VcError::VerificationFailed(format!(
+            "Signature verification failed: {e}"
+        )));
     }
 
-    let payload_bytes = match base64::engine::general_purpose::URL_SAFE_NO_PAD.decode(parts[1]) {
-        Ok(p) => p,
-        Err(e) => {
-            tracing::error!(error = %e, "Invalid JWT payload encoding");
-            return VerificationResult::error(format!("Invalid JWT payload encoding: {e}"));
-        }
-    };
+    let payload_bytes = base64::engine::general_purpose::URL_SAFE_NO_PAD.decode(parts[1])?;
 
-    let claims: JwtClaims = match serde_json::from_slice(&payload_bytes) {
-        Ok(c) => c,
-        Err(e) => {
-            tracing::error!(error = %e, "Failed to deserialize JWT claims");
-            return VerificationResult::error(format!("Failed to deserialize JWT claims: {e}"));
-        }
-    };
+    let claims: JwtClaims = serde_json::from_slice(&payload_bytes)?;
 
     if check_expiration {
         let now = chrono::Utc::now().timestamp();
@@ -128,7 +112,7 @@ fn verify_jwt_impl(jwt: &str, public_key_jwk: &str, check_expiration: bool) -> V
                 .map(|t| t.to_rfc3339())
                 .unwrap_or_else(|| claims.exp.to_string());
             tracing::error!(expired_at, "JWT expired");
-            return VerificationResult::error(format!("JWT expired at {expired_at}"));
+            return Err(VcError::JwtExpired(expired_at));
         }
     }
 
@@ -138,11 +122,11 @@ fn verify_jwt_impl(jwt: &str, public_key_jwk: &str, check_expiration: bool) -> V
         "JWT verification successful"
     );
 
-    VerificationResult {
+    Ok(VerificationResult {
         valid: true,
         claims: Some(claims),
         error: None,
-    }
+    })
 }
 
 fn get_public_key_impl(private_key_jwk: &str) -> Result<String, VcError> {
@@ -282,7 +266,7 @@ mod tests {
         assert_eq!(parts.len(), 3);
 
         // Verify JWT (skip expiration check for test)
-        let result = verify_jwt_impl(&jwt, &keypair.public_jwk, false);
+        let result = verify_jwt_impl(&jwt, &keypair.public_jwk, false).unwrap();
 
         assert!(result.valid);
         assert!(result.error.is_none());
@@ -316,8 +300,7 @@ mod tests {
 
         let result = verify_jwt_impl(&jwt, &wrong_keypair.public_jwk, false);
 
-        assert!(!result.valid);
-        assert!(result.error.is_some());
+        assert!(result.is_err());
     }
 
     #[test]

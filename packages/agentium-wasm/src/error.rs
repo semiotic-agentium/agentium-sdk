@@ -31,6 +31,9 @@ pub enum VcError {
 
     #[error("Decode error: {0}")]
     DecodeError(#[from] DecodeError),
+
+    #[error("Jwt expired at {0}")]
+    JwtExpired(String),
 }
 
 impl From<VcError> for JsValue {
