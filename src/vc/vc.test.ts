@@ -8,12 +8,7 @@ import MockAdapter from 'axios-mock-adapter';
 import { AgentiumClient, AgentiumApiError } from '../index.js';
 import { verifyJwt } from '../wasm.js';
 import { createMemoryStorage } from './storage.js';
-import {
-  createTestFixture,
-  generateTestKeypair,
-  generateTestDidDocument,
-  issueTestJwt,
-} from './test-helpers.js';
+import { createTestFixture, generateTestKeypair, generateTestDidDocument } from './test-helpers.js';
 
 describe('VC Module', () => {
   let mock: MockAdapter;
@@ -123,7 +118,11 @@ describe('VC Module', () => {
     it('should find key by kid', async () => {
       const client = new AgentiumClient();
       const keypair = await generateTestKeypair();
-      const didDoc = generateTestDidDocument('did:web:example.com', keypair.publicJwk, 'specific-key');
+      const didDoc = generateTestDidDocument(
+        'did:web:example.com',
+        keypair.publicJwk,
+        'specific-key',
+      );
 
       const publicKeyJwk = client.extractPublicKeyJwk(didDoc, 'did:web:example.com#specific-key');
 
@@ -157,7 +156,9 @@ describe('VC Module', () => {
       });
 
       // Mock the DID document endpoint
-      mock.onGet('https://api.agentium.network/.well-known/did.json').reply(200, fixture.didDocument);
+      mock
+        .onGet('https://api.agentium.network/.well-known/did.json')
+        .reply(200, fixture.didDocument);
 
       const result = await client.verifyCredential(fixture.jwt, false);
 
@@ -210,7 +211,9 @@ describe('VC Module', () => {
         .reply(200, { vc: fixture.jwt });
 
       // Mock DID document endpoint
-      mock.onGet('https://api.agentium.network/.well-known/did.json').reply(200, fixture.didDocument);
+      mock
+        .onGet('https://api.agentium.network/.well-known/did.json')
+        .reply(200, fixture.didDocument);
 
       const result = await client.connectAndStoreMembership('fake-privy-token');
 
