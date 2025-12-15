@@ -32,8 +32,19 @@ jobs:
           node-version-file: 'package.json'
           cache: 'npm'
 
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: wasm32-unknown-unknown
+
+      - name: Install wasm-pack
+        uses: jetli/wasm-pack-action@v0.4.0
+
       - name: Install dependencies
         run: npm ci
+
+      - name: Build WASM
+        run: npm run build:wasm
 
       - name: Build docs
         run: npm run docs
@@ -61,8 +72,19 @@ jobs:
           node-version-file: 'package.json'
           cache: 'npm'
 
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: wasm32-unknown-unknown
+
+      - name: Install wasm-pack
+        uses: jetli/wasm-pack-action@v0.4.0
+
       - name: Install dependencies
         run: npm ci
+
+      - name: Build WASM
+        run: npm run build:wasm
 
       - name: Build docs
         run: npm run docs
