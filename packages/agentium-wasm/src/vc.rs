@@ -79,17 +79,21 @@ fn verify_jwt_impl(
     public_key_jwk: &str,
     check_expiration: bool,
 ) -> Result<VerificationResult, VcError> {
+    use base64::Engine;
+
     let key: JWK = serde_json::from_str(public_key_jwk)?;
 
-    let parts: Vec<&str> = jwt.split('.').collect();
-    if parts.len() != 3 {
-        return Err(VcError::InvalidJwtFormat("missing sections".to_string()));
-    }
+    // do not allocate
+    let mut parts = jwt.split('.');
+    let (Some(part0), Some(part1), Some(part2)) = (parts.next(), parts.next(), parts.next()) else {
+        let e = VcError::InvalidJwtFormat("missing sections".to_string());
+        tracing::error!(error = %e, "Signature verification failed");
+        return Err(e);
+    };
 
-    use base64::Engine;
-    let signature = base64::engine::general_purpose::URL_SAFE_NO_PAD.decode(parts[2])?;
+    let signature = base64::engine::general_purpose::URL_SAFE_NO_PAD.decode(part2)?;
 
-    let signing_input = format!("{}.{}", parts[0], parts[1]);
+    let signing_input = format!("{}.{}", part0, part1);
     let algorithm = key.get_algorithm().unwrap_or(ssi::jwk::Algorithm::EdDSA);
 
     if let Err(e) =
@@ -101,7 +105,7 @@ fn verify_jwt_impl(
         )));
     }
 
-    let payload_bytes = base64::engine::general_purpose::URL_SAFE_NO_PAD.decode(parts[1])?;
+    let payload_bytes = base64::engine::general_purpose::URL_SAFE_NO_PAD.decode(part1)?;
 
     let claims: JwtClaims = serde_json::from_slice(&payload_bytes)?;
 
