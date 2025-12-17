@@ -8,7 +8,7 @@ import init, {
   get_public_key as wasmGetPublicKey,
   init_logging as wasmInitLogging,
   type InitInput,
-} from '@semiotic-labs/agentium-wasm';
+} from '@semiotic-labs/agentium-sdk-wasm';
 import type { VerificationResult, KeyPair } from './vc/types.js';
 
 let wasmInitialized: Promise<void> | null = null;
@@ -52,7 +52,6 @@ export function initLogging(): void {
  *
  * @param jwt - The JWT string to verify (compact format: header.payload.signature)
  * @param publicKeyJwk - The public key as JWK JSON string
- * @param checkExpiration - Whether to check if the JWT has expired (default: true)
  * @returns Verification result with validity status, decoded claims if valid, and structured error if invalid.
  *          On failure: `{ valid: false, error: { code, message, data? } }`.
  *          Error codes: `JWT_EXPIRED` (with `data.expiredAt`), `INVALID_JWT_FORMAT`, `INVALID_JWK`,
@@ -61,10 +60,9 @@ export function initLogging(): void {
 export async function verifyJwt(
   jwt: string,
   publicKeyJwk: string,
-  checkExpiration: boolean = true,
 ): Promise<VerificationResult> {
   await ensureWasmReady();
-  return wasmVerifyJwt(jwt, publicKeyJwk, checkExpiration) as VerificationResult;
+  return wasmVerifyJwt(jwt, publicKeyJwk) as VerificationResult;
 }
 
 /**

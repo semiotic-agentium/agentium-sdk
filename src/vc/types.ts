@@ -127,9 +127,9 @@ export interface JsonWebKey {
  */
 export interface KeyPair {
   /** Full JWK with private key material (keep secret!) */
-  private_jwk: string;
+  private_key: JsonWebKey;
   /** Public JWK (safe to share) */
-  public_jwk: string;
+  public_key: JsonWebKey;
 }
 
 // ─────────────────────────────────────────────────────────────────────────────

@@ -396,15 +396,14 @@ export class AgentiumClient {
    * finds the matching public key, and uses WASM for Ed25519 verification.
    *
    * @param jwt - The JWT-VC to verify
-   * @param checkExpiration - Whether to check expiration (default: true, VCs expire in 24h)
    * @returns Verification result with validity status, decoded claims, and structured error if invalid
    */
-  async verifyCredential(jwt: string, checkExpiration?: boolean): Promise<VerificationResult> {
+  async verifyCredential(jwt: string): Promise<VerificationResult> {
     // Extract kid from JWT header to find the correct key
     const header = this.parseJwtHeader(jwt);
     const didDocument = await this.fetchIssuerDidDocument();
     const publicKeyJwk = this.extractPublicKeyJwk(didDocument, header.kid);
-    return verifyJwt(jwt, publicKeyJwk, checkExpiration ?? true);
+    return verifyJwt(jwt, publicKeyJwk);
   }
 
   /**
