@@ -1,0 +1,16 @@
+{
+  "name": "@semiotic-labs/agentium-sdk-wasm",
+  "type": "module",
+  "description": "WASM library for Agentium SDK - JWT-VC verification",
+  "version": "0.1.0",
+  "files": [
+    "agentium_sdk_wasm_bg.wasm",
+    "agentium_sdk_wasm.js",
+    "agentium_sdk_wasm.d.ts"
+  ],
+  "main": "agentium_sdk_wasm.js",
+  "types": "agentium_sdk_wasm.d.ts",
+  "sideEffects": [
+    "./snippets/*"
+  ]
+}
