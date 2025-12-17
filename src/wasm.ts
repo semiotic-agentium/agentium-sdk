@@ -57,10 +57,7 @@ export function initLogging(): void {
  *          Error codes: `JWT_EXPIRED` (with `data.expiredAt`), `INVALID_JWT_FORMAT`, `INVALID_JWK`,
  *          `VERIFICATION_FAILED`, `CLAIMS_VALIDATION`, `SERIALIZATION_ERROR`, `DECODE_ERROR`.
  */
-export async function verifyJwt(
-  jwt: string,
-  publicKeyJwk: string,
-): Promise<VerificationResult> {
+export async function verifyJwt(jwt: string, publicKeyJwk: string): Promise<VerificationResult> {
   await ensureWasmReady();
   return wasmVerifyJwt(jwt, publicKeyJwk) as VerificationResult;
 }
