@@ -12,13 +12,13 @@
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, resolve } from 'node:path';
-import { initSync } from '@semiotic-labs/agentium-wasm';
+import { initSync } from '@semiotic-labs/agentium-sdk-wasm';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 // Load WASM binary from filesystem
-const wasmPath = resolve(__dirname, 'packages/agentium-wasm/pkg/agentium_wasm_bg.wasm');
+const wasmPath = resolve(__dirname, 'packages/agentium-native/wasm/pkg/agentium_sdk_wasm_bg.wasm');
 const wasmBinary = readFileSync(wasmPath);
 
 // Initialize WASM synchronously before tests run
