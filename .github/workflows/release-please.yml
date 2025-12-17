@@ -62,9 +62,15 @@ jobs:
           # Create a new branch from the release tag with build artifacts
           git checkout -b release-build-${{ env.TAG_NAME }}
 
+          # For git installs: create the node_modules structure so the wasm package is found
+          # npm doesn't process file: dependencies for git installs, so we bundle it
+          mkdir -p node_modules/@semiotic-labs/agentium-sdk-wasm
+          cp -r packages/agentium-native/wasm/pkg/* node_modules/@semiotic-labs/agentium-sdk-wasm/
+
           # Force add the build artifacts (overrides .gitignore)
           git add -f dist/
           git add -f packages/agentium-native/wasm/pkg/
+          git add -f node_modules/@semiotic-labs/agentium-sdk-wasm/
 
           git commit -m "chore: add prebuilt artifacts for ${{ env.TAG_NAME }}"
 
