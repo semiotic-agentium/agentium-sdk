@@ -6,6 +6,29 @@ SPDX-License-Identifier: MIT
 
 # Changelog
 
+## [0.3.0](https://github.com/semiotic-agentium/agentium-sdk/compare/agentium-sdk-v0.2.1...agentium-sdk-v0.3.0) (2025-12-17)
+
+
+### ⚠ BREAKING CHANGES
+
+* connectGoogleIdentity response structure changed
+
+### Features
+
+* add agentium-native workspace with core and wasm crates ([d1b82e7](https://github.com/semiotic-agentium/agentium-sdk/commit/d1b82e7ad0b1cddc48675e7bd0cb768e525bfd26))
+* add agentium-wasm crate for JWT-VC verification ([bb0fcc2](https://github.com/semiotic-agentium/agentium-sdk/commit/bb0fcc287235281f859defc0136cc85acbc27b81))
+* add TypeScript wrapper for WASM initialization ([48261e0](https://github.com/semiotic-agentium/agentium-sdk/commit/48261e0e232335cbecdccebd8267b092ffdca16d))
+* add VC types and storage abstraction ([29f3bc7](https://github.com/semiotic-agentium/agentium-sdk/commit/29f3bc747373cf86aca99277f67bd078680e0a9e))
+* align SDK types with W3C VC spec and backend SSI implementation ([b448dc4](https://github.com/semiotic-agentium/agentium-sdk/commit/b448dc465e3dd3f1bb8227330d34726e60eb759f))
+* integrate VC verification into AgentiumClient ([26b7000](https://github.com/semiotic-agentium/agentium-sdk/commit/26b7000cfec3ccec0530b84df6c030ad51441d98))
+* migrate to OAuth 2.0 token endpoint ([ac70a97](https://github.com/semiotic-agentium/agentium-sdk/commit/ac70a97a51efc6977feba9feb4bbbb635e544e5b))
+* structured errors in VerificationResult; restore non-throwing verify_jwt ([39aa828](https://github.com/semiotic-agentium/agentium-sdk/commit/39aa828f48283bfa66d5ba3cdafe49f870feb9ae))
+
+
+### Bug Fixes
+
+* validate JWT has exactly 3 parts ([531067a](https://github.com/semiotic-agentium/agentium-sdk/commit/531067a72fc88661f70ca2bb70193e431ff90d76))
+
 ## [0.2.1](https://github.com/semiotic-agentium/agentium-sdk/compare/agentium-sdk-v0.2.0...agentium-sdk-v0.2.1) (2025-12-04)
 
 
