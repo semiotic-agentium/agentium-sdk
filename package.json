@@ -56,7 +56,6 @@
     "vitest": "^4.0.15"
   },
   "dependencies": {
-    "@semiotic-labs/agentium-sdk-wasm": "file:./packages/agentium-native/wasm/pkg",
     "axios": "^1.13.2"
   }
 }

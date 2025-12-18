@@ -48,32 +48,6 @@ jobs:
 
       - name: Publish to NPM
         if: ${{ steps.release.outputs.release_created }}
-        run: npm publish --access public
-
-      # Push prebuilt artifacts to release tag for git dependency users
-      - name: Push prebuilt artifacts to release tag
-        if: ${{ steps.release.outputs.release_created }}
         env:
-          TAG_NAME: ${{ steps.release.outputs.tag_name }}
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-
-          # Create a new branch from the release tag with build artifacts
-          git checkout -b release-build-${{ env.TAG_NAME }}
-
-          # For git installs: create the node_modules structure so the wasm package is found
-          # npm doesn't process file: dependencies for git installs, so we bundle it
-          mkdir -p node_modules/@semiotic-labs/agentium-sdk-wasm
-          cp -r packages/agentium-native/wasm/pkg/* node_modules/@semiotic-labs/agentium-sdk-wasm/
-
-          # Force add the build artifacts (overrides .gitignore)
-          git add -f dist/
-          git add -f packages/agentium-native/wasm/pkg/
-          git add -f node_modules/@semiotic-labs/agentium-sdk-wasm/
-
-          git commit -m "chore: add prebuilt artifacts for ${{ env.TAG_NAME }}"
-
-          # Force update the release tag to include artifacts
-          git tag -f ${{ env.TAG_NAME }}
-          git push origin ${{ env.TAG_NAME }} --force
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: npm publish --access public

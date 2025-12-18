@@ -8,7 +8,7 @@ import init, {
   get_public_key as wasmGetPublicKey,
   init_logging as wasmInitLogging,
   type InitInput,
-} from '@semiotic-labs/agentium-sdk-wasm';
+} from '../packages/agentium-native/wasm/pkg/agentium_sdk_wasm.js';
 import type { VerificationResult, KeyPair } from './vc/types.js';
 
 let wasmInitialized: Promise<void> | null = null;
