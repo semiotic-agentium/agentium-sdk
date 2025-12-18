@@ -6,6 +6,13 @@ SPDX-License-Identifier: MIT
 
 # Changelog
 
+## [0.5.2](https://github.com/semiotic-agentium/agentium-sdk/compare/agentium-sdk-v0.5.1...agentium-sdk-v0.5.2) (2025-12-18)
+
+
+### Bug Fixes
+
+* update credential API to match backend response format ([89a3a26](https://github.com/semiotic-agentium/agentium-sdk/commit/89a3a2661cea0e2e28854b7bb6039d276defd02c))
+
 ## [0.5.1](https://github.com/semiotic-agentium/agentium-sdk/compare/agentium-sdk-v0.5.0...agentium-sdk-v0.5.1) (2025-12-18)
 
 
