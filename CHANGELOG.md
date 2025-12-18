@@ -6,6 +6,13 @@ SPDX-License-Identifier: MIT
 
 # Changelog
 
+## [0.5.1](https://github.com/semiotic-agentium/agentium-sdk/compare/agentium-sdk-v0.5.0...agentium-sdk-v0.5.1) (2025-12-18)
+
+
+### Bug Fixes
+
+* include wasm in npm package by removing pkg/.gitignore ([22a7f18](https://github.com/semiotic-agentium/agentium-sdk/commit/22a7f189708353871b53f1e672619f21dce96b3c))
+
 ## [0.5.0](https://github.com/semiotic-agentium/agentium-sdk/compare/agentium-sdk-v0.4.0...agentium-sdk-v0.5.0) (2025-12-18)
 
 
