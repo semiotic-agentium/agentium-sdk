@@ -29,8 +29,14 @@
   "author": "",
   "exports": {
     ".": {
+      "types": "./dist/index.d.ts",
       "import": "./dist/index.js",
       "require": "./dist/index.js"
+    },
+    "./wasm": "./packages/agentium-native/wasm/pkg/agentium_sdk_wasm_bg.wasm",
+    "./wasm-url": {
+      "types": "./dist/wasm-url.d.ts",
+      "import": "./dist/wasm-url.js"
     }
   },
   "license": "MIT",
