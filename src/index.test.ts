@@ -229,17 +229,17 @@ describe('AgentiumClient', () => {
   describe('exchangePrivyToken', () => {
     it('should exchange Privy token for JWT tokens', async () => {
       const client = new AgentiumClient();
-      const privyToken = 'privy-id-token';
+      const token = 'privy-id-token';
       const mockResponse = createMockOAuthResponse({});
 
       mock
         .onPost('https://api.agentium.network/oauth/token', {
           grant_type: 'privy_id_token',
-          id_token: privyToken,
+          id_token: token,
         })
         .reply(200, mockResponse);
 
-      const response = await client.exchangePrivyToken(privyToken);
+      const response = await client.exchangePrivyToken(token);
 
       expect(response.access_token).toBe('mock-access-token');
       expect(response.token_type).toBe('Bearer');
