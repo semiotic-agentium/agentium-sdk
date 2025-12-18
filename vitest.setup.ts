@@ -12,7 +12,7 @@
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, resolve } from 'node:path';
-import { initSync } from '@semiotic-labs/agentium-sdk-wasm';
+import { initSync } from './packages/agentium-native/wasm/pkg/agentium_sdk_wasm.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
