@@ -308,6 +308,9 @@ export class AgentiumClient {
    * @throws {AgentiumApiError} If JWT format is invalid
    */
   parseJwtHeader(jwt: string): JwtHeader {
+    if (!jwt || typeof jwt !== 'string') {
+      throw new AgentiumApiError('Invalid JWT: expected non-empty string');
+    }
     const parts = jwt.split('.');
     if (parts.length !== 3) {
       throw new AgentiumApiError('Invalid JWT format: expected 3 parts');
@@ -368,20 +371,24 @@ export class AgentiumClient {
 
   /**
    * Fetches a membership credential from the backend.
-   * Uses Privy auth token for authentication.
+   * Uses token for authentication.
    *
-   * @param privyToken - Privy auth token (NOT the accessToken from OAuth)
+   * @param token - An auth token
    * @returns Raw JWT string
    * @throws {AgentiumApiError} 401 if token invalid/expired, 403 if user banned
    */
-  async fetchMembershipCredential(privyToken: string): Promise<string> {
+  async fetchMembershipCredential(token: string): Promise<string> {
     try {
-      const response = await this.axiosInstance.post<{ vc: string }>(
+      const response = await this.axiosInstance.post<{ credential: string }>(
         '/v1/credentials/membership',
         {},
-        { headers: { Authorization: `Bearer ${privyToken}` } },
+        { headers: { Authorization: `Bearer ${token}` } },
       );
-      return response.data.vc;
+      const credential = response.data.credential;
+      if (!credential) {
+        throw new AgentiumApiError('No credential in response from server');
+      }
+      return credential;
     } catch (error) {
       if (isAxiosError(error)) {
         throw new AgentiumApiError(error.message, error.response?.status);

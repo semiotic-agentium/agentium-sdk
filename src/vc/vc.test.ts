@@ -204,7 +204,7 @@ describe('VC Module', () => {
       // Mock credential fetch endpoint
       mock
         .onPost('https://api.agentium.network/v1/credentials/membership')
-        .reply(200, { vc: fixture.jwt });
+        .reply(200, { credential: fixture.jwt });
 
       // Mock DID document endpoint
       mock
@@ -231,7 +231,7 @@ describe('VC Module', () => {
 
       mock
         .onPost('https://api.agentium.network/v1/credentials/membership')
-        .reply(200, { vc: fixture.jwt });
+        .reply(200, { credential: fixture.jwt });
       mock.onGet('https://api.agentium.network/.well-known/did.json').reply(200, wrongDidDoc);
 
       const result = await client.connectAndStoreMembership('fake-privy-token');
