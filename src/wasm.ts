@@ -6,13 +6,11 @@ import init, {
   verify_jwt as wasmVerifyJwt,
   generate_keypair as wasmGenerateKeypair,
   get_public_key as wasmGetPublicKey,
-  init_logging as wasmInitLogging,
   type InitInput,
 } from '../packages/agentium-native/wasm/pkg/agentium_sdk_wasm.js';
 import type { VerificationResult, KeyPair } from './vc/types.js';
 
 let wasmInitialized: Promise<void> | null = null;
-let loggingInitialized = false;
 
 /**
  * Ensures the WASM module is loaded and ready.
@@ -34,17 +32,6 @@ export async function ensureWasmReady(wasmUrl?: InitInput): Promise<void> {
     });
   }
   await wasmInitialized;
-}
-
-/**
- * Initialize WASM logging to browser console.
- * Call once after ensureWasmReady() to enable debug output.
- */
-export function initLogging(): void {
-  if (!loggingInitialized) {
-    wasmInitLogging();
-    loggingInitialized = true;
-  }
 }
 
 /**

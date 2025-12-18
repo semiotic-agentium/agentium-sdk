@@ -8,7 +8,21 @@ import type { VcStorage, VerificationResult, DidDocument, JwtHeader } from './vc
 
 // Re-export VC module types and utilities
 export * from './vc/index.js';
-export { ensureWasmReady, initLogging, verifyJwt, generateKeypair, getPublicKey } from './wasm.js';
+export { ensureWasmReady, verifyJwt, generateKeypair, getPublicKey } from './wasm.js';
+
+// Re-export telemetry module
+export {
+  initTelemetry,
+  consoleSink,
+  nullSink,
+  withLevelFilter,
+  withTargetFilter,
+  composeSinks,
+  type TelemetryEvent,
+  type TelemetryLevel,
+  type TelemetrySink,
+  type InitTelemetryOptions,
+} from './telemetry.js';
 
 /**
  * Options for configuring the AgentiumClient.
