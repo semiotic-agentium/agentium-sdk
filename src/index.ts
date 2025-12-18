@@ -419,12 +419,12 @@ export class AgentiumClient {
    *
    * Per spec: errors are logged but user sees no change (silent failure).
    *
-   * @param privyToken - Privy auth token
+   * @param token - Server auth token for authorization
    * @returns Verification result (always returns, never throws)
    */
-  async connectAndStoreMembership(privyToken: string): Promise<VerificationResult> {
+  async connectAndStoreMembership(token: string): Promise<VerificationResult> {
     try {
-      const jwt = await this.fetchMembershipCredential(privyToken);
+      const jwt = await this.fetchMembershipCredential(token);
       const result = await this.verifyCredential(jwt);
 
       if (result.valid && this.vcStorage) {
