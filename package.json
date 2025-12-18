@@ -11,7 +11,7 @@
   ],
   "scripts": {
     "test": "vitest",
-    "build:wasm": "cd packages/agentium-native/wasm && wasm-pack build --target web --scope semiotic-labs",
+    "build:wasm": "cd packages/agentium-native/wasm && wasm-pack build --target web --scope semiotic-labs && rm -f pkg/.gitignore",
     "build": "npm run build:wasm && tsc",
     "docs": "typedoc",
     "lint": "eslint src/**/*.ts",
