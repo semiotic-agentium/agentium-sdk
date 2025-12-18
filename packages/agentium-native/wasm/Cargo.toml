@@ -37,7 +37,7 @@ getrandom = { workspace = true, features = ["wasm_js"] }
 
 tracing = { workspace = true }
 console_error_panic_hook = { workspace = true }
-tracing-subscriber = { workspace = true }
+tracing-subscriber = { workspace = true, features = ["env-filter"] }
 zeroize = { workspace = true, features = ["zeroize_derive"] }
 
 
