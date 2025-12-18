@@ -6,6 +6,13 @@ SPDX-License-Identifier: MIT
 
 # Changelog
 
+## [0.6.0](https://github.com/semiotic-agentium/agentium-sdk/compare/agentium-sdk-v0.5.2...agentium-sdk-v0.6.0) (2025-12-18)
+
+
+### Features
+
+* add wasm-url helper for easier WASM initialization ([75c2e15](https://github.com/semiotic-agentium/agentium-sdk/commit/75c2e159413ecd589b6de6554733d08cce23658a))
+
 ## [0.5.2](https://github.com/semiotic-agentium/agentium-sdk/compare/agentium-sdk-v0.5.1...agentium-sdk-v0.5.2) (2025-12-18)
 
 
