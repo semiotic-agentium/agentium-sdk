@@ -6,9 +6,11 @@ import init, {
   verify_jwt as wasmVerifyJwt,
   generate_keypair as wasmGenerateKeypair,
   get_public_key as wasmGetPublicKey,
-  type InitInput,
 } from '../packages/agentium-native/wasm/pkg/agentium_sdk_wasm.js';
+import type { InitInput } from '../packages/agentium-native/wasm/pkg/agentium_sdk_wasm.js';
 import type { VerificationResult, KeyPair } from './vc/types.js';
+
+export type { InitInput as WasmInitInput };
 
 let wasmInitialized: Promise<void> | null = null;
 

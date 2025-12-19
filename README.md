@@ -39,6 +39,10 @@ const client = new AgentiumClient();
 
 // Custom endpoint (for local/staging)
 const client = new AgentiumClient({ baseURL: 'http://localhost:8080' });
+
+// For bundlers like Vite that require explicit WASM URL
+import wasmUrl from '@semiotic-labs/agentium-sdk/wasm?url';
+const client = new AgentiumClient({ wasmUrl });
 ```
 
 ### Identity Connection
@@ -133,25 +137,29 @@ const storedVc = client.getStoredCredential();
 
 ### WASM Utilities
 
-Low-level cryptographic operations for Ed25519.
+Low-level cryptographic operations for Ed25519. WASM is automatically initialized on first use — no manual setup required.
 
 ```typescript
-import {
-  ensureWasmReady,
-  verifyJwt,
-  generateKeypair,
-  getPublicKey,
-} from '@semiotic-labs/agentium-sdk';
-
-// For bundlers like Vite, provide WASM URL explicitly
-import wasmUrl from '@semiotic-labs/agentium-sdk/wasm?url';
-await ensureWasmReady(wasmUrl);
+import { verifyJwt, generateKeypair, getPublicKey } from '@semiotic-labs/agentium-sdk';
 
 // Generate key pair
 const { privateKey, publicKey } = await generateKeypair();
 
 // Verify JWT directly
 const result = await verifyJwt(jwtString, publicKeyJwk);
+```
+
+#### Bundler Configuration (Vite, etc.)
+
+For bundlers like Vite that require explicit WASM URL resolution, pass `wasmUrl` to the client constructor (see [Client Setup](#client-setup)).
+
+If using low-level WASM utilities directly (without `AgentiumClient`), initialize manually:
+
+```typescript
+import { ensureWasmReady } from '@semiotic-labs/agentium-sdk';
+import wasmUrl from '@semiotic-labs/agentium-sdk/wasm?url';
+
+await ensureWasmReady(wasmUrl);
 ```
 
 ### Error Handling

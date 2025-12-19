@@ -3,12 +3,18 @@
 // SPDX-License-Identifier: MIT
 
 import axios, { isAxiosError, type AxiosInstance } from 'axios';
-import { verifyJwt } from './wasm.js';
+import { ensureWasmReady, verifyJwt, type WasmInitInput } from './wasm.js';
 import type { VcStorage, VerificationResult, DidDocument, JwtHeader } from './vc/index.js';
 
 // Re-export VC module types and utilities
 export * from './vc/index.js';
-export { ensureWasmReady, verifyJwt, generateKeypair, getPublicKey } from './wasm.js';
+export {
+  ensureWasmReady,
+  verifyJwt,
+  generateKeypair,
+  getPublicKey,
+  type WasmInitInput,
+} from './wasm.js';
 
 // Re-export telemetry module
 export {
@@ -33,6 +39,16 @@ export interface AgentiumClientOptions {
    * @default https://api.agentium.network
    */
   baseURL?: string;
+
+  /**
+   * URL to the WASM binary. Required for bundlers like Vite that need explicit URL resolution.
+   * @example
+   * ```typescript
+   * import wasmUrl from '@semiotic-labs/agentium-sdk/wasm?url';
+   * const client = new AgentiumClient({ wasmUrl });
+   * ```
+   */
+  wasmUrl?: WasmInitInput;
 }
 
 /**
@@ -154,6 +170,7 @@ export class AgentiumClient {
   private readonly axiosInstance: AxiosInstance;
   private readonly DEFAULT_BASE_URL = 'https://api.agentium.network';
   private readonly OAUTH_TOKEN_PATH = '/oauth/token';
+  private readonly wasmReady: Promise<void>;
   private vcStorage: VcStorage | null = null;
 
   /**
@@ -165,6 +182,7 @@ export class AgentiumClient {
     this.axiosInstance = axios.create({
       baseURL: baseURL,
     });
+    this.wasmReady = ensureWasmReady(options.wasmUrl);
   }
 
   /**
@@ -399,6 +417,7 @@ export class AgentiumClient {
    * @returns Verification result with validity status, decoded claims, and structured error if invalid
    */
   async verifyCredential(jwt: string): Promise<VerificationResult> {
+    await this.wasmReady;
     // Extract kid from JWT header to find the correct key
     const header = this.parseJwtHeader(jwt);
     const didDocument = await this.fetchIssuerDidDocument();
