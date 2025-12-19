@@ -6,6 +6,14 @@ SPDX-License-Identifier: MIT
 
 # Changelog
 
+## [0.7.0](https://github.com/semiotic-agentium/agentium-sdk/compare/agentium-sdk-v0.6.0...agentium-sdk-v0.7.0) (2025-12-19)
+
+
+### Features
+
+* add composable telemetry module with sink utilities ([a1354f3](https://github.com/semiotic-agentium/agentium-sdk/commit/a1354f3b8208b4f16d6a584683f54704577360de))
+* implement custom telemetry layer with JS sink callback ([ff07a5a](https://github.com/semiotic-agentium/agentium-sdk/commit/ff07a5a0ff2fa5a48394609be9b876330326648d))
+
 ## [0.6.0](https://github.com/semiotic-agentium/agentium-sdk/compare/agentium-sdk-v0.5.2...agentium-sdk-v0.6.0) (2025-12-18)
 
 
