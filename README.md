@@ -178,6 +178,78 @@ try {
 }
 ```
 
+### Telemetry
+
+The SDK provides a flexible telemetry system that forwards tracing events from the WASM layer to JavaScript. Consumers can define custom sinks to handle events (logging, analytics, monitoring services, etc.).
+
+> **Note:** The WASM layer currently emits events only — spans are not yet supported.
+
+#### Initialization
+
+Telemetry must be initialized after WASM is ready and can only be called once. If not initialized, no telemetry is emitted (silent by default).
+
+```typescript
+import { ensureWasmReady, initTelemetry, consoleSink } from '@semiotic-labs/agentium-sdk';
+
+await ensureWasmReady();
+initTelemetry({ sink: consoleSink });
+```
+
+#### Built-in Sinks
+
+- **`consoleSink`** — Logs events to the browser/Node console using the appropriate method (`console.error`, `console.warn`, etc.)
+- **`nullSink`** — Discards all events (useful for explicitly disabling telemetry)
+
+#### Filtering Events
+
+Filter events by level or target module:
+
+```typescript
+import { withLevelFilter, withTargetFilter, consoleSink } from '@semiotic-labs/agentium-sdk';
+
+// Only log errors and warnings
+const errorSink = withLevelFilter(['error', 'warn'], consoleSink);
+
+// Only log events from agentium modules
+const agentiumSink = withTargetFilter(['agentium_sdk'], consoleSink);
+```
+
+#### Composing Sinks
+
+Combine multiple sinks to forward events to different destinations:
+
+```typescript
+import { composeSinks, withLevelFilter, consoleSink, initTelemetry } from '@semiotic-labs/agentium-sdk';
+
+const myAnalyticsSink = (event) => {
+  // Send to your analytics service
+  analytics.track('sdk_event', event);
+};
+
+initTelemetry({
+  sink: composeSinks(
+    withLevelFilter(['error', 'warn', 'info'], consoleSink),
+    myAnalyticsSink
+  ),
+  filter: 'agentium_sdk=debug' // tracing-subscriber EnvFilter syntax
+});
+```
+
+#### Event Structure
+
+Events passed to sinks have the following shape:
+
+```typescript
+interface TelemetryEvent {
+  kind: 'event';                    // Event type (currently always "event")
+  level: 'error' | 'warn' | 'info' | 'debug' | 'trace';
+  target: string;                   // Module path (e.g., "agentium_sdk_wasm::vc")
+  name?: string;                    // Event name
+  fields: Record<string, unknown>;  // Structured fields from the event
+  ts_ms: number;                    // Timestamp in milliseconds
+}
+```
+
 ## API Documentation
 
 Generate full API documentation from source:
