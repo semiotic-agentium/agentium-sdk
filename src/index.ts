@@ -251,27 +251,6 @@ export class AgentiumClient {
     }
   }
 
-  /**
-   * Exchanges a Privy ID token for JWT tokens.
-   * @param idToken - The Privy ID token to exchange.
-   * @returns A promise that resolves with the OAuth token response.
-   * @throws {AgentiumApiError} Will throw a custom API error if the call fails.
-   */
-  async exchangePrivyToken(idToken: string): Promise<OAuthTokenResponse> {
-    try {
-      const response = await this.axiosInstance.post<OAuthTokenResponse>(this.OAUTH_TOKEN_PATH, {
-        grant_type: 'privy_id_token' as GrantType,
-        id_token: idToken,
-      });
-      return response.data;
-    } catch (error) {
-      if (isAxiosError(error)) {
-        throw new AgentiumApiError(error.message, error.response?.status);
-      }
-      throw error;
-    }
-  }
-
   // ─────────────────────────────────────────────────────────────────────────────
   // Verifiable Credentials (VC) Methods
   // ─────────────────────────────────────────────────────────────────────────────

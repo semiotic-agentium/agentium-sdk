@@ -77,14 +77,6 @@ Refreshes an access token using a refresh token.
 const newTokens = await client.refreshToken(currentRefreshToken);
 ```
 
-#### `exchangePrivyToken(idToken)`
-
-Exchanges a Privy ID token for JWT tokens.
-
-```typescript
-const tokens = await client.exchangePrivyToken(privyIdToken);
-```
-
 ### Verifiable Credentials
 
 The SDK supports W3C Verifiable Credentials issued as JWTs with Ed25519 signatures.

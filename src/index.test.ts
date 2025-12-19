@@ -51,7 +51,6 @@ describe('AgentiumClient', () => {
     expect(client.connectGoogleIdentity).toBeInstanceOf(Function);
     expect(client.exchangeApiKey).toBeInstanceOf(Function);
     expect(client.refreshToken).toBeInstanceOf(Function);
-    expect(client.exchangePrivyToken).toBeInstanceOf(Function);
   });
 
   it('should accept a baseURL in the constructor and use default if not provided', () => {
@@ -223,38 +222,6 @@ describe('AgentiumClient', () => {
         .reply(401, { message: 'Invalid token' });
 
       await expect(client.refreshToken('invalid-refresh-token')).rejects.toThrow(AgentiumApiError);
-    });
-  });
-
-  describe('exchangePrivyToken', () => {
-    it('should exchange Privy token for JWT tokens', async () => {
-      const client = new AgentiumClient();
-      const token = 'privy-id-token';
-      const mockResponse = createMockOAuthResponse({});
-
-      mock
-        .onPost('https://api.agentium.network/oauth/token', {
-          grant_type: 'privy_id_token',
-          id_token: token,
-        })
-        .reply(200, mockResponse);
-
-      const response = await client.exchangePrivyToken(token);
-
-      expect(response.access_token).toBe('mock-access-token');
-      expect(response.token_type).toBe('Bearer');
-    });
-
-    it('should handle invalid Privy token error', async () => {
-      const client = new AgentiumClient();
-
-      mock
-        .onPost('https://api.agentium.network/oauth/token')
-        .reply(401, { message: 'Invalid Privy token' });
-
-      await expect(client.exchangePrivyToken('invalid-privy-token')).rejects.toThrow(
-        AgentiumApiError,
-      );
     });
   });
 });
