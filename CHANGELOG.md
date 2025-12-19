@@ -6,6 +6,18 @@ SPDX-License-Identifier: MIT
 
 # Changelog
 
+## [0.8.0](https://github.com/semiotic-agentium/agentium-sdk/compare/agentium-sdk-v0.7.0...agentium-sdk-v0.8.0) (2025-12-19)
+
+
+### Features
+
+* add wasmUrl option to AgentiumClient constructor ([a29c076](https://github.com/semiotic-agentium/agentium-sdk/commit/a29c076ae71b519338fac6398260bcd0fedd5ac9))
+
+
+### Bug Fixes
+
+* remove unused exchangePrivyToken method ([27d70f9](https://github.com/semiotic-agentium/agentium-sdk/commit/27d70f969cff1e611e3b6d49e2b94bacee5c396b))
+
 ## [0.7.0](https://github.com/semiotic-agentium/agentium-sdk/compare/agentium-sdk-v0.6.0...agentium-sdk-v0.7.0) (2025-12-19)
 
 
