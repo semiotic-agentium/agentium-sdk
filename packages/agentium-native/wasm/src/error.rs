@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: MIT
 
-use agentium_sdk_core::VcError;
+use agentium_sdk_core::{JwtError, VcError};
 use serde::Serialize;
 use wasm_bindgen::JsValue;
 
@@ -57,6 +57,21 @@ impl<'a> From<serde_json::Error> for JsErrorObj<'a> {
         Self {
             code: "SERIALIZATION_ERROR",
             message: value.to_string(),
+            data: None,
+        }
+    }
+}
+
+impl<'a> From<JwtError> for JsErrorObj<'a> {
+    fn from(value: JwtError) -> Self {
+        let (code, message) = match &value {
+            JwtError::Parts => ("INVALID_JWT_FORMAT", "JWT must have exactly 3 dot-separated parts".to_string()),
+            JwtError::Base64(e) => ("DECODE_ERROR", format!("Invalid Base64url: {e}")),
+            JwtError::InvalidClaims(e) => ("INVALID_JWT_FORMAT", format!("Could not deserialize claims: {e}")),
+        };
+        Self {
+            code,
+            message,
             data: None,
         }
     }

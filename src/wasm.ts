@@ -6,9 +6,11 @@ import init, {
   verify_jwt as wasmVerifyJwt,
   generate_keypair as wasmGenerateKeypair,
   get_public_key as wasmGetPublicKey,
+  parse_jwt_header as wasmParseJwtHeader,
+  extract_public_key_jwk as wasmExtractPublicKeyJwk,
 } from '../packages/agentium-native/wasm/pkg/agentium_sdk_wasm.js';
 import type { InitInput } from '../packages/agentium-native/wasm/pkg/agentium_sdk_wasm.js';
-import type { VerificationResult, KeyPair } from './vc/types.js';
+import type { VerificationResult, KeyPair, JwtHeader, DidDocument } from './vc/types.js';
 
 export type { InitInput as WasmInitInput };
 
@@ -72,4 +74,33 @@ export async function generateKeypair(): Promise<KeyPair> {
 export async function getPublicKey(privateKeyJwk: string): Promise<string> {
   await ensureWasmReady();
   return wasmGetPublicKey(privateKeyJwk);
+}
+
+/**
+ * Parse a JWT header without verifying the signature.
+ *
+ * @param jwt - The JWT string (compact format: header.payload.signature)
+ * @returns The parsed JWT header containing algorithm, type, and optional key ID
+ * @throws {WasmVcError} If the JWT format is invalid
+ */
+export async function parseJwtHeader(jwt: string): Promise<JwtHeader> {
+  await ensureWasmReady();
+  return wasmParseJwtHeader(jwt) as JwtHeader;
+}
+
+/**
+ * Extract the public key JWK from a DID document.
+ *
+ * @param didDocument - The DID document
+ * @param kid - Optional key ID to match (from JWT header). Can be full ID or just fragment.
+ * @returns The public key as JWK JSON string
+ * @throws {WasmVcError} If no matching public key is found
+ */
+export async function extractPublicKeyJwk(
+  didDocument: DidDocument,
+  kid?: string,
+): Promise<string> {
+  await ensureWasmReady();
+  const didDocumentJson = JSON.stringify(didDocument);
+  return wasmExtractPublicKeyJwk(didDocumentJson, kid);
 }

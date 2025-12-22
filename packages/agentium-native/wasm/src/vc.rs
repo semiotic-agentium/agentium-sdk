@@ -14,7 +14,9 @@
 //! - Fetching public keys (e.g., from did:web resolution)
 //! - Passing the correct public key for verification
 
-use agentium_sdk_core::{KeyPair, PrivateKey, PublicKey, verify_jwt as sdk_core_verify};
+use agentium_sdk_core::{
+    DidDocument, JwtRef, KeyPair, PrivateKey, PublicKey, verify_jwt as sdk_core_verify,
+};
 use wasm_bindgen::prelude::*;
 
 use crate::error::JsErrorObj;
@@ -67,4 +69,41 @@ pub fn get_public_key(private_key_jwk: &str) -> Result<String, JsValue> {
         .map_err(JsErrorObj::from)?
         .pubkey();
     Ok(serde_json::to_string(pubkey.jwk_key()).map_err(JsErrorObj::from)?)
+}
+
+/// Parse a JWT header without verifying the signature.
+///
+/// # Arguments
+/// * `jwt` - The JWT string (compact format: header.payload.signature)
+///
+/// # Returns
+/// The parsed JWT header containing algorithm, type, and optional key ID.
+#[wasm_bindgen]
+pub fn parse_jwt_header(jwt: &str) -> Result<JsValue, JsValue> {
+    let jwt_ref = JwtRef::try_from(jwt).map_err(JsErrorObj::from)?;
+    let header = jwt_ref.header_claims().map_err(JsErrorObj::from)?;
+    Ok(serde_wasm_bindgen::to_value(&header)?)
+}
+
+/// Extract the public key JWK from a DID document.
+///
+/// # Arguments
+/// * `did_document_json` - The DID document as JSON string
+/// * `kid` - Optional key ID to match (from JWT header). Can be full ID or just fragment.
+///
+/// # Returns
+/// The public key as JWK JSON string
+#[wasm_bindgen]
+pub fn extract_public_key_jwk(
+    did_document_json: &str,
+    kid: Option<String>,
+) -> Result<String, JsValue> {
+    let did_document: DidDocument =
+        serde_json::from_str(did_document_json).map_err(JsErrorObj::from)?;
+
+    let jwk = did_document
+        .extract_public_key_jwk(kid.as_deref())
+        .map_err(JsErrorObj::from)?;
+
+    serde_json::to_string(jwk).map_err(|e| JsErrorObj::from(e).into())
 }

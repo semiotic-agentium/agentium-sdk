@@ -10,4 +10,10 @@ export default defineConfig({
     // Load WASM binary synchronously before tests
     setupFiles: ['./vitest.setup.ts'],
   },
+  server: {
+    watch: {
+      // Exclude Rust build artifacts from file watching
+      ignored: ['**/packages/agentium-native/target/**'],
+    },
+  },
 });

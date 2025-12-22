@@ -2,14 +2,16 @@
 //
 // SPDX-License-Identifier: MIT
 
+mod did;
 mod error;
 mod jwt;
 mod key_pair;
 mod types;
 mod vc;
 
+pub use did::{Did, DidDocument, DidParseError, JsonWebKey, KeyId, VerificationMethod};
 pub use error::VcError;
-pub use jwt::{JwtError, JwtRef};
+pub use jwt::{JwtError, JwtHeader, JwtRef};
 pub use key_pair::{KeyPair, PrivateKey, PublicKey};
 pub use types::{CredentialSubject, Issuer, JwtClaims, VerifiableCredential};
 pub use vc::verify_jwt;

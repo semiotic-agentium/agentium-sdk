@@ -17,8 +17,24 @@
 //! callers to specify their expected claims structure.
 
 use base64::Engine;
-use serde::de::DeserializeOwned;
+use serde::{Deserialize, Serialize, de::DeserializeOwned};
 use thiserror::Error;
+
+/// JWT header structure.
+///
+/// Contains algorithm, token type, and optional key ID for
+/// matching against verification methods in a DID document.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct JwtHeader {
+    /// Algorithm (e.g., "EdDSA")
+    pub alg: String,
+    /// Token type (usually "JWT")
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub typ: Option<String>,
+    /// Key ID - references verification method in DID document
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub kid: Option<String>,
+}
 
 /// A zero-copy reference to a JWT string.
 ///
@@ -86,6 +102,27 @@ impl<'a> JwtRef<'a> {
     /// Returns the base64url-encoded header portion of the JWT.
     pub fn header(&self) -> &str {
         self.header
+    }
+
+    /// Returns the decoded header bytes.
+    ///
+    /// # Panics
+    ///
+    /// This method will not panic as the header was already validated
+    /// during construction.
+    pub fn header_bytes(&self) -> Vec<u8> {
+        base64::engine::general_purpose::URL_SAFE_NO_PAD
+            .decode(self.header)
+            .expect("Decoded already")
+    }
+
+    /// Parses and returns the header from the JWT.
+    ///
+    /// The header is base64url-decoded and then deserialized from JSON
+    /// into a [`JwtHeader`] containing algorithm, type, and key ID.
+    pub fn header_claims(&self) -> Result<JwtHeader, JwtError> {
+        let bytes = self.header_bytes();
+        serde_json::from_slice(&bytes).map_err(JwtError::InvalidClaims)
     }
 
     /// Returns the base64url-encoded payload portion of the JWT.

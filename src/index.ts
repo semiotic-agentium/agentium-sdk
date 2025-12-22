@@ -4,6 +4,10 @@
 
 import axios, { isAxiosError, type AxiosInstance } from 'axios';
 import { ensureWasmReady, verifyJwt, type WasmInitInput } from './wasm.js';
+import {
+  parse_jwt_header as wasmParseJwtHeader,
+  extract_public_key_jwk as wasmExtractPublicKeyJwk,
+} from '../packages/agentium-native/wasm/pkg/agentium_sdk_wasm.js';
 import type { VcStorage, VerificationResult, DidDocument, JwtHeader } from './vc/index.js';
 
 // Re-export VC module types and utilities
@@ -13,6 +17,8 @@ export {
   verifyJwt,
   generateKeypair,
   getPublicKey,
+  parseJwtHeader,
+  extractPublicKeyJwk,
   type WasmInitInput,
 } from './wasm.js';
 
@@ -313,71 +319,29 @@ export class AgentiumClient {
 
   /**
    * Parses a JWT to extract the header (without verification).
+   * Delegates to WASM module for parsing.
    *
    * @param jwt - The JWT string
    * @returns Parsed JWT header
-   * @throws {AgentiumApiError} If JWT format is invalid
+   * @throws {WasmVcError} If JWT format is invalid
    */
   parseJwtHeader(jwt: string): JwtHeader {
-    if (!jwt || typeof jwt !== 'string') {
-      throw new AgentiumApiError('Invalid JWT: expected non-empty string');
-    }
-    const parts = jwt.split('.');
-    if (parts.length !== 3) {
-      throw new AgentiumApiError('Invalid JWT format: expected 3 parts');
-    }
-    const headerPart = parts[0];
-    if (!headerPart) {
-      throw new AgentiumApiError('Invalid JWT format: missing header');
-    }
-    try {
-      const headerJson = atob(headerPart.replace(/-/g, '+').replace(/_/g, '/'));
-      return JSON.parse(headerJson) as JwtHeader;
-    } catch {
-      throw new AgentiumApiError('Invalid JWT header encoding');
-    }
+    return wasmParseJwtHeader(jwt) as JwtHeader;
   }
 
   /**
    * Extracts the public key JWK from a DID document.
    * If a key ID (kid) is provided, finds the matching verification method.
    * Otherwise, uses the first verification method.
+   * Delegates to WASM module for extraction.
    *
    * @param didDocument - The DID document to extract from
    * @param kid - Optional key ID to match (from JWT header)
    * @returns The public key as a JSON string
-   * @throws {AgentiumApiError} If no matching public key is found
+   * @throws {WasmVcError} If no matching public key is found
    */
   extractPublicKeyJwk(didDocument: DidDocument, kid?: string): string {
-    const methods = didDocument.verificationMethod;
-
-    if (!methods || methods.length === 0) {
-      throw new AgentiumApiError('No verification methods found in DID document');
-    }
-
-    let verificationMethod = methods[0];
-
-    // If kid is provided, find the matching verification method
-    if (kid) {
-      const matched = methods.find((m) => m.id === kid);
-      if (matched) {
-        verificationMethod = matched;
-      } else {
-        // kid might be just the fragment (e.g., "key-1"), try matching suffix
-        const matchedByFragment = methods.find((m) => m.id.endsWith(`#${kid}`) || m.id === kid);
-        if (matchedByFragment) {
-          verificationMethod = matchedByFragment;
-        }
-      }
-    }
-
-    if (!verificationMethod?.publicKeyJwk) {
-      throw new AgentiumApiError(
-        kid ? `No public key found for kid: ${kid}` : 'No public key found in DID document',
-      );
-    }
-
-    return JSON.stringify(verificationMethod.publicKeyJwk);
+    return wasmExtractPublicKeyJwk(JSON.stringify(didDocument), kid);
   }
 
   /**
