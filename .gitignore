@@ -71,3 +71,15 @@ package-lock.json
 docs/
 *.org
 packages/agentium-wasm/target
+
+# Python SDK
+packages/agentium-python/.venv/
+packages/agentium-python/target/
+packages/agentium-python/*.egg-info/
+packages/agentium-python/.pytest_cache/
+__pycache__/
+*.pyc
+*.pyo
+*.whl
+.mypy_cache/
+.ruff_cache/
