@@ -17,9 +17,9 @@ use agentium_sdk_core::{
 use pyo3::exceptions::PyValueError;
 use pyo3::prelude::*;
 use serde::{Deserialize, Serialize};
+use tracing_subscriber::Registry;
 use tracing_subscriber::filter::EnvFilter;
 use tracing_subscriber::layer::SubscriberExt;
-use tracing_subscriber::Registry;
 
 /// Structured error for verification failures.
 #[derive(Serialize, Deserialize, Clone, Debug)]

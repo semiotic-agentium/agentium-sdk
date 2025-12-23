@@ -65,9 +65,15 @@ impl<'a> From<serde_json::Error> for JsErrorObj<'a> {
 impl<'a> From<JwtError> for JsErrorObj<'a> {
     fn from(value: JwtError) -> Self {
         let (code, message) = match &value {
-            JwtError::Parts => ("INVALID_JWT_FORMAT", "JWT must have exactly 3 dot-separated parts".to_string()),
+            JwtError::Parts => (
+                "INVALID_JWT_FORMAT",
+                "JWT must have exactly 3 dot-separated parts".to_string(),
+            ),
             JwtError::Base64(e) => ("DECODE_ERROR", format!("Invalid Base64url: {e}")),
-            JwtError::InvalidClaims(e) => ("INVALID_JWT_FORMAT", format!("Could not deserialize claims: {e}")),
+            JwtError::InvalidClaims(e) => (
+                "INVALID_JWT_FORMAT",
+                format!("Could not deserialize claims: {e}"),
+            ),
         };
         Self {
             code,

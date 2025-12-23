@@ -12,8 +12,8 @@ use std::collections::BTreeMap;
 
 use serde::Serialize;
 use tracing::field::{Field, Visit};
-use tracing_subscriber::layer::Context;
 use tracing_subscriber::Layer;
+use tracing_subscriber::layer::Context;
 
 /// A telemetry event captured from tracing.
 #[derive(Debug, Clone, Serialize)]
