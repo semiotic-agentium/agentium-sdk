@@ -26,11 +26,11 @@ struct WasmTelemetrySink;
 impl TelemetrySink for WasmTelemetrySink {
     fn emit(&self, event: TelemetryEvent) {
         JS_CALLBACK.with(|callback| {
-            if let Some(func) = callback.borrow().as_ref() {
-                if let Ok(js_value) = serde_wasm_bindgen::to_value(&event) {
-                    // Ignore call errors - JS side may have issues
-                    let _ = func.call1(&JsValue::NULL, &js_value);
-                }
+            if let Some(func) = callback.borrow().as_ref()
+                && let Ok(js_value) = serde_wasm_bindgen::to_value(&event)
+            {
+                // Ignore call errors - JS side may have issues
+                let _ = func.call1(&JsValue::NULL, &js_value);
             }
         });
     }
