@@ -61,7 +61,7 @@ jobs:
         working-directory: packages/agentium-native/python
         run: |
           maturin build --release
-          pip install target/wheels/*.whl
+          pip install ../target/wheels/*.whl
 
       - name: Build Python docs
         working-directory: packages/agentium-native/python
@@ -123,7 +123,7 @@ jobs:
         working-directory: packages/agentium-native/python
         run: |
           maturin build --release
-          pip install target/wheels/*.whl
+          pip install ../target/wheels/*.whl
 
       - name: Build Python docs
         working-directory: packages/agentium-native/python
