@@ -72,9 +72,18 @@ jobs:
       - name: Install maturin
         run: pip install maturin
 
-      - name: Build Python wheel
+      - name: Build and install Python SDK
         working-directory: packages/agentium-native/python
-        run: maturin build --release
+        run: |
+          maturin build --release
+          pip install target/wheels/*.whl
+
+      - name: Install test dependencies
+        run: pip install pytest pytest-asyncio httpx respx
+
+      - name: Run Python tests
+        working-directory: packages/agentium-native/python
+        run: pytest -v
 
   reuse:
     name: REUSE Compliance
