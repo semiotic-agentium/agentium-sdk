@@ -1,3 +1,6 @@
+<!-- SPDX-FileCopyrightText: 2025 Semiotic AI, Inc. -->
+<!-- SPDX-License-Identifier: MIT -->
+
 # AgentiumClient
 
 The main client for interacting with the Agentium API.

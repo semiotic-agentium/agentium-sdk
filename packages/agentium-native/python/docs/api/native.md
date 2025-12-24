@@ -1,3 +1,6 @@
+<!-- SPDX-FileCopyrightText: 2025 Semiotic AI, Inc. -->
+<!-- SPDX-License-Identifier: MIT -->
+
 # Native Functions
 
 Low-level cryptographic operations powered by Rust.
