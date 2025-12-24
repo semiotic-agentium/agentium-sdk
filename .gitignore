@@ -93,3 +93,4 @@ packages/agentium-native/target/
 packages/agentium-native/napi/
 packages/agentium-native/wasm/pkg/
 packages/agentium-native/site-python/
+packages/site-python/

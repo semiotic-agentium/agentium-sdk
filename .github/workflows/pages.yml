@@ -65,7 +65,7 @@ jobs:
 
       - name: Build Python docs
         working-directory: packages/agentium-native/python
-        run: mkdocs build -d ../../site-python
+        run: mkdocs build -d ../site-python
 
       - name: Merge docs
         run: |
@@ -127,7 +127,7 @@ jobs:
 
       - name: Build Python docs
         working-directory: packages/agentium-native/python
-        run: mkdocs build -d ../../site-python
+        run: mkdocs build -d ../site-python
 
       - name: Merge docs
         run: |
