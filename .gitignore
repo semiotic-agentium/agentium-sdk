@@ -73,13 +73,21 @@ docs/
 packages/agentium-wasm/target
 
 # Python SDK
-packages/agentium-python/.venv/
-packages/agentium-python/target/
-packages/agentium-python/*.egg-info/
-packages/agentium-python/.pytest_cache/
+packages/agentium-native/python/.venv/
+packages/agentium-native/python/target/
+packages/agentium-native/python/*.egg-info/
+packages/agentium-native/python/.pytest_cache/
+packages/agentium-native/python/site/
+packages/agentium-native/python/agentium/*.so
 __pycache__/
 *.pyc
 *.pyo
 *.whl
 .mypy_cache/
 .ruff_cache/
+
+# Rust build artifacts
+packages/agentium-native/target/
+packages/agentium-native/napi/
+packages/agentium-native/wasm/pkg/
+packages/agentium-native/site-python/
