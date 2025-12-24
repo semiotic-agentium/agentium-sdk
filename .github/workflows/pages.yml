@@ -46,8 +46,30 @@ jobs:
       - name: Build WASM
         run: npm run build:wasm
 
-      - name: Build docs
+      - name: Build TypeScript docs
         run: npm run docs
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install maturin and docs dependencies
+        run: pip install maturin mkdocs mkdocs-material "mkdocstrings[python]"
+
+      - name: Build and install Python SDK
+        working-directory: packages/agentium-native/python
+        run: |
+          maturin build --release
+          pip install target/wheels/*.whl
+
+      - name: Build Python docs
+        working-directory: packages/agentium-native/python
+        run: mkdocs build -d ../../site-python
+
+      - name: Merge docs
+        run: |
+          cp -r packages/agentium-native/site-python docs/python
 
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v4
@@ -86,8 +108,30 @@ jobs:
       - name: Build WASM
         run: npm run build:wasm
 
-      - name: Build docs
+      - name: Build TypeScript docs
         run: npm run docs
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install maturin and docs dependencies
+        run: pip install maturin mkdocs mkdocs-material "mkdocstrings[python]"
+
+      - name: Build and install Python SDK
+        working-directory: packages/agentium-native/python
+        run: |
+          maturin build --release
+          pip install target/wheels/*.whl
+
+      - name: Build Python docs
+        working-directory: packages/agentium-native/python
+        run: mkdocs build -d ../../site-python
+
+      - name: Merge docs
+        run: |
+          cp -r packages/agentium-native/site-python docs/python
 
       - name: Deploy docs
         uses: peaceiris/actions-gh-pages@v4
