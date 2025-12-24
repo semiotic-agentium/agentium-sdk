@@ -1,3 +1,6 @@
+<!-- SPDX-FileCopyrightText: 2025 Semiotic AI, Inc. -->
+<!-- SPDX-License-Identifier: MIT -->
+
 # Agentium SDK for Python
 
 Python SDK for Agentium Network - DID and Verifiable Credentials.
