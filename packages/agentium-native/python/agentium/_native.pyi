@@ -122,3 +122,22 @@ def get_public_key(private_key_jwk: str) -> str:
         ValueError: If the private key is invalid
     """
     ...
+
+def init_tracing(callback: Any, filter: str | None = None) -> None:
+    """Initialize telemetry with a Python callback.
+
+    Sets up tracing to forward log events to a Python function. This can only be
+    called once per process; subsequent calls are ignored.
+
+    Args:
+        callback: Python function to receive telemetry events.
+                  Each event has: kind, level, target, name, fields, ts_ms
+        filter: Optional filter string (e.g., "info", "debug", "agentium=trace").
+                Defaults to "info" if not provided.
+
+    Example:
+        >>> def my_handler(event):
+        ...     print(f"[{event['level']}] {event['target']}: {event['fields']}")
+        >>> init_tracing(my_handler, "debug")
+    """
+    ...
