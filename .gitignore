@@ -77,6 +77,8 @@ packages/agentium-native/python/.venv/
 packages/agentium-native/python/target/
 packages/agentium-native/python/*.egg-info/
 packages/agentium-native/python/.pytest_cache/
+# Un-ignore Python SDK source docs (needed for mkdocs build in CI)
+!packages/agentium-native/python/docs/
 packages/agentium-native/python/site/
 packages/agentium-native/python/agentium/*.so
 __pycache__/
