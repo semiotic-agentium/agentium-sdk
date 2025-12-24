@@ -47,7 +47,45 @@ jobs:
           config-file: release-please-config.json
 
       - name: Publish to NPM
+        id: npm-publish
         if: ${{ steps.release.outputs.release_created }}
+        # Allow NPM publishing to fail without blocking Python release
+        # Ensures independent package releases don't affect each other
+        continue-on-error: true
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: npm publish --access public
+
+      - name: Setup Python
+        if: ${{ steps.release.outputs['packages/agentium-native/python--release_created'] }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Install Python build tools
+        if: ${{ steps.release.outputs['packages/agentium-native/python--release_created'] }}
+        run: pip install maturin
+
+      - name: Build Python package
+        if: ${{ steps.release.outputs['packages/agentium-native/python--release_created'] }}
+        working-directory: packages/agentium-native/python
+        run: maturin build --release
+
+      - name: Publish to PyPI
+        id: pypi-publish
+        if: ${{ steps.release.outputs['packages/agentium-native/python--release_created'] }}
+        # Allow Python publishing to fail without blocking NPM release
+        # Ensures independent package releases don't affect each other
+        continue-on-error: true
+        env:
+          MATURIN_PYPI_TOKEN: ${{ secrets.PYPI_API_TOKEN }}
+        working-directory: packages/agentium-native/python
+        run: maturin publish --skip-existing
+
+      - name: Check publishing results
+        if: always()
+        run: |
+          if [[ "${{ steps.npm-publish.outcome }}" == "failure" ]] || [[ "${{ steps.pypi-publish.outcome }}" == "failure" ]]; then
+            echo "::error::One or more packages failed to publish"
+            exit 1
+          fi

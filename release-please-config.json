@@ -4,6 +4,11 @@
       "release-type": "node",
       "package-name": "@semiotic-labs/agentium-sdk",
       "bump-minor-pre-major": true
+    },
+    "packages/agentium-native/python": {
+      "release-type": "python",
+      "package-name": "agentium-sdk",
+      "bump-minor-pre-major": true
     }
   }
 }
