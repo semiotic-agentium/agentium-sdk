@@ -290,6 +290,14 @@ npm run reuse:check        # Verify compliance
 npm run reuse:write        # Apply SPDX headers
 ```
 
+## Python SDK
+
+A Python SDK is also available with equivalent functionality. See the [Python SDK documentation](packages/agentium-native/python/README.md) for installation and usage.
+
+```bash
+pip install agentium
+```
+
 ## License
 
 MIT

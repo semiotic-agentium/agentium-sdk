@@ -4,14 +4,16 @@ Python SDK for Agentium Network - DID and Verifiable Credentials.
 
 ## Installation
 
+Once we have our sdk published, you can:
+
 ```bash
-pip install agentium
+pip install agentium-sdk
 ```
 
 ## Quick Start
 
 ```python
-import agentium
+import agentium-sdk
 
 # Connect with Google Sign-In (async)
 wallet_address, did = await agentium.connect_google(google_id_token)
@@ -204,12 +206,39 @@ except AgentiumApiError as e:
     print(e.status_code)  # 401, 403, etc.
 ```
 
+## Documentation
+
+Full API documentation is available at:
+
+- **Online**: [semiotic-ai.github.io/agentium-sdk/python/](https://semiotic-ai.github.io/agentium-sdk/python/)
+
+To build and serve docs locally:
+
+```bash
+# Install docs dependencies
+pip install -e ".[docs]"
+
+# Build the SDK (required for mkdocstrings to inspect types)
+maturin develop
+
+# Serve docs locally with hot-reload
+mkdocs serve
+
+# Or build static site
+mkdocs build
+```
+
 ## Development
 
 ```bash
+# Install build tool
 pip install maturin
-cd packages/agentium-native
+
+# Build and install in development mode
 maturin develop
+
+# Run tests
+pip install -e ".[dev]"
 pytest
 ```
 
