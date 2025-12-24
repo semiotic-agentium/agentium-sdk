@@ -96,10 +96,7 @@ export async function parseJwtHeader(jwt: string): Promise<JwtHeader> {
  * @returns The public key as JWK JSON string
  * @throws {WasmVcError} If no matching public key is found
  */
-export async function extractPublicKeyJwk(
-  didDocument: DidDocument,
-  kid?: string,
-): Promise<string> {
+export async function extractPublicKeyJwk(didDocument: DidDocument, kid?: string): Promise<string> {
   await ensureWasmReady();
   const didDocumentJson = JSON.stringify(didDocument);
   return wasmExtractPublicKeyJwk(didDocumentJson, kid);
