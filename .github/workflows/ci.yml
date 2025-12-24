@@ -49,6 +49,33 @@ jobs:
       - name: Run Tests
         run: npm test
 
+  build_python:
+    name: Build Python SDK
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Cache Rust dependencies
+        uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: packages/agentium-native
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install maturin
+        run: pip install maturin
+
+      - name: Build Python wheel
+        working-directory: packages/agentium-native/python
+        run: maturin build --release
+
   reuse:
     name: REUSE Compliance
     runs-on: ubuntu-latest
