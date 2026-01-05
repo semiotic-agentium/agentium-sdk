@@ -9,6 +9,14 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Literal
 
+__all__ = [
+    "GrantType",
+    "OAuthTokenResponse",
+    "Badge",
+    "ConnectIdentityResponse",
+    "CredentialResponse",
+]
+
 # Grant types supported by the OAuth endpoint
 GrantType = Literal[
     "api_key",
@@ -77,7 +85,7 @@ class CredentialResponse:
     """The JWT-encoded Verifiable Credential."""
 
 
-def parse_scope_for_identity(scope: str) -> tuple[str, bool]:
+def _parse_scope_for_identity(scope: str) -> tuple[str, bool]:
     """Parse OAuth scope string to extract DID and new_user flag.
 
     Scope format: "user did:pkh:eip155:1:0x... [new_user]"

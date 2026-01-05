@@ -16,13 +16,13 @@ pip install agentium-sdk
 ## Quick Start
 
 ```python
-import agentium
+import agentium_sdk
 
 # Connect with Google Sign-In (async)
-wallet_address, did = await agentium.connect_google(google_id_token)
+wallet_address, did = await agentium_sdk.connect_google(google_id_token)
 
 # Or use the sync version
-wallet_address, did = agentium.connect_google_sync(google_id_token)
+wallet_address, did = agentium_sdk.connect_google_sync(google_id_token)
 ```
 
 ## AgentiumClient
@@ -32,7 +32,7 @@ The `AgentiumClient` is the main interface for API interactions.
 ### Configuration
 
 ```python
-from agentium import AgentiumClient
+from agentium_sdk import AgentiumClient
 
 # Default: connects to https://api.agentium.network
 async with AgentiumClient() as client:
@@ -110,7 +110,7 @@ Low-level cryptographic operations powered by Rust.
 Verify a JWT signature against a public key.
 
 ```python
-from agentium import verify_jwt
+from agentium_sdk import verify_jwt
 
 result = verify_jwt(jwt_string, public_key_jwk_json)
 if result.valid:
@@ -125,7 +125,7 @@ else:
 Parse JWT header without verification.
 
 ```python
-from agentium import parse_jwt_header
+from agentium_sdk import parse_jwt_header
 
 header = parse_jwt_header(jwt_string)
 print(header.alg)  # "EdDSA"
@@ -137,7 +137,7 @@ print(header.kid)  # Key ID for DID document lookup
 Extract a public key from a DID document.
 
 ```python
-from agentium import extract_public_key_jwk
+from agentium_sdk import extract_public_key_jwk
 
 public_key_jwk = extract_public_key_jwk(did_doc_json, kid="#key-1")
 ```
@@ -147,7 +147,7 @@ public_key_jwk = extract_public_key_jwk(did_doc_json, kid="#key-1")
 Generate a new Ed25519 key pair.
 
 ```python
-from agentium import generate_keypair
+from agentium_sdk import generate_keypair
 
 keypair = generate_keypair()
 print(keypair.public_key_jwk)   # Safe to share
@@ -159,7 +159,7 @@ print(keypair.private_key_jwk)  # Keep secret!
 Derive public key from a private key.
 
 ```python
-from agentium import get_public_key
+from agentium_sdk import get_public_key
 
 public_jwk = get_public_key(private_key_jwk_json)
 ```
@@ -169,7 +169,7 @@ public_jwk = get_public_key(private_key_jwk_json)
 Enable structured tracing with a custom callback.
 
 ```python
-from agentium import init_tracing
+from agentium_sdk import init_tracing
 
 def telemetry_handler(event: dict):
     """Receives events with: kind, level, target, name, fields, ts_ms"""
@@ -200,7 +200,7 @@ init_tracing(telemetry_handler, "debug")  # filter: "info", "debug", "agentium=t
 Raised on API failures.
 
 ```python
-from agentium import AgentiumApiError
+from agentium_sdk import AgentiumApiError
 
 try:
     await client.connect_google_identity(invalid_token)

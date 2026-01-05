@@ -15,13 +15,13 @@ Python SDK for Agentium Network - DID and Verifiable Credentials.
 ## Quick Example
 
 ```python
-import agentium
+import agentium_sdk
 
 # Async (recommended)
-wallet_address, did = await agentium.connect_google(google_id_token)
+wallet_address, did = await agentium_sdk.connect_google(google_id_token)
 
 # Sync wrapper available
-wallet_address, did = agentium.connect_google_sync(google_id_token)
+wallet_address, did = agentium_sdk.connect_google_sync(google_id_token)
 ```
 
 ## Installation

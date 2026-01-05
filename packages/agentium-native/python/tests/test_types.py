@@ -6,22 +6,22 @@
 
 import pytest
 
-from agentium import _extract_wallet_address
-from agentium.types import (
+from agentium_sdk import _extract_wallet_address
+from agentium_sdk.types import (
     Badge,
     ConnectIdentityResponse,
     OAuthTokenResponse,
-    parse_scope_for_identity,
+    _parse_scope_for_identity,
 )
 
 
 class TestParseScopeForIdentity:
-    """Tests for parse_scope_for_identity function."""
+    """Tests for _parse_scope_for_identity function."""
 
     def test_extracts_did_and_new_user(self) -> None:
         """Should extract DID and detect new_user flag."""
         scope = "user did:pkh:eip155:1:0xAbC123 new_user"
-        did, is_new = parse_scope_for_identity(scope)
+        did, is_new = _parse_scope_for_identity(scope)
 
         assert did == "did:pkh:eip155:1:0xAbC123"
         assert is_new is True
@@ -29,14 +29,14 @@ class TestParseScopeForIdentity:
     def test_existing_user(self) -> None:
         """Should detect existing user (no new_user flag)."""
         scope = "user did:pkh:eip155:1:0xAbC123"
-        did, is_new = parse_scope_for_identity(scope)
+        did, is_new = _parse_scope_for_identity(scope)
 
         assert did == "did:pkh:eip155:1:0xAbC123"
         assert is_new is False
 
     def test_empty_scope(self) -> None:
         """Should handle empty scope gracefully."""
-        did, is_new = parse_scope_for_identity("")
+        did, is_new = _parse_scope_for_identity("")
 
         assert did == ""
         assert is_new is False
@@ -44,7 +44,7 @@ class TestParseScopeForIdentity:
     def test_no_did_in_scope(self) -> None:
         """Should return empty DID if not present."""
         scope = "user some_other_scope"
-        did, is_new = parse_scope_for_identity(scope)
+        did, is_new = _parse_scope_for_identity(scope)
 
         assert did == ""
         assert is_new is False

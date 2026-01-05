@@ -5,4 +5,4 @@
 
 Error types raised by the SDK.
 
-::: agentium.AgentiumApiError
+::: agentium_sdk.AgentiumApiError

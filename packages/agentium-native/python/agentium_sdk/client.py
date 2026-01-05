@@ -11,19 +11,19 @@ from typing import Any
 
 import httpx
 
-from agentium._native import (
+from agentium_sdk._native import (
     VerificationResult,
     extract_public_key_jwk,
     parse_jwt_header,
     verify_jwt,
 )
-from agentium.exceptions import AgentiumApiError
-from agentium.types import (
+from agentium_sdk.exceptions import AgentiumApiError
+from agentium_sdk.types import (
     Badge,
     ConnectIdentityResponse,
     GrantType,
     OAuthTokenResponse,
-    parse_scope_for_identity,
+    _parse_scope_for_identity,
 )
 
 DEFAULT_BASE_URL = "https://api.agentium.network"
@@ -47,20 +47,29 @@ class AgentiumClient:
         ...     print(response.did)
     """
 
-    def __init__(self, base_url: str = DEFAULT_BASE_URL) -> None:
+    def __init__(
+        self,
+        base_url: str = DEFAULT_BASE_URL,
+        timeout: float = 30.0,
+    ) -> None:
         """Create an AgentiumClient instance.
 
         Args:
             base_url: The base URL of the Agentium API.
                 Defaults to https://api.agentium.network
+            timeout: Request timeout in seconds. Defaults to 30.0.
         """
         self._base_url = base_url
+        self._timeout = timeout
         self._client: httpx.AsyncClient | None = None
 
     async def _get_client(self) -> httpx.AsyncClient:
         """Get or create the async HTTP client."""
         if self._client is None or self._client.is_closed:
-            self._client = httpx.AsyncClient(base_url=self._base_url)
+            self._client = httpx.AsyncClient(
+                base_url=self._base_url,
+                timeout=self._timeout,
+            )
         return self._client
 
     async def close(self) -> None:
@@ -132,7 +141,7 @@ class AgentiumClient:
             "google_id_token", id_token=google_token
         )
 
-        did, is_new = parse_scope_for_identity(token_response.scope)
+        did, is_new = _parse_scope_for_identity(token_response.scope)
 
         return ConnectIdentityResponse(
             did=did,

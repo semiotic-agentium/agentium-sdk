@@ -7,30 +7,30 @@ Low-level cryptographic operations powered by Rust.
 
 ## JWT Operations
 
-::: agentium.verify_jwt
+::: agentium_sdk.verify_jwt
 
-::: agentium.parse_jwt_header
+::: agentium_sdk.parse_jwt_header
 
 ## DID Operations
 
-::: agentium.extract_public_key_jwk
+::: agentium_sdk.extract_public_key_jwk
 
 ## Key Generation
 
-::: agentium.generate_keypair
+::: agentium_sdk.generate_keypair
 
-::: agentium.get_public_key
+::: agentium_sdk.get_public_key
 
 ## Telemetry
 
-::: agentium.init_tracing
+::: agentium_sdk.init_tracing
 
 ## Native Types
 
-::: agentium.VerificationResult
+::: agentium_sdk.VerificationResult
 
-::: agentium.VerificationError
+::: agentium_sdk.VerificationError
 
-::: agentium.JwtHeader
+::: agentium_sdk.JwtHeader
 
-::: agentium.GeneratedKeyPair
+::: agentium_sdk.GeneratedKeyPair

@@ -16,11 +16,11 @@ pip install agentium-sdk
 The simplest way to use Agentium is through the `connect_google` function:
 
 ```python
-import agentium
+import agentium_sdk
 
 async def handle_google_login(google_id_token: str):
     """Handle Google Sign-In and get wallet address + DID."""
-    wallet_address, did = await agentium.connect_google(google_id_token)
+    wallet_address, did = await agentium_sdk.connect_google(google_id_token)
     
     print(f"Wallet: {wallet_address}")  # 0x...
     print(f"DID: {did}")                # did:pkh:eip155:1:0x...
@@ -31,7 +31,7 @@ async def handle_google_login(google_id_token: str):
 For synchronous code:
 
 ```python
-wallet_address, did = agentium.connect_google_sync(google_id_token)
+wallet_address, did = agentium_sdk.connect_google_sync(google_id_token)
 ```
 
 ### Using AgentiumClient
@@ -39,7 +39,7 @@ wallet_address, did = agentium.connect_google_sync(google_id_token)
 For more control, use the `AgentiumClient` directly:
 
 ```python
-from agentium import AgentiumClient
+from agentium_sdk import AgentiumClient
 
 async with AgentiumClient() as client:
     # Connect identity
@@ -66,7 +66,7 @@ async with AgentiumClient(base_url="https://custom.api.endpoint") as client:
 Enable structured tracing for debugging:
 
 ```python
-from agentium import init_tracing
+from agentium_sdk import init_tracing
 
 def handle_event(event: dict):
     print(f"[{event['level']}] {event['name']}: {event['fields']}")
@@ -78,7 +78,7 @@ init_tracing(handle_event, "debug")
 ## Error Handling
 
 ```python
-from agentium import AgentiumClient, AgentiumApiError
+from agentium_sdk import AgentiumClient, AgentiumApiError
 
 async with AgentiumClient() as client:
     try:

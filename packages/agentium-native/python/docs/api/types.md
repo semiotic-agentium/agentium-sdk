@@ -7,12 +7,12 @@ Response types and data classes.
 
 ## Response Types
 
-::: agentium.ConnectIdentityResponse
+::: agentium_sdk.ConnectIdentityResponse
 
-::: agentium.OAuthTokenResponse
+::: agentium_sdk.OAuthTokenResponse
 
-::: agentium.Badge
+::: agentium_sdk.Badge
 
 ## Enums
 
-::: agentium.GrantType
+::: agentium_sdk.GrantType

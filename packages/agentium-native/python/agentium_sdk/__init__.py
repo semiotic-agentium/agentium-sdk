@@ -9,8 +9,8 @@ It supports Google Sign-In integration, DID creation, and Verifiable Credential
 verification.
 
 Example:
-    >>> import agentium
-    >>> wallet_address, did = await agentium.connect_google(google_id_token)
+    >>> import agentium_sdk
+    >>> wallet_address, did = await agentium_sdk.connect_google(google_id_token)
 
 """
 
@@ -18,7 +18,7 @@ from __future__ import annotations
 
 import asyncio
 
-from agentium._native import (
+from agentium_sdk._native import (
     GeneratedKeyPair,
     JwtHeader,
     VerificationError,
@@ -30,9 +30,9 @@ from agentium._native import (
     parse_jwt_header,
     verify_jwt,
 )
-from agentium.client import AgentiumClient
-from agentium.exceptions import AgentiumApiError
-from agentium.types import (
+from agentium_sdk.client import AgentiumClient
+from agentium_sdk.exceptions import AgentiumApiError
+from agentium_sdk.types import (
     Badge,
     ConnectIdentityResponse,
     GrantType,
@@ -77,7 +77,7 @@ async def connect_google(
         AgentiumApiError: If the request fails.
 
     Example:
-        >>> wallet_address, did = await agentium.connect_google(google_id_token)
+        >>> wallet_address, did = await agentium_sdk.connect_google(google_id_token)
         >>> print(wallet_address)  # 0x...
         >>> print(did)  # did:pkh:eip155:1:0x...
     """
@@ -105,7 +105,7 @@ def connect_google_sync(
         AgentiumApiError: If the request fails.
 
     Example:
-        >>> wallet_address, did = agentium.connect_google_sync(google_id_token)
+        >>> wallet_address, did = agentium_sdk.connect_google_sync(google_id_token)
         >>> print(wallet_address)  # 0x...
         >>> print(did)  # did:pkh:eip155:1:0x...
     """

@@ -10,7 +10,7 @@ import httpx
 import pytest
 import respx
 
-from agentium import AgentiumClient, AgentiumApiError, connect_google
+from agentium_sdk import AgentiumClient, AgentiumApiError, connect_google
 
 
 @pytest.fixture

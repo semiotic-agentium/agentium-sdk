@@ -20,6 +20,11 @@ class AgentiumApiError(Exception):
         self.message = message
         self.status_code = status_code
 
+    def __str__(self) -> str:
+        if self.status_code:
+            return f"{self.message} (HTTP {self.status_code})"
+        return self.message
+
     def __repr__(self) -> str:
         if self.status_code:
             return f"AgentiumApiError({self.message!r}, status_code={self.status_code})"

@@ -9,8 +9,8 @@ import json
 
 import pytest
 
-import agentium
-from agentium import (
+import agentium_sdk
+from agentium_sdk import (
     GeneratedKeyPair,
     JwtHeader,
     VerificationResult,

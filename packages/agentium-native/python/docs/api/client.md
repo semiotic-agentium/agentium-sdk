@@ -5,7 +5,7 @@
 
 The main client for interacting with the Agentium API.
 
-::: agentium.AgentiumClient
+::: agentium_sdk.AgentiumClient
     options:
       members:
         - __init__

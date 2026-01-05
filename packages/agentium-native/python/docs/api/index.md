@@ -16,6 +16,6 @@ The Agentium SDK is organized into several modules:
 
 ## Top-Level Functions
 
-::: agentium.connect_google
+::: agentium_sdk.connect_google
 
-::: agentium.connect_google_sync
+::: agentium_sdk.connect_google_sync

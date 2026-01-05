@@ -7,7 +7,7 @@ requires = ["maturin>=1.4,<2.0"]
 build-backend = "maturin"
 
 [project]
-name = "agentium"
+name = "agentium-sdk"
 version = "0.1.0"
 description = "Agentium SDK for Python - DID and Verifiable Credentials"
 readme = "README.md"
@@ -46,7 +46,7 @@ Documentation = "https://github.com/semiotic-agentium/agentium-sdk"
 [tool.maturin]
 features = ["pyo3/extension-module"]
 python-source = "."
-module-name = "agentium._native"
+module-name = "agentium_sdk._native"
 
 [tool.ruff]
 line-length = 100
