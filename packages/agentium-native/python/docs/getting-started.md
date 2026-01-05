@@ -51,8 +51,7 @@ async with AgentiumClient() as client:
     # Verify credential
     result = await client.verify_credential(credential)
     if result.valid:
-        claims = result.claims_dict()
-        print(claims)
+        print(result.claims)  # dict with JWT claims
 ```
 
 ### Custom Endpoint

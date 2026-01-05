@@ -16,7 +16,7 @@ pip install agentium-sdk
 ## Quick Start
 
 ```python
-import agentium-sdk
+import agentium
 
 # Connect with Google Sign-In (async)
 wallet_address, did = await agentium.connect_google(google_id_token)
@@ -98,7 +98,7 @@ Verify a credential against the issuer's public key (fetches DID document automa
 ```python
 result = await client.verify_credential(credential_jwt)
 if result.valid:
-    claims = result.claims_dict()
+    print(result.claims)  # dict with JWT claims
 ```
 
 ## Native Functions
@@ -114,7 +114,7 @@ from agentium import verify_jwt
 
 result = verify_jwt(jwt_string, public_key_jwk_json)
 if result.valid:
-    claims = result.claims_dict()  # dict[str, Any]
+    print(result.claims)           # dict[str, Any]
 else:
     print(result.error.code)       # e.g., "JWT_EXPIRED"
     print(result.error.message)
@@ -187,7 +187,7 @@ init_tracing(telemetry_handler, "debug")  # filter: "info", "debug", "agentium=t
 |------|-------------|
 | `ConnectIdentityResponse` | DID, tokens, badge status, `is_new` flag |
 | `OAuthTokenResponse` | `access_token`, `refresh_token`, `expires_in`, `scope` |
-| `VerificationResult` | `valid`, `claims`, `error`, `claims_dict()` |
+| `VerificationResult` | `valid`, `claims` (dict), `error` |
 | `VerificationError` | `code`, `message` |
 | `JwtHeader` | `alg`, `typ`, `kid` |
 | `GeneratedKeyPair` | `private_key_jwk`, `public_key_jwk` |
