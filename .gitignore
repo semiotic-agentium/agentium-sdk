@@ -80,7 +80,7 @@ packages/agentium-native/python/.pytest_cache/
 # Un-ignore Python SDK source docs (needed for mkdocs build in CI)
 !packages/agentium-native/python/docs/
 packages/agentium-native/python/site/
-packages/agentium-native/python/agentium/*.so
+packages/agentium-native/python/agentium_sdk/*.so
 __pycache__/
 *.pyc
 *.pyo
