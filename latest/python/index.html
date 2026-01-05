@@ -702,13 +702,13 @@
 <li><strong>Type Safety</strong> - Full type hints and PEP 561 compatible</li>
 </ul>
 <h2 id="quick-example">Quick Example<a class="headerlink" href="#quick-example" title="Permanent link">&para;</a></h2>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">agentium</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">agentium_sdk</span>
 <a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>
 <a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="c1"># Async (recommended)</span>
-<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="n">wallet_address</span><span class="p">,</span> <span class="n">did</span> <span class="o">=</span> <span class="k">await</span> <span class="n">agentium</span><span class="o">.</span><span class="n">connect_google</span><span class="p">(</span><span class="n">google_id_token</span><span class="p">)</span>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="n">wallet_address</span><span class="p">,</span> <span class="n">did</span> <span class="o">=</span> <span class="k">await</span> <span class="n">agentium_sdk</span><span class="o">.</span><span class="n">connect_google</span><span class="p">(</span><span class="n">google_id_token</span><span class="p">)</span>
 <a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>
 <a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="c1"># Sync wrapper available</span>
-<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="n">wallet_address</span><span class="p">,</span> <span class="n">did</span> <span class="o">=</span> <span class="n">agentium</span><span class="o">.</span><span class="n">connect_google_sync</span><span class="p">(</span><span class="n">google_id_token</span><span class="p">)</span>
+<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="n">wallet_address</span><span class="p">,</span> <span class="n">did</span> <span class="o">=</span> <span class="n">agentium_sdk</span><span class="o">.</span><span class="n">connect_google_sync</span><span class="p">(</span><span class="n">google_id_token</span><span class="p">)</span>
 </code></pre></div>
 <h2 id="installation">Installation<a class="headerlink" href="#installation" title="Permanent link">&para;</a></h2>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>pip<span class="w"> </span>install<span class="w"> </span>agentium-sdk

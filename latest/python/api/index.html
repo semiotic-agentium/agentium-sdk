@@ -452,7 +452,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#agentium.connect_google" class="md-nav__link">
+  <a href="#agentium_sdk.connect_google" class="md-nav__link">
     <span class="md-ellipsis">
       
         connect_google
@@ -463,7 +463,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#agentium.connect_google_sync" class="md-nav__link">
+  <a href="#agentium_sdk.connect_google_sync" class="md-nav__link">
     <span class="md-ellipsis">
       
         connect_google_sync
@@ -650,7 +650,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#agentium.connect_google" class="md-nav__link">
+  <a href="#agentium_sdk.connect_google" class="md-nav__link">
     <span class="md-ellipsis">
       
         connect_google
@@ -661,7 +661,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#agentium.connect_google_sync" class="md-nav__link">
+  <a href="#agentium_sdk.connect_google_sync" class="md-nav__link">
     <span class="md-ellipsis">
       
         connect_google_sync
@@ -729,15 +729,15 @@
 <div class="doc doc-object doc-function">
 
 
-<h2 id="agentium.connect_google" class="doc doc-heading">
-            <span class="doc doc-object-name doc-function-name">agentium.connect_google</span>
+<h2 id="agentium_sdk.connect_google" class="doc doc-heading">
+            <span class="doc doc-object-name doc-function-name">agentium_sdk.connect_google</span>
 
 
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-async"><code>async</code></small>
   </span>
 
-<a href="#agentium.connect_google" class="headerlink" title="Permanent link">&para;</a></h2>
+<a href="#agentium_sdk.connect_google" class="headerlink" title="Permanent link">&para;</a></h2>
 <div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">connect_google</span><span class="p">(</span><span class="n">google_id_token</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">base_url</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;https://api.agentium.network&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span>
 </code></pre></div>
 
@@ -829,7 +829,7 @@ and returns the wallet address and DID.</p>
       <tbody>
           <tr class="doc-section-item">
             <td>
-                  <code><a class="autorefs autorefs-internal" title="agentium.AgentiumApiError (agentium.exceptions.AgentiumApiError)" href="exceptions/#agentium.AgentiumApiError">AgentiumApiError</a></code>
+                  <code><a class="autorefs autorefs-internal" title="agentium_sdk.AgentiumApiError (agentium_sdk.exceptions.AgentiumApiError)" href="exceptions/#agentium_sdk.AgentiumApiError">AgentiumApiError</a></code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -846,7 +846,7 @@ and returns the wallet address and DID.</p>
   <blockquote>
 <blockquote>
 <blockquote>
-<p>wallet_address, did = await agentium.connect_google(google_id_token)
+<p>wallet_address, did = await agentium_sdk.connect_google(google_id_token)
 print(wallet_address)  # 0x...
 print(did)  # did:pkh:eip155:1:0x...</p>
 </blockquote>
@@ -861,11 +861,11 @@ print(did)  # did:pkh:eip155:1:0x...</p>
 <div class="doc doc-object doc-function">
 
 
-<h2 id="agentium.connect_google_sync" class="doc doc-heading">
-            <span class="doc doc-object-name doc-function-name">agentium.connect_google_sync</span>
+<h2 id="agentium_sdk.connect_google_sync" class="doc doc-heading">
+            <span class="doc doc-object-name doc-function-name">agentium_sdk.connect_google_sync</span>
 
 
-<a href="#agentium.connect_google_sync" class="headerlink" title="Permanent link">&para;</a></h2>
+<a href="#agentium_sdk.connect_google_sync" class="headerlink" title="Permanent link">&para;</a></h2>
 <div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">connect_google_sync</span><span class="p">(</span><span class="n">google_id_token</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">base_url</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;https://api.agentium.network&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span>
 </code></pre></div>
 
@@ -955,7 +955,7 @@ print(did)  # did:pkh:eip155:1:0x...</p>
       <tbody>
           <tr class="doc-section-item">
             <td>
-                  <code><a class="autorefs autorefs-internal" title="agentium.AgentiumApiError (agentium.exceptions.AgentiumApiError)" href="exceptions/#agentium.AgentiumApiError">AgentiumApiError</a></code>
+                  <code><a class="autorefs autorefs-internal" title="agentium_sdk.AgentiumApiError (agentium_sdk.exceptions.AgentiumApiError)" href="exceptions/#agentium_sdk.AgentiumApiError">AgentiumApiError</a></code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -972,7 +972,7 @@ print(did)  # did:pkh:eip155:1:0x...</p>
   <blockquote>
 <blockquote>
 <blockquote>
-<p>wallet_address, did = agentium.connect_google_sync(google_id_token)
+<p>wallet_address, did = agentium_sdk.connect_google_sync(google_id_token)
 print(wallet_address)  # 0x...
 print(did)  # did:pkh:eip155:1:0x...</p>
 </blockquote>
