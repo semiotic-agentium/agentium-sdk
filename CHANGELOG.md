@@ -6,6 +6,18 @@ SPDX-License-Identifier: MIT
 
 # Changelog
 
+## [0.9.0](https://github.com/semiotic-agentium/agentium-sdk/compare/agentium-sdk-v0.8.0...agentium-sdk-v0.9.0) (2026-01-05)
+
+
+### Features
+
+* add PyO3 native bindings for agentium-sdk ([71cf961](https://github.com/semiotic-agentium/agentium-sdk/commit/71cf9616a2ebe44aaeb14d47c52177a2e4f66941))
+* add Python SDK interface for Agentium Network ([fbf83b2](https://github.com/semiotic-agentium/agentium-sdk/commit/fbf83b2f802eec36b2cfa739ba554f70a6be7eee))
+* add telemetry primitives to core crate ([36c6359](https://github.com/semiotic-agentium/agentium-sdk/commit/36c6359e83462c9d48323243de50f09c10058354))
+* **native:** move JWT header parsing and DID key extraction to wasm-rust ([a6c504d](https://github.com/semiotic-agentium/agentium-sdk/commit/a6c504d4bd50a9cfc7aa9cc735fc162fa4c04b9c))
+* return claims as native Python dict via pythonize ([ea8624f](https://github.com/semiotic-agentium/agentium-sdk/commit/ea8624faca6558b4024815aeb0175d979a3322f5))
+* SDK improvements and rename to agentium-sdk ([9c55a7f](https://github.com/semiotic-agentium/agentium-sdk/commit/9c55a7fab355d236e41fd942477ef0f57b2f0531))
+
 ## [0.8.0](https://github.com/semiotic-agentium/agentium-sdk/compare/agentium-sdk-v0.7.0...agentium-sdk-v0.8.0) (2025-12-19)
 
 
