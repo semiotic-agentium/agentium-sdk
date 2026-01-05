@@ -1216,10 +1216,6 @@
             <span class="doc doc-object-name doc-function-name">agentium_sdk.verify_jwt</span>
 
 
-  <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-builtin"><code>builtin</code></small>
-  </span>
-
 <a href="#agentium_sdk.verify_jwt" class="headerlink" title="Permanent link">&para;</a></h2>
 <div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">verify_jwt</span><span class="p">(</span><span class="n">jwt</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">public_key_jwk</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">VerificationResult</span>
 </code></pre></div>
@@ -1309,10 +1305,6 @@
 <h2 id="agentium_sdk.parse_jwt_header" class="doc doc-heading">
             <span class="doc doc-object-name doc-function-name">agentium_sdk.parse_jwt_header</span>
 
-
-  <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-builtin"><code>builtin</code></small>
-  </span>
 
 <a href="#agentium_sdk.parse_jwt_header" class="headerlink" title="Permanent link">&para;</a></h2>
 <div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">parse_jwt_header</span><span class="p">(</span><span class="n">jwt</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">JwtHeader</span>
@@ -1411,10 +1403,6 @@
 <h2 id="agentium_sdk.extract_public_key_jwk" class="doc doc-heading">
             <span class="doc doc-object-name doc-function-name">agentium_sdk.extract_public_key_jwk</span>
 
-
-  <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-builtin"><code>builtin</code></small>
-  </span>
 
 <a href="#agentium_sdk.extract_public_key_jwk" class="headerlink" title="Permanent link">&para;</a></h2>
 <div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">extract_public_key_jwk</span><span class="p">(</span><span class="n">did_document_json</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">kid</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span>
@@ -1530,10 +1518,6 @@
             <span class="doc doc-object-name doc-function-name">agentium_sdk.generate_keypair</span>
 
 
-  <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-builtin"><code>builtin</code></small>
-  </span>
-
 <a href="#agentium_sdk.generate_keypair" class="headerlink" title="Permanent link">&para;</a></h2>
 <div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">generate_keypair</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">GeneratedKeyPair</span>
 </code></pre></div>
@@ -1609,10 +1593,6 @@
 <h2 id="agentium_sdk.get_public_key" class="doc doc-heading">
             <span class="doc doc-object-name doc-function-name">agentium_sdk.get_public_key</span>
 
-
-  <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-builtin"><code>builtin</code></small>
-  </span>
 
 <a href="#agentium_sdk.get_public_key" class="headerlink" title="Permanent link">&para;</a></h2>
 <div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">get_public_key</span><span class="p">(</span><span class="n">private_key_jwk</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span>
@@ -1712,17 +1692,15 @@
             <span class="doc doc-object-name doc-function-name">agentium_sdk.init_tracing</span>
 
 
-  <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-builtin"><code>builtin</code></small>
-  </span>
-
 <a href="#agentium_sdk.init_tracing" class="headerlink" title="Permanent link">&para;</a></h2>
 <div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">init_tracing</span><span class="p">(</span><span class="n">callback</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="nb">filter</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span>
 </code></pre></div>
 
     <div class="doc doc-contents first">
 
-        <p>Initialize tracing with a Python callback sink.</p>
+        <p>Initialize telemetry with a Python callback.</p>
+<p>Sets up tracing to forward log events to a Python function. This can only be
+called once per process; subsequent calls are ignored.</p>
 
 
 <p><span class="doc-section-title">Parameters:</span></p>
@@ -1745,7 +1723,7 @@
             </td>
             <td>
               <div class="doc-md-description">
-                <p>Python callable that receives telemetry events as dicts.
+                <p>Python function to receive telemetry events.
       Each event has: kind, level, target, name, fields, ts_ms</p>
               </div>
             </td>
@@ -1774,18 +1752,17 @@
     </table>
 
 
-<details class="note" open>
-  <summary>Note</summary>
-  <p>This can only be called once per process. Subsequent calls are ignored.</p>
-</details>
-
 <details class="example" open>
   <summary>Example</summary>
-  <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">def</span><span class="w"> </span><span class="nf">my_handler</span><span class="p">(</span><span class="n">event</span><span class="p">):</span>
-<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[</span><span class="si">{</span><span class="n">event</span><span class="p">[</span><span class="s1">&#39;level&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">] </span><span class="si">{</span><span class="n">event</span><span class="p">[</span><span class="s1">&#39;target&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">event</span><span class="p">[</span><span class="s1">&#39;fields&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>
-<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="n">init_tracing</span><span class="p">(</span><span class="n">my_handler</span><span class="p">,</span> <span class="s2">&quot;debug&quot;</span><span class="p">)</span>
-</code></pre></div>
+  <blockquote>
+<blockquote>
+<blockquote>
+<p>def my_handler(event):
+...     print(f"[{event['level']}] {event['target']}: {event['fields']}")
+init_tracing(my_handler, "debug")</p>
+</blockquote>
+</blockquote>
+</blockquote>
 </details>
 
     </div>
