@@ -86,14 +86,16 @@ impl From<agentium_sdk_core::JwtError> for VerificationError {
 }
 
 /// Result of JWT verification.
-#[derive(Serialize, Deserialize)]
-#[pyclass(get_all)]
+#[pyclass]
 pub struct VerificationResult {
     /// Whether the JWT signature is valid
+    #[pyo3(get)]
     pub valid: bool,
-    /// JWT claims as JSON string if valid
-    pub claims: Option<String>,
+    /// JWT claims as Python dict if valid
+    #[pyo3(get)]
+    pub claims: Option<PyObject>,
     /// Structured error if invalid
+    #[pyo3(get)]
     pub error: Option<VerificationError>,
 }
 
@@ -110,20 +112,6 @@ impl VerificationResult {
                     .map(|e| e.code.as_str())
                     .unwrap_or("None")
             )
-        }
-    }
-
-    /// Parse claims JSON into a Python dict.
-    ///
-    /// Returns None if verification failed or claims are not available.
-    fn claims_dict(&self, py: Python<'_>) -> PyResult<Option<PyObject>> {
-        match &self.claims {
-            Some(json_str) => {
-                let json_module = py.import("json")?;
-                let dict = json_module.call_method1("loads", (json_str,))?;
-                Ok(Some(dict.into()))
-            }
-            None => Ok(None),
         }
     }
 }
@@ -173,9 +161,9 @@ impl GeneratedKeyPair {
 ///     public_key_jwk: The public key as JWK JSON string
 ///
 /// Returns:
-///     VerificationResult with validity status and decoded claims if valid
+///     VerificationResult with validity status and decoded claims as Python dict if valid
 #[pyfunction]
-pub fn verify_jwt(jwt: &str, public_key_jwk: &str) -> VerificationResult {
+pub fn verify_jwt(py: Python<'_>, jwt: &str, public_key_jwk: &str) -> VerificationResult {
     let pubkey: Result<PublicKey, _> = public_key_jwk.try_into();
 
     let pubkey = match pubkey {
@@ -190,10 +178,10 @@ pub fn verify_jwt(jwt: &str, public_key_jwk: &str) -> VerificationResult {
     };
 
     match core_verify_jwt(jwt, &pubkey) {
-        Ok(claims) => match serde_json::to_string(&claims) {
-            Ok(claims_json) => VerificationResult {
+        Ok(claims) => match pythonize::pythonize(py, &claims) {
+            Ok(py_claims) => VerificationResult {
                 valid: true,
-                claims: Some(claims_json),
+                claims: Some(py_claims.into()),
                 error: None,
             },
             Err(e) => VerificationResult {
@@ -201,7 +189,7 @@ pub fn verify_jwt(jwt: &str, public_key_jwk: &str) -> VerificationResult {
                 claims: None,
                 error: Some(VerificationError {
                     code: "SERIALIZATION_ERROR".to_string(),
-                    message: format!("Failed to serialize claims: {e}"),
+                    message: format!("Failed to convert claims to Python: {e}"),
                 }),
             },
         },

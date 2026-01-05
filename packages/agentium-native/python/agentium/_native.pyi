@@ -21,19 +21,11 @@ class VerificationResult:
     valid: bool
     """Whether the JWT signature is valid"""
 
-    claims: str | None
-    """JWT claims as JSON string if valid"""
+    claims: dict[str, Any] | None
+    """JWT claims as Python dict if valid"""
 
     error: VerificationError | None
     """Structured error if invalid"""
-
-    def claims_dict(self) -> dict[str, Any] | None:
-        """Parse claims JSON into a Python dict.
-
-        Returns:
-            Parsed claims as dict, or None if verification failed.
-        """
-        ...
 
 class JwtHeader:
     """Parsed JWT header."""
