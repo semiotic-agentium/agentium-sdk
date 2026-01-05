@@ -56,36 +56,109 @@ jobs:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: npm publish --access public
 
-      - name: Setup Python
-        if: ${{ steps.release.outputs['packages/agentium-native/python--release_created'] }}
-        uses: actions/setup-python@v5
+    outputs:
+      python_release_created: ${{ steps.release.outputs['packages/agentium-native/python--release_created'] }}
+
+  # Build Python wheels for multiple platforms
+  build-python-wheels:
+    name: Build Python wheels (${{ matrix.target }})
+    needs: release-please
+    if: ${{ needs.release-please.outputs.python_release_created }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # Linux x86_64
+          - os: ubuntu-latest
+            target: x86_64-unknown-linux-gnu
+          # Linux aarch64
+          - os: ubuntu-latest
+            target: aarch64-unknown-linux-gnu
+          # macOS x86_64
+          - os: macos-13
+            target: x86_64-apple-darwin
+          # macOS Apple Silicon
+          - os: macos-14
+            target: aarch64-apple-darwin
+          # Windows x86_64
+          - os: windows-latest
+            target: x86_64-pc-windows-msvc
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build wheels
+        uses: PyO3/maturin-action@v1
         with:
-          python-version: '3.x'
+          target: ${{ matrix.target }}
+          args: --release --out dist
+          sccache: 'true'
+          working-directory: packages/agentium-native/python
 
-      - name: Install Python build tools
-        if: ${{ steps.release.outputs['packages/agentium-native/python--release_created'] }}
-        run: pip install maturin
+      - name: Upload wheels
+        uses: actions/upload-artifact@v4
+        with:
+          name: wheels-${{ matrix.target }}
+          path: packages/agentium-native/python/dist
 
-      - name: Build Python package
-        if: ${{ steps.release.outputs['packages/agentium-native/python--release_created'] }}
-        working-directory: packages/agentium-native/python
-        run: maturin build --release
+  # Build source distribution
+  build-python-sdist:
+    name: Build Python sdist
+    needs: release-please
+    if: ${{ needs.release-please.outputs.python_release_created }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build sdist
+        uses: PyO3/maturin-action@v1
+        with:
+          command: sdist
+          args: --out dist
+          working-directory: packages/agentium-native/python
+
+      - name: Upload sdist
+        uses: actions/upload-artifact@v4
+        with:
+          name: wheels-sdist
+          path: packages/agentium-native/python/dist
+
+  # Publish all wheels to PyPI
+  publish-python:
+    name: Publish Python to PyPI
+    needs: [release-please, build-python-wheels, build-python-sdist]
+    if: ${{ needs.release-please.outputs.python_release_created }}
+    runs-on: ubuntu-latest
+    environment:
+      name: pypi
+      url: https://pypi.org/p/agentium-sdk
+    steps:
+      - name: Download all wheels
+        uses: actions/download-artifact@v4
+        with:
+          pattern: wheels-*
+          path: dist
+          merge-multiple: true
 
       - name: Publish to PyPI
-        id: pypi-publish
-        if: ${{ steps.release.outputs['packages/agentium-native/python--release_created'] }}
-        # Allow Python publishing to fail without blocking NPM release
-        # Ensures independent package releases don't affect each other
-        continue-on-error: true
+        uses: PyO3/maturin-action@v1
         env:
           MATURIN_PYPI_TOKEN: ${{ secrets.PYPI_API_TOKEN }}
-        working-directory: packages/agentium-native/python
-        run: maturin publish --skip-existing
+        with:
+          command: upload
+          args: --skip-existing dist/*
 
+  check-publishing-results:
+    name: Check publishing results
+    needs: [release-please, publish-python]
+    if: always() && (needs.release-please.outputs.python_release_created || needs.release-please.result == 'success')
+    runs-on: ubuntu-latest
+    steps:
       - name: Check publishing results
-        if: always()
         run: |
-          if [[ "${{ steps.npm-publish.outcome }}" == "failure" ]] || [[ "${{ steps.pypi-publish.outcome }}" == "failure" ]]; then
-            echo "::error::One or more packages failed to publish"
+          echo "Release Please: ${{ needs.release-please.result }}"
+          echo "Publish Python: ${{ needs.publish-python.result }}"
+          if [[ "${{ needs.publish-python.result }}" == "failure" ]]; then
+            echo "::error::Python package failed to publish"
             exit 1
           fi
