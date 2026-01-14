@@ -94,15 +94,19 @@ jobs:
 
       - name: Build wheels
         uses: PyO3/maturin-action@v1
-        env:
-          OPENSSL_STATIC: '1'
-          OPENSSL_VENDORED: '1'
         with:
           target: ${{ matrix.target }}
           args: --release --out dist
           sccache: 'true'
-          manylinux: '2_28'
+          manylinux: auto
           working-directory: packages/agentium-native/python
+          before-script-linux: |
+            # Install OpenSSL development libraries
+            if command -v yum &> /dev/null; then
+              yum install -y openssl-devel perl-IPC-Cmd
+            elif command -v apt-get &> /dev/null; then
+              apt-get update && apt-get install -y libssl-dev pkg-config
+            fi
 
       - name: Upload wheels
         uses: actions/upload-artifact@v4
