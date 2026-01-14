@@ -15,3 +15,6 @@ The main client for interacting with the Agentium API.
         - fetch_membership_credential
         - fetch_issuer_did_document
         - verify_credential
+        - request_wallet_challenge
+        - verify_wallet_signature
+        - connect_wallet

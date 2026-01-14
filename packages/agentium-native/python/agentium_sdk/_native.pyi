@@ -115,6 +115,47 @@ def get_public_key(private_key_jwk: str) -> str:
     """
     ...
 
+def sign_challenge(message: bytes, chain_id: str, private_key: bytes) -> str:
+    """Sign a challenge message for wallet authentication.
+
+    The signing algorithm is determined by the chain namespace in the CAIP-2 identifier.
+    For example, `eip155:*` chains use secp256k1 ECDSA with EIP-191 message encoding.
+
+    Args:
+        message: The challenge message bytes from the backend.
+        chain_id: CAIP-2 chain identifier string (e.g., "eip155:84532").
+            See: https://github.com/ChainAgnostic/CAIPs/blob/master/CAIPs/caip-2.md
+        private_key: Raw private key bytes (format depends on chain, 32 bytes for EVM).
+
+    Returns:
+        Hex-encoded signature string (format is chain-specific).
+
+    Raises:
+        ValueError: If chain_id is not a valid CAIP-2 string, key is malformed,
+            namespace is unsupported, or signing fails.
+    """
+    ...
+
+def validate_caip2(chain_id: str) -> bool:
+    """Validate a CAIP-2 chain identifier string.
+
+    CAIP-2 defines a format for blockchain identifiers: `namespace:reference`
+    - Namespace: 3-8 lowercase alphanumeric characters (e.g., "eip155", "solana")
+    - Reference: 1-32 alphanumeric characters with hyphens/underscores (e.g., "1", "84532")
+
+    See: https://github.com/ChainAgnostic/CAIPs/blob/master/CAIPs/caip-2.md
+
+    Args:
+        chain_id: String to validate (e.g., "eip155:84532", "cosmos:cosmoshub-4")
+
+    Returns:
+        True if valid.
+
+    Raises:
+        ValueError: If the format does not conform to CAIP-2 specification.
+    """
+    ...
+
 def init_tracing(callback: Any, filter: str | None = None) -> None:
     """Initialize telemetry with a Python callback.
 
