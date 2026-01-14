@@ -6,6 +6,14 @@ SPDX-License-Identifier: MIT
 
 # Changelog
 
+## [0.9.2](https://github.com/semiotic-agentium/agentium-sdk/compare/agentium-sdk-v0.9.1...agentium-sdk-v0.9.2) (2026-01-14)
+
+
+### Bug Fixes
+
+* **ci:** improve Python wheel build reliability ([4b7b890](https://github.com/semiotic-agentium/agentium-sdk/commit/4b7b8904c6bd5f56d451ed02e5bbb29e3a3a3b9c))
+* **ci:** pin Python to 3.13 in our wheels builder ([e2b7f99](https://github.com/semiotic-agentium/agentium-sdk/commit/e2b7f9932214ab6937aac310287a1aa9d717c59c))
+
 ## [0.9.1](https://github.com/semiotic-agentium/agentium-sdk/compare/agentium-sdk-v0.9.0...agentium-sdk-v0.9.1) (2026-01-14)
 
 
