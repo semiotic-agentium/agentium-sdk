@@ -6,6 +6,13 @@ SPDX-License-Identifier: MIT
 
 # Changelog
 
+## [0.9.6](https://github.com/semiotic-agentium/agentium-sdk/compare/agentium-sdk-v0.9.5...agentium-sdk-v0.9.6) (2026-01-14)
+
+
+### Bug Fixes
+
+* **python:** fix cross-compilation issue for aarch64 targets ([2246d02](https://github.com/semiotic-agentium/agentium-sdk/commit/2246d02ac15148d6230e7d0b79e0a2ee93da1985))
+
 ## [0.9.5](https://github.com/semiotic-agentium/agentium-sdk/compare/agentium-sdk-v0.9.4...agentium-sdk-v0.9.5) (2026-01-14)
 
 

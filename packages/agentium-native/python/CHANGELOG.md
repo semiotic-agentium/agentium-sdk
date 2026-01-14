@@ -1,6 +1,13 @@
 # Changelog
 
 
+## [0.4.4](https://github.com/semiotic-agentium/agentium-sdk/compare/agentium-sdk-python-v0.4.3...agentium-sdk-python-v0.4.4) (2026-01-14)
+
+
+### Bug Fixes
+
+* **python:** fix cross-compilation issue for aarch64 targets ([2246d02](https://github.com/semiotic-agentium/agentium-sdk/commit/2246d02ac15148d6230e7d0b79e0a2ee93da1985))
+
 ## [0.4.3](https://github.com/semiotic-agentium/agentium-sdk/compare/agentium-sdk-python-v0.4.2...agentium-sdk-python-v0.4.3) (2026-01-14)
 
 
