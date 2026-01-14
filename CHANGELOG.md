@@ -6,6 +6,26 @@ SPDX-License-Identifier: MIT
 
 # Changelog
 
+## [0.9.0](https://github.com/semiotic-agentium/agentium-sdk/compare/agentium-sdk-v0.8.0...agentium-sdk-v0.9.0) (2026-01-14)
+
+
+### Features
+
+* add PyO3 native bindings for agentium-sdk ([71cf961](https://github.com/semiotic-agentium/agentium-sdk/commit/71cf9616a2ebe44aaeb14d47c52177a2e4f66941))
+* add Python SDK interface for Agentium Network ([fbf83b2](https://github.com/semiotic-agentium/agentium-sdk/commit/fbf83b2f802eec36b2cfa739ba554f70a6be7eee))
+* add telemetry primitives to core crate ([36c6359](https://github.com/semiotic-agentium/agentium-sdk/commit/36c6359e83462c9d48323243de50f09c10058354))
+* **core:** add wallet signing and CAIP-2 support ([22e6ec0](https://github.com/semiotic-agentium/agentium-sdk/commit/22e6ec076d1b79ff0d442e3fc1eaaf5bf6c4be5a))
+* **native:** move JWT header parsing and DID key extraction to wasm-rust ([a6c504d](https://github.com/semiotic-agentium/agentium-sdk/commit/a6c504d4bd50a9cfc7aa9cc735fc162fa4c04b9c))
+* **python:** expose wallet authentication bindings ([6e53d84](https://github.com/semiotic-agentium/agentium-sdk/commit/6e53d84935690d0a700b5310ee77a383403bfb22))
+* return claims as native Python dict via pythonize ([ea8624f](https://github.com/semiotic-agentium/agentium-sdk/commit/ea8624faca6558b4024815aeb0175d979a3322f5))
+* SDK improvements and rename to agentium-sdk ([9c55a7f](https://github.com/semiotic-agentium/agentium-sdk/commit/9c55a7fab355d236e41fd942477ef0f57b2f0531))
+* **sdk:** add wallet sign-in authentication methods ([04122c4](https://github.com/semiotic-agentium/agentium-sdk/commit/04122c48ba092247c9651e5462d1dd65fb71e084))
+
+
+### Bug Fixes
+
+* **python:** resolve mypy type errors ([aec6ca7](https://github.com/semiotic-agentium/agentium-sdk/commit/aec6ca78070e20952b00193f8b06a3d5ad15e627))
+
 ## [0.8.0](https://github.com/semiotic-agentium/agentium-sdk/compare/agentium-sdk-v0.7.0...agentium-sdk-v0.8.0) (2025-12-19)
 
 
