@@ -31,3 +31,8 @@ tracing = "0.1"
 console_error_panic_hook = "0.1"
 tracing-subscriber = { version = "0.3", features = ["env-filter"] }
 zeroize = { version = "1.8.2", features = ["zeroize_derive"] }
+
+# EVM signing
+alloy-primitives = "1.5.2"
+alloy-signer = "1.4.1"
+alloy-signer-local = "1.4.1"

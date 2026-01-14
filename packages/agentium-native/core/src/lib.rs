@@ -2,14 +2,18 @@
 //
 // SPDX-License-Identifier: MIT
 
+mod caip2;
 mod did;
 mod error;
 mod jwt;
 mod key_pair;
+pub mod signer;
 pub mod telemetry;
 mod types;
 mod vc;
 
+pub use caip2::{Caip2, Caip2Error, ChainNamespace, NamespaceError, ReferenceError};
+pub use signer::{sign_challenge, SignError, WalletSignature};
 pub use did::{Did, DidDocument, DidParseError, JsonWebKey, KeyId, VerificationMethod};
 pub use error::VcError;
 pub use jwt::{JwtError, JwtHeader, JwtRef};
