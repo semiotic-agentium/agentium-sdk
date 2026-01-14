@@ -9,7 +9,6 @@ import json
 
 import pytest
 
-import agentium_sdk
 from agentium_sdk import (
     GeneratedKeyPair,
     JwtHeader,
@@ -39,7 +38,7 @@ class TestGenerateKeypair:
         """Generated keys should be valid JWK JSON."""
         kp = generate_keypair()
 
-        private = json.loads(kp.private_key_jwk)
+        _private = json.loads(kp.private_key_jwk)  # Verify it parses
         public = json.loads(kp.public_key_jwk)
 
         # Ed25519 keys use OKP (Octet Key Pair)

@@ -4,13 +4,12 @@
 
 """Tests for AgentiumClient with mocked HTTP responses."""
 
-import json
 
 import httpx
 import pytest
 import respx
 
-from agentium_sdk import AgentiumClient, AgentiumApiError, connect_google, connect_wallet
+from agentium_sdk import AgentiumApiError, AgentiumClient, connect_google, connect_wallet
 
 
 @pytest.fixture

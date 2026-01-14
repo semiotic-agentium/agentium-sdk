@@ -136,7 +136,7 @@ class Caip2:
         return f"{self.namespace}:{self.reference}"
 
     @classmethod
-    def parse(cls, chain_id: str) -> "Caip2":
+    def parse(cls, chain_id: str) -> Caip2:
         """Parse a CAIP-2 string into a Caip2 object.
 
         Args:
