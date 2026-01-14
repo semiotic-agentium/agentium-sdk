@@ -273,11 +273,13 @@ npm install
 ### Scripts
 
 ```bash
-npm test          # Run tests
-npm run build     # Build (WASM + TypeScript)
-npm run docs      # Generate API docs
-npm run lint      # Lint code
-npm run check     # Lint + format check
+npm test              # Run tests
+npm run build         # Build (WASM + TypeScript)
+npm run docs          # Generate API docs
+npm run lint          # Lint code
+npm run check         # Lint + format check
+npm run format:all    # Format all code (TS, Python, Rust)
+npm run format:rust   # Format Rust code
 ```
 
 ### REUSE Compliance

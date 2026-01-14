@@ -22,6 +22,11 @@ jobs:
         uses: dtolnay/rust-toolchain@stable
         with:
           targets: wasm32-unknown-unknown
+          components: rustfmt
+
+      - name: Check Rust formatting
+        working-directory: packages/agentium-native
+        run: cargo fmt --all --check
 
       - name: Cache Rust dependencies
         uses: Swatinem/rust-cache@v2
