@@ -10,7 +10,7 @@ import httpx
 import pytest
 import respx
 
-from agentium_sdk import AgentiumClient, AgentiumApiError, connect_google
+from agentium_sdk import AgentiumClient, AgentiumApiError, connect_google, connect_wallet
 
 
 @pytest.fixture
@@ -265,3 +265,180 @@ class TestClientCustomBaseUrl:
             response = await client.connect_google_identity("token")
 
         assert response.access_token == "token"
+
+
+class TestWalletChallengeRequest:
+    """Tests for wallet challenge request."""
+
+    @respx.mock
+    @pytest.mark.asyncio
+    async def test_request_wallet_challenge(self) -> None:
+        """Test wallet challenge request."""
+        respx.get("https://api.agentium.network/auth/wallet/challenge").mock(
+            return_value=httpx.Response(
+                200,
+                json={
+                    "message": "Challenge message from backend...",
+                    "nonce": "abc123",
+                },
+            )
+        )
+
+        async with AgentiumClient() as client:
+            challenge = await client.request_wallet_challenge(
+                "0x742d35Cc6634C0532925a3b844Bc9e7595f1b2b7",
+                "eip155:84532",
+            )
+
+        assert challenge.nonce == "abc123"
+        assert challenge.message == "Challenge message from backend..."
+
+    @respx.mock
+    @pytest.mark.asyncio
+    async def test_request_wallet_challenge_error(self) -> None:
+        """Test wallet challenge request error."""
+        respx.get("https://api.agentium.network/auth/wallet/challenge").mock(
+            return_value=httpx.Response(400, json={"error": "invalid_chain"})
+        )
+
+        async with AgentiumClient() as client:
+            with pytest.raises(AgentiumApiError) as exc_info:
+                await client.request_wallet_challenge("0x123", "invalid:chain")
+
+        assert exc_info.value.status_code == 400
+
+
+class TestWalletSignatureVerification:
+    """Tests for wallet signature verification."""
+
+    @respx.mock
+    @pytest.mark.asyncio
+    async def test_verify_wallet_signature(self) -> None:
+        """Test wallet signature verification."""
+        respx.post("https://api.agentium.network/auth/wallet/verify").mock(
+            return_value=httpx.Response(
+                200,
+                json={
+                    "access_token": "access_jwt",
+                    "refresh_token": "refresh_jwt",
+                    "token_type": "Bearer",
+                    "expires_in": 3600,
+                    "scope": "user did:pkh:eip155:84532:0x742d... new_user",
+                },
+            )
+        )
+
+        async with AgentiumClient() as client:
+            response = await client.verify_wallet_signature(
+                "Challenge message...",
+                "0xsignature...",
+            )
+
+        assert response.access_token == "access_jwt"
+        assert "new_user" in response.scope
+
+    @respx.mock
+    @pytest.mark.asyncio
+    async def test_verify_wallet_signature_invalid(self) -> None:
+        """Test wallet signature verification with invalid signature."""
+        respx.post("https://api.agentium.network/auth/wallet/verify").mock(
+            return_value=httpx.Response(401, json={"error": "invalid_signature"})
+        )
+
+        async with AgentiumClient() as client:
+            with pytest.raises(AgentiumApiError) as exc_info:
+                await client.verify_wallet_signature("msg", "bad_sig")
+
+        assert exc_info.value.status_code == 401
+
+
+class TestConnectWallet:
+    """Tests for connect_wallet method."""
+
+    # Test private key (never use in production)
+    TEST_PRIVATE_KEY = bytes.fromhex(
+        "ac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcbf5e9341ad332d3e"
+    )
+    TEST_ADDRESS = "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"
+
+    @respx.mock
+    @pytest.mark.asyncio
+    async def test_connect_wallet_full_flow(self) -> None:
+        """Test full wallet connection flow."""
+        # Mock challenge endpoint
+        respx.get("https://api.agentium.network/auth/wallet/challenge").mock(
+            return_value=httpx.Response(
+                200,
+                json={
+                    "message": "Sign this message to authenticate",
+                    "nonce": "nonce123",
+                },
+            )
+        )
+
+        # Mock verify endpoint
+        respx.post("https://api.agentium.network/auth/wallet/verify").mock(
+            return_value=httpx.Response(
+                200,
+                json={
+                    "access_token": "access_token",
+                    "refresh_token": "refresh_token",
+                    "token_type": "Bearer",
+                    "expires_in": 3600,
+                    "scope": f"user did:pkh:eip155:84532:{self.TEST_ADDRESS} new_user",
+                },
+            )
+        )
+
+        async with AgentiumClient() as client:
+            response = await client.connect_wallet(
+                self.TEST_ADDRESS,
+                "eip155:84532",
+                self.TEST_PRIVATE_KEY,
+            )
+
+        assert response.did == f"did:pkh:eip155:84532:{self.TEST_ADDRESS}"
+        assert response.is_new is True
+        assert response.access_token == "access_token"
+        assert response.refresh_token == "refresh_token"
+
+
+class TestTopLevelConnectWallet:
+    """Tests for top-level connect_wallet function."""
+
+    TEST_PRIVATE_KEY = bytes.fromhex(
+        "ac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcbf5e9341ad332d3e"
+    )
+    TEST_ADDRESS = "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"
+
+    @respx.mock
+    @pytest.mark.asyncio
+    async def test_connect_wallet_returns_address_and_did(self) -> None:
+        """Should return tuple of (wallet_address, did)."""
+        respx.get("https://api.agentium.network/auth/wallet/challenge").mock(
+            return_value=httpx.Response(
+                200,
+                json={"message": "Sign this", "nonce": "n123"},
+            )
+        )
+        respx.post("https://api.agentium.network/auth/wallet/verify").mock(
+            return_value=httpx.Response(
+                200,
+                json={
+                    "access_token": "token",
+                    "refresh_token": "refresh",
+                    "token_type": "Bearer",
+                    "expires_in": 3600,
+                    "scope": f"user did:pkh:eip155:84532:{self.TEST_ADDRESS}",
+                },
+            )
+        )
+
+        wallet_address, did = await connect_wallet(
+            self.TEST_ADDRESS,
+            "eip155:84532",
+            self.TEST_PRIVATE_KEY,
+        )
+
+        assert wallet_address == self.TEST_ADDRESS
+        assert did == f"did:pkh:eip155:84532:{self.TEST_ADDRESS}"
