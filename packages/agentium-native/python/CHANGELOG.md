@@ -1,6 +1,13 @@
 # Changelog
 
 
+## [0.4.5](https://github.com/semiotic-agentium/agentium-sdk/compare/agentium-sdk-python-v0.4.4...agentium-sdk-python-v0.4.5) (2026-01-14)
+
+
+### Bug Fixes
+
+* **python:** set python version ([3007a58](https://github.com/semiotic-agentium/agentium-sdk/commit/3007a588dd1ff29472cb6b38b45248d9a1051f5b))
+
 ## [0.4.4](https://github.com/semiotic-agentium/agentium-sdk/compare/agentium-sdk-python-v0.4.3...agentium-sdk-python-v0.4.4) (2026-01-14)
 
 
