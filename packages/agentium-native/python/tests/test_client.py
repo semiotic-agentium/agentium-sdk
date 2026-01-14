@@ -4,7 +4,6 @@
 
 """Tests for AgentiumClient with mocked HTTP responses."""
 
-
 import httpx
 import pytest
 import respx
