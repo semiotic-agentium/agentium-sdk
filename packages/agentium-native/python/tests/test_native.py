@@ -263,32 +263,49 @@ class TestSignChallenge:
             sign_challenge(b"test", "eip155:1", bytes(16))  # 16 bytes, not 32
 
 
+class TestCaip2:
+    """Tests for Caip2 Python class."""
+
+    def test_parse_and_str(self) -> None:
+        """Test parsing and string representation."""
+        from agentium_sdk import Caip2
+
+        caip2 = Caip2.parse("eip155:84532")
+        assert caip2.namespace == "eip155"
+        assert caip2.reference == "84532"
+        assert str(caip2) == "eip155:84532"
+        assert caip2.evm_chain_id() == 84532
+
+    def test_parse_invalid_raises_caip2_error(self) -> None:
+        """Test that invalid input raises Caip2Error (subclass of ValueError)."""
+        from agentium_sdk import Caip2, Caip2Error
+
+        with pytest.raises(Caip2Error):
+            Caip2.parse("invalid")
+
+
 class TestValidateCaip2:
     """Tests for validate_caip2 function."""
 
     def test_validate_caip2_valid(self) -> None:
         """Test valid CAIP-2 identifiers."""
-        assert validate_caip2("eip155:1")
-        assert validate_caip2("eip155:84532")
-        assert validate_caip2("cosmos:cosmoshub-4")
-        assert validate_caip2("solana:mainnet")
+        assert validate_caip2("eip155:1") is True
+        assert validate_caip2("eip155:84532") is True
+        assert validate_caip2("cosmos:cosmoshub-4") is True
+        assert validate_caip2("solana:mainnet") is True
 
     def test_validate_caip2_invalid_missing_colon(self) -> None:
         """Test invalid CAIP-2 - missing colon."""
-        with pytest.raises(ValueError):
-            validate_caip2("eip155")
+        assert validate_caip2("eip155") is False
 
     def test_validate_caip2_invalid_empty_reference(self) -> None:
         """Test invalid CAIP-2 - empty reference."""
-        with pytest.raises(ValueError):
-            validate_caip2("eip155:")
+        assert validate_caip2("eip155:") is False
 
     def test_validate_caip2_invalid_namespace_too_short(self) -> None:
         """Test invalid CAIP-2 - namespace too short."""
-        with pytest.raises(ValueError):
-            validate_caip2("ab:123")
+        assert validate_caip2("ab:123") is False
 
     def test_validate_caip2_invalid_uppercase_namespace(self) -> None:
         """Test invalid CAIP-2 - uppercase in namespace."""
-        with pytest.raises(ValueError):
-            validate_caip2("EIP155:1")
+        assert validate_caip2("EIP155:1") is False

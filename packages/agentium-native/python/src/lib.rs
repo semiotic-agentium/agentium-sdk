@@ -368,15 +368,10 @@ pub fn sign_challenge(message: &[u8], chain_id: &str, private_key: &[u8]) -> PyR
 ///     chain_id: String to validate (e.g., "eip155:84532", "cosmos:cosmoshub-4")
 ///
 /// Returns:
-///     True if valid.
-///
-/// Raises:
-///     ValueError: If the format does not conform to CAIP-2 specification.
+///     True if valid, False otherwise. Never raises exceptions.
 #[pyfunction]
 pub fn validate_caip2(chain_id: &str) -> PyResult<bool> {
-    agentium_sdk_core::Caip2::new(chain_id)
-        .map(|_| true)
-        .map_err(|e| PyValueError::new_err(format!("Invalid CAIP-2: {e}")))
+    Ok(agentium_sdk_core::Caip2::new(chain_id).is_ok())
 }
 
 // ============================================================================

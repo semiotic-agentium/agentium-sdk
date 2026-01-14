@@ -149,10 +149,7 @@ def validate_caip2(chain_id: str) -> bool:
         chain_id: String to validate (e.g., "eip155:84532", "cosmos:cosmoshub-4")
 
     Returns:
-        True if valid.
-
-    Raises:
-        ValueError: If the format does not conform to CAIP-2 specification.
+        True if valid, False otherwise. Never raises exceptions.
     """
     ...
 

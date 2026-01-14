@@ -329,11 +329,11 @@ class AgentiumClient:
         except httpx.RequestError as e:
             raise AgentiumApiError(str(e)) from e
 
-    async def connect_wallet(
+async def connect_wallet(
         self,
         address: str,
         chain_id: str,
-        private_key: bytes,
+        private_key: bytes | str,
     ) -> ConnectIdentityResponse:
         """Connect a wallet identity using local signing.
 
@@ -347,7 +347,7 @@ class AgentiumClient:
             address: Wallet address (format is chain-specific).
             chain_id: CAIP-2 chain identifier (e.g., "eip155:84532").
                 See: https://github.com/ChainAgnostic/CAIPs/blob/master/CAIPs/caip-2.md
-            private_key: Raw private key bytes (format depends on chain).
+            private_key: Raw private key bytes or hex string (with or without 0x prefix).
 
         Returns:
             ConnectIdentityResponse with DID and tokens.
@@ -361,11 +361,15 @@ class AgentiumClient:
             ...     response = await client.connect_wallet(
             ...         address="0x742d35Cc6634C0532925a3b844Bc9e7595f1b2b7",
             ...         chain_id="eip155:84532",
-            ...         private_key=bytes.fromhex("ac0974..."),
+            ...         private_key="ac0974...",  # hex string or bytes
             ...     )
             ...     print(response.did)
         """
         from agentium_sdk._native import sign_challenge
+
+        # Normalize private key to bytes
+        if isinstance(private_key, str):
+            private_key = bytes.fromhex(private_key.removeprefix("0x"))
 
         # 1. Get challenge
         challenge = await self.request_wallet_challenge(address, chain_id)

@@ -36,6 +36,8 @@ from agentium_sdk.client import AgentiumClient
 from agentium_sdk.exceptions import AgentiumApiError
 from agentium_sdk.types import (
     Badge,
+    Caip2,
+    Caip2Error,
     ConnectIdentityResponse,
     GrantType,
     OAuthTokenResponse,
@@ -118,7 +120,7 @@ def connect_google_sync(
 async def connect_wallet(
     address: str,
     chain_id: str,
-    private_key: bytes,
+    private_key: bytes | str,
     *,
     base_url: str = "https://api.agentium.network",
 ) -> tuple[str, str]:
@@ -128,7 +130,7 @@ async def connect_wallet(
         address: Wallet address (format is chain-specific).
         chain_id: CAIP-2 chain identifier (e.g., "eip155:84532").
             See: https://github.com/ChainAgnostic/CAIPs/blob/master/CAIPs/caip-2.md
-        private_key: Raw private key bytes.
+        private_key: Raw private key bytes or hex string (with or without 0x prefix).
         base_url: The Agentium API base URL.
 
     Returns:
@@ -138,7 +140,7 @@ async def connect_wallet(
         >>> wallet, did = await agentium_sdk.connect_wallet(
         ...     "0x742d35Cc6634C0532925a3b844Bc9e7595f1b2b7",
         ...     "eip155:84532",
-        ...     private_key_bytes,
+        ...     "ac0974...",  # hex string or bytes
         ... )
     """
     async with AgentiumClient(base_url=base_url) as client:
@@ -149,7 +151,7 @@ async def connect_wallet(
 def connect_wallet_sync(
     address: str,
     chain_id: str,
-    private_key: bytes,
+    private_key: bytes | str,
     *,
     base_url: str = "https://api.agentium.network",
 ) -> tuple[str, str]:
@@ -169,12 +171,15 @@ __all__ = [
     "AgentiumClient",
     # Exceptions
     "AgentiumApiError",
+    "Caip2Error",
     # Response types
     "ConnectIdentityResponse",
     "OAuthTokenResponse",
     "WalletChallengeResponse",
     "Badge",
     "GrantType",
+    # Types
+    "Caip2",
     # Native types
     "VerificationResult",
     "VerificationError",
