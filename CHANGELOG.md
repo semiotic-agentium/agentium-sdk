@@ -6,6 +6,13 @@ SPDX-License-Identifier: MIT
 
 # Changelog
 
+## [0.9.1](https://github.com/semiotic-agentium/agentium-sdk/compare/agentium-sdk-v0.9.0...agentium-sdk-v0.9.1) (2026-01-14)
+
+
+### Bug Fixes
+
+* use distinct tag prefix for Python releases ([38a60f6](https://github.com/semiotic-agentium/agentium-sdk/commit/38a60f6b6abda13fae9bd32a50f792204e90af9b))
+
 ## [0.9.0](https://github.com/semiotic-agentium/agentium-sdk/compare/agentium-sdk-v0.8.0...agentium-sdk-v0.9.0) (2026-01-14)
 
 
