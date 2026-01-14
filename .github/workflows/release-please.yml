@@ -123,7 +123,7 @@ jobs:
           name: wheels-sdist
           path: packages/agentium-native/python/dist
 
-  # Publish all wheels to PyPI
+  # Publish all wheels to PyPI using Trusted Publishing (OIDC)
   publish-python:
     name: Publish Python to PyPI
     needs: [release-please, build-python-wheels, build-python-sdist]
@@ -132,6 +132,8 @@ jobs:
     environment:
       name: pypi
       url: https://pypi.org/p/agentium-sdk
+    permissions:
+      id-token: write  # Required for OIDC Trusted Publishing
     steps:
       - name: Download all wheels
         uses: actions/download-artifact@v4
@@ -141,24 +143,7 @@ jobs:
           merge-multiple: true
 
       - name: Publish to PyPI
-        uses: PyO3/maturin-action@v1
-        env:
-          MATURIN_PYPI_TOKEN: ${{ secrets.PYPI_API_TOKEN }}
+        uses: pypa/gh-action-pypi-publish@release/v1
         with:
-          command: upload
-          args: --skip-existing dist/*
-
-  check-publishing-results:
-    name: Check publishing results
-    needs: [release-please, publish-python]
-    if: always() && (needs.release-please.outputs.python_release_created || needs.release-please.result == 'success')
-    runs-on: ubuntu-latest
-    steps:
-      - name: Check publishing results
-        run: |
-          echo "Release Please: ${{ needs.release-please.result }}"
-          echo "Publish Python: ${{ needs.publish-python.result }}"
-          if [[ "${{ needs.publish-python.result }}" == "failure" ]]; then
-            echo "::error::Python package failed to publish"
-            exit 1
-          fi
+          packages-dir: dist/
+          skip-existing: true
