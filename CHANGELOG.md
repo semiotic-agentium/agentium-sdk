@@ -6,6 +6,15 @@ SPDX-License-Identifier: MIT
 
 # Changelog
 
+## [0.9.4](https://github.com/semiotic-agentium/agentium-sdk/compare/agentium-sdk-v0.9.3...agentium-sdk-v0.9.4) (2026-01-14)
+
+
+### Bug Fixes
+
+* **python:** fix wheel builds with updated macOS runner and vendored OpenSSL ([e5e7292](https://github.com/semiotic-agentium/agentium-sdk/commit/e5e7292b79c3e30eb387806d0edb7472e7259d79))
+* **python:** trigger release to test wheel build fixes ([100cefc](https://github.com/semiotic-agentium/agentium-sdk/commit/100cefc6aaf6a62a912e3c71b3813d8bb64e050b))
+* **python:** trigger release to test wheel build fixes ([e6110f8](https://github.com/semiotic-agentium/agentium-sdk/commit/e6110f833c1f0bf4298d673e8125205f8c714669))
+
 ## [0.9.3](https://github.com/semiotic-agentium/agentium-sdk/compare/agentium-sdk-v0.9.2...agentium-sdk-v0.9.3) (2026-01-14)
 
 
