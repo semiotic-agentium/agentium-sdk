@@ -28,6 +28,8 @@ from agentium_sdk._native import (
     get_public_key,
     init_tracing,
     parse_jwt_header,
+    sign_challenge,
+    validate_caip2,
     verify_jwt,
 )
 from agentium_sdk.client import AgentiumClient
@@ -37,6 +39,7 @@ from agentium_sdk.types import (
     ConnectIdentityResponse,
     GrantType,
     OAuthTokenResponse,
+    WalletChallengeResponse,
 )
 
 __version__ = "0.1.0"
@@ -112,10 +115,56 @@ def connect_google_sync(
     return asyncio.run(connect_google(google_id_token, base_url=base_url))
 
 
+async def connect_wallet(
+    address: str,
+    chain_id: str,
+    private_key: bytes,
+    *,
+    base_url: str = "https://api.agentium.network",
+) -> tuple[str, str]:
+    """Connect a wallet identity and return wallet address and DID.
+
+    Args:
+        address: Wallet address (format is chain-specific).
+        chain_id: CAIP-2 chain identifier (e.g., "eip155:84532").
+            See: https://github.com/ChainAgnostic/CAIPs/blob/master/CAIPs/caip-2.md
+        private_key: Raw private key bytes.
+        base_url: The Agentium API base URL.
+
+    Returns:
+        Tuple of (wallet_address, did).
+
+    Example:
+        >>> wallet, did = await agentium_sdk.connect_wallet(
+        ...     "0x742d35Cc6634C0532925a3b844Bc9e7595f1b2b7",
+        ...     "eip155:84532",
+        ...     private_key_bytes,
+        ... )
+    """
+    async with AgentiumClient(base_url=base_url) as client:
+        response = await client.connect_wallet(address, chain_id, private_key)
+        return address, response.did
+
+
+def connect_wallet_sync(
+    address: str,
+    chain_id: str,
+    private_key: bytes,
+    *,
+    base_url: str = "https://api.agentium.network",
+) -> tuple[str, str]:
+    """Synchronous version of connect_wallet."""
+    return asyncio.run(
+        connect_wallet(address, chain_id, private_key, base_url=base_url)
+    )
+
+
 __all__ = [
     # Top-level functions
     "connect_google",
     "connect_google_sync",
+    "connect_wallet",
+    "connect_wallet_sync",
     # Client
     "AgentiumClient",
     # Exceptions
@@ -123,6 +172,7 @@ __all__ = [
     # Response types
     "ConnectIdentityResponse",
     "OAuthTokenResponse",
+    "WalletChallengeResponse",
     "Badge",
     "GrantType",
     # Native types
@@ -137,4 +187,6 @@ __all__ = [
     "generate_keypair",
     "get_public_key",
     "init_tracing",
+    "sign_challenge",
+    "validate_caip2",
 ]

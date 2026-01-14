@@ -23,6 +23,7 @@ from agentium_sdk.types import (
     ConnectIdentityResponse,
     GrantType,
     OAuthTokenResponse,
+    WalletChallengeResponse,
     _parse_scope_for_identity,
 )
 
@@ -30,6 +31,8 @@ DEFAULT_BASE_URL = "https://api.agentium.network"
 OAUTH_TOKEN_PATH = "/oauth/token"
 MEMBERSHIP_CREDENTIAL_PATH = "/v1/credentials/membership"
 DID_DOCUMENT_PATH = "/.well-known/did.json"
+WALLET_CHALLENGE_PATH = "/auth/wallet/challenge"
+WALLET_VERIFY_PATH = "/auth/wallet/verify"
 
 
 class AgentiumClient:
@@ -255,3 +258,138 @@ class AgentiumClient:
         public_key_jwk = extract_public_key_jwk(did_document_json, header.kid)
 
         return verify_jwt(jwt, public_key_jwk)
+
+    async def request_wallet_challenge(
+        self, address: str, chain_id: str
+    ) -> WalletChallengeResponse:
+        """Request a challenge message for wallet sign-in.
+
+        Args:
+            address: Wallet address (format is chain-specific, 0x-prefixed for EVM).
+            chain_id: CAIP-2 chain identifier (e.g., "eip155:84532").
+                See: https://github.com/ChainAgnostic/CAIPs/blob/master/CAIPs/caip-2.md
+
+        Returns:
+            WalletChallengeResponse with message to sign and nonce.
+
+        Raises:
+            AgentiumApiError: If chain not supported or request fails.
+        """
+        client = await self._get_client()
+
+        try:
+            response = await client.get(
+                WALLET_CHALLENGE_PATH,
+                params={"address": address, "chain_id": chain_id},
+            )
+            response.raise_for_status()
+            data = response.json()
+            return WalletChallengeResponse(
+                message=data["message"],
+                nonce=data["nonce"],
+            )
+        except httpx.HTTPStatusError as e:
+            raise AgentiumApiError(str(e), e.response.status_code) from e
+        except httpx.RequestError as e:
+            raise AgentiumApiError(str(e)) from e
+
+    async def verify_wallet_signature(
+        self, message: str, signature: str
+    ) -> OAuthTokenResponse:
+        """Verify wallet signature and obtain tokens.
+
+        Args:
+            message: The challenge message that was signed.
+            signature: Hex-encoded signature (format is chain-specific).
+
+        Returns:
+            OAuthTokenResponse with access and refresh tokens.
+
+        Raises:
+            AgentiumApiError: If signature invalid or verification fails.
+        """
+        client = await self._get_client()
+
+        try:
+            response = await client.post(
+                WALLET_VERIFY_PATH,
+                json={"message": message, "signature": signature},
+            )
+            response.raise_for_status()
+            data = response.json()
+            return OAuthTokenResponse(
+                access_token=data["access_token"],
+                refresh_token=data["refresh_token"],
+                token_type=data["token_type"],
+                expires_in=data["expires_in"],
+                scope=data["scope"],
+            )
+        except httpx.HTTPStatusError as e:
+            raise AgentiumApiError(str(e), e.response.status_code) from e
+        except httpx.RequestError as e:
+            raise AgentiumApiError(str(e)) from e
+
+    async def connect_wallet(
+        self,
+        address: str,
+        chain_id: str,
+        private_key: bytes,
+    ) -> ConnectIdentityResponse:
+        """Connect a wallet identity using local signing.
+
+        This method handles the full wallet sign-in flow:
+        1. Request challenge from backend
+        2. Sign challenge with private key (locally)
+        3. Submit signature for verification
+        4. Return identity response with tokens
+
+        Args:
+            address: Wallet address (format is chain-specific).
+            chain_id: CAIP-2 chain identifier (e.g., "eip155:84532").
+                See: https://github.com/ChainAgnostic/CAIPs/blob/master/CAIPs/caip-2.md
+            private_key: Raw private key bytes (format depends on chain).
+
+        Returns:
+            ConnectIdentityResponse with DID and tokens.
+
+        Raises:
+            AgentiumApiError: If any API step fails.
+            ValueError: If signing fails (invalid key, unsupported chain).
+
+        Example:
+            >>> async with AgentiumClient() as client:
+            ...     response = await client.connect_wallet(
+            ...         address="0x742d35Cc6634C0532925a3b844Bc9e7595f1b2b7",
+            ...         chain_id="eip155:84532",
+            ...         private_key=bytes.fromhex("ac0974..."),
+            ...     )
+            ...     print(response.did)
+        """
+        from agentium_sdk._native import sign_challenge
+
+        # 1. Get challenge
+        challenge = await self.request_wallet_challenge(address, chain_id)
+
+        # 2. Sign locally
+        signature = sign_challenge(
+            challenge.message.encode("utf-8"),
+            chain_id,
+            private_key,
+        )
+
+        # 3. Verify and get tokens
+        token_response = await self.verify_wallet_signature(
+            challenge.message, signature
+        )
+
+        # 4. Parse identity from scope
+        did, is_new = _parse_scope_for_identity(token_response.scope)
+
+        return ConnectIdentityResponse(
+            did=did,
+            badge=Badge(status="Active" if is_new else "Existing"),
+            is_new=is_new,
+            access_token=token_response.access_token,
+            refresh_token=token_response.refresh_token,
+            expires_in=token_response.expires_in,
+        )

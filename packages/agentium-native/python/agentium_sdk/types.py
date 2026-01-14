@@ -15,6 +15,7 @@ __all__ = [
     "Badge",
     "ConnectIdentityResponse",
     "CredentialResponse",
+    "WalletChallengeResponse",
 ]
 
 # Grant types supported by the OAuth endpoint
@@ -83,6 +84,17 @@ class CredentialResponse:
 
     credential: str
     """The JWT-encoded Verifiable Credential."""
+
+
+@dataclass(frozen=True)
+class WalletChallengeResponse:
+    """Response from wallet challenge request."""
+
+    message: str
+    """The challenge message to sign (format is chain-specific)."""
+
+    nonce: str
+    """Unique nonce for replay protection."""
 
 
 def _parse_scope_for_identity(scope: str) -> tuple[str, bool]:
