@@ -546,6 +546,28 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#agentium_sdk.AgentiumClient.request_wallet_challenge" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        request_wallet_challenge
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#agentium_sdk.AgentiumClient.verify_wallet_signature" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        verify_wallet_signature
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -760,6 +782,28 @@
     <span class="md-ellipsis">
       
         verify_credential
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#agentium_sdk.AgentiumClient.request_wallet_challenge" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        request_wallet_challenge
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#agentium_sdk.AgentiumClient.verify_wallet_signature" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        verify_wallet_signature
       
     </span>
   </a>
@@ -1484,6 +1528,251 @@ finds the matching public key, and verifies the signature.</p>
             <td>
               <div class="doc-md-description">
                 <p>VerificationResult with validity status, decoded claims, and error if invalid.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="agentium_sdk.AgentiumClient.request_wallet_challenge" class="doc doc-heading">
+            <span class="doc doc-object-name doc-function-name">request_wallet_challenge</span>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-async"><code>async</code></small>
+  </span>
+
+<a href="#agentium_sdk.AgentiumClient.request_wallet_challenge" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">request_wallet_challenge</span><span class="p">(</span><span class="n">address</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">chain_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">WalletChallengeResponse</span>
+</code></pre></div>
+
+    <div class="doc doc-contents ">
+
+        <p>Request a challenge message for wallet sign-in.</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                <code>address</code>
+            </td>
+            <td>
+                  <code><span title="str">str</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Wallet address (format is chain-specific, 0x-prefixed for EVM).</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>chain_id</code>
+            </td>
+            <td>
+                  <code><span title="str">str</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>CAIP-2 chain identifier (e.g., "eip155:84532").
+See: https://github.com/ChainAgnostic/CAIPs/blob/master/CAIPs/caip-2.md</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+    <p><span class="doc-section-title">Returns:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                  <code><a class="autorefs autorefs-internal" title="agentium_sdk.WalletChallengeResponse
+
+
+  
+      dataclass
+   (agentium_sdk.types.WalletChallengeResponse)" href="../types/#agentium_sdk.WalletChallengeResponse">WalletChallengeResponse</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>WalletChallengeResponse with message to sign and nonce.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+<p><span class="doc-section-title">Raises:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                  <code><a class="autorefs autorefs-internal" title="agentium_sdk.AgentiumApiError (agentium_sdk.exceptions.AgentiumApiError)" href="../exceptions/#agentium_sdk.AgentiumApiError">AgentiumApiError</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>If chain not supported or request fails.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="agentium_sdk.AgentiumClient.verify_wallet_signature" class="doc doc-heading">
+            <span class="doc doc-object-name doc-function-name">verify_wallet_signature</span>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-async"><code>async</code></small>
+  </span>
+
+<a href="#agentium_sdk.AgentiumClient.verify_wallet_signature" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">verify_wallet_signature</span><span class="p">(</span><span class="n">message</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">signature</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">OAuthTokenResponse</span>
+</code></pre></div>
+
+    <div class="doc doc-contents ">
+
+        <p>Verify wallet signature and obtain tokens.</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                <code>message</code>
+            </td>
+            <td>
+                  <code><span title="str">str</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The challenge message that was signed.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>signature</code>
+            </td>
+            <td>
+                  <code><span title="str">str</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Hex-encoded signature (format is chain-specific).</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+    <p><span class="doc-section-title">Returns:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                  <code><a class="autorefs autorefs-internal" title="agentium_sdk.OAuthTokenResponse
+
+
+  
+      dataclass
+   (agentium_sdk.types.OAuthTokenResponse)" href="../types/#agentium_sdk.OAuthTokenResponse">OAuthTokenResponse</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>OAuthTokenResponse with access and refresh tokens.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+<p><span class="doc-section-title">Raises:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                  <code><a class="autorefs autorefs-internal" title="agentium_sdk.AgentiumApiError (agentium_sdk.exceptions.AgentiumApiError)" href="../exceptions/#agentium_sdk.AgentiumApiError">AgentiumApiError</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>If signature invalid or verification fails.</p>
               </div>
             </td>
           </tr>

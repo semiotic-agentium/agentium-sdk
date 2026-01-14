@@ -602,6 +602,39 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#wallet-authentication" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Wallet Authentication
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#agentium_sdk.sign_challenge" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        sign_challenge
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#agentium_sdk.validate_caip2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        validate_caip2
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#telemetry" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -964,6 +997,39 @@
     <span class="md-ellipsis">
       
         get_public_key
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#wallet-authentication" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Wallet Authentication
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#agentium_sdk.sign_challenge" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        sign_challenge
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#agentium_sdk.validate_caip2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        validate_caip2
       
     </span>
   </a>
@@ -1673,6 +1739,218 @@
             <td>
               <div class="doc-md-description">
                 <p>If the private key is invalid</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+    </div>
+
+</div><h2 id="wallet-authentication">Wallet Authentication<a class="headerlink" href="#wallet-authentication" title="Permanent link">&para;</a></h2>
+
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="agentium_sdk.sign_challenge" class="doc doc-heading">
+            <span class="doc doc-object-name doc-function-name">agentium_sdk.sign_challenge</span>
+
+
+<a href="#agentium_sdk.sign_challenge" class="headerlink" title="Permanent link">&para;</a></h2>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">sign_challenge</span><span class="p">(</span><span class="n">message</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">,</span> <span class="n">chain_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">private_key</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span>
+</code></pre></div>
+
+    <div class="doc doc-contents first">
+
+        <p>Sign a challenge message for wallet authentication.</p>
+<p>The signing algorithm is determined by the chain namespace in the CAIP-2 identifier.
+For example, <code>eip155:*</code> chains use secp256k1 ECDSA with EIP-191 message encoding.</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                <code>message</code>
+            </td>
+            <td>
+                  <code><span title="bytes">bytes</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The challenge message bytes from the backend.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>chain_id</code>
+            </td>
+            <td>
+                  <code><span title="str">str</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>CAIP-2 chain identifier string (e.g., "eip155:84532").
+See: https://github.com/ChainAgnostic/CAIPs/blob/master/CAIPs/caip-2.md</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>private_key</code>
+            </td>
+            <td>
+                  <code><span title="bytes">bytes</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Raw private key bytes (format depends on chain, 32 bytes for EVM).</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+    <p><span class="doc-section-title">Returns:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                  <code><span title="str">str</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Hex-encoded signature string (format is chain-specific).</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+<p><span class="doc-section-title">Raises:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                  <code><span title="ValueError">ValueError</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>If chain_id is not a valid CAIP-2 string, key is malformed,
+namespace is unsupported, or signing fails.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="agentium_sdk.validate_caip2" class="doc doc-heading">
+            <span class="doc doc-object-name doc-function-name">agentium_sdk.validate_caip2</span>
+
+
+<a href="#agentium_sdk.validate_caip2" class="headerlink" title="Permanent link">&para;</a></h2>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">validate_caip2</span><span class="p">(</span><span class="n">chain_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span>
+</code></pre></div>
+
+    <div class="doc doc-contents first">
+
+        <p>Validate a CAIP-2 chain identifier string.</p>
+<p>CAIP-2 defines a format for blockchain identifiers: <code>namespace:reference</code>
+- Namespace: 3-8 lowercase alphanumeric characters (e.g., "eip155", "solana")
+- Reference: 1-32 alphanumeric characters with hyphens/underscores (e.g., "1", "84532")</p>
+<p>See: https://github.com/ChainAgnostic/CAIPs/blob/master/CAIPs/caip-2.md</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                <code>chain_id</code>
+            </td>
+            <td>
+                  <code><span title="str">str</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>String to validate (e.g., "eip155:84532", "cosmos:cosmoshub-4")</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+    <p><span class="doc-section-title">Returns:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                  <code><span title="bool">bool</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>True if valid, False otherwise. Never raises exceptions.</p>
               </div>
             </td>
           </tr>
