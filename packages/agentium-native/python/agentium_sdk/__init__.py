@@ -50,7 +50,7 @@ try:
 
     __version__ = version("agentium-sdk")
 except Exception:
-    __version__ = "0.2.0"  # Fallback for development
+    __version__ = "0.3.0"  # Fallback for development
 
 
 def _extract_wallet_address(did: str) -> str:
