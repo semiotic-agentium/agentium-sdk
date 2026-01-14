@@ -18,6 +18,7 @@
     "format:check": "prettier --check .",
     "format:write": "prettier --write .",
     "format:python": "cd packages/agentium-native/python && ruff check . --fix && ruff format .",
+    "check:python": "cd packages/agentium-native/python && mypy agentium_sdk",
     "format:rust": "cd packages/agentium-native && cargo fmt --all",
     "format:rust:check": "cd packages/agentium-native && cargo fmt --all --check",
     "format:all": "npm run format:write && npm run format:python && npm run format:rust",
