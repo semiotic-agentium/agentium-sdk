@@ -7,8 +7,6 @@ Python SDK for Agentium Network - DID and Verifiable Credentials.
 
 ## Installation
 
-Once we have our sdk published, you can:
-
 ```bash
 pip install agentium-sdk
 ```

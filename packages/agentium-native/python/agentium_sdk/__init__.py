@@ -39,12 +39,18 @@ from agentium_sdk.types import (
     Caip2,
     Caip2Error,
     ConnectIdentityResponse,
+    CredentialResponse,
     GrantType,
     OAuthTokenResponse,
     WalletChallengeResponse,
 )
 
-__version__ = "0.1.0"
+try:
+    from importlib.metadata import version
+
+    __version__ = version("agentium-sdk")
+except Exception:
+    __version__ = "0.0.0"  # Fallback for development
 
 
 def _extract_wallet_address(did: str) -> str:
@@ -172,6 +178,7 @@ __all__ = [
     "Caip2Error",
     # Response types
     "ConnectIdentityResponse",
+    "CredentialResponse",
     "OAuthTokenResponse",
     "WalletChallengeResponse",
     "Badge",
