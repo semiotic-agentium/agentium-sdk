@@ -1,6 +1,13 @@
 # Changelog
 
 
+## [0.4.1](https://github.com/semiotic-agentium/agentium-sdk/compare/agentium-sdk-python-v0.4.0...agentium-sdk-python-v0.4.1) (2026-01-14)
+
+
+### Bug Fixes
+
+* **python:** trigger release with corrected wheel build configuration ([c80f5f3](https://github.com/semiotic-agentium/agentium-sdk/commit/c80f5f3c3b4f96dc0ae1231884131d55867e8e25))
+
 ## [0.4.0](https://github.com/semiotic-agentium/agentium-sdk/compare/agentium-sdk-python-v0.3.0...agentium-sdk-python-v0.4.0) (2026-01-14)
 
 

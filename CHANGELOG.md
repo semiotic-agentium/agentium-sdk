@@ -6,6 +6,13 @@ SPDX-License-Identifier: MIT
 
 # Changelog
 
+## [0.9.3](https://github.com/semiotic-agentium/agentium-sdk/compare/agentium-sdk-v0.9.2...agentium-sdk-v0.9.3) (2026-01-14)
+
+
+### Bug Fixes
+
+* **python:** trigger release with corrected wheel build configuration ([c80f5f3](https://github.com/semiotic-agentium/agentium-sdk/commit/c80f5f3c3b4f96dc0ae1231884131d55867e8e25))
+
 ## [0.9.2](https://github.com/semiotic-agentium/agentium-sdk/compare/agentium-sdk-v0.9.1...agentium-sdk-v0.9.2) (2026-01-14)
 
 
