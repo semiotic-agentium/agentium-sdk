@@ -7,7 +7,7 @@
     },
     "packages/agentium-native/python": {
       "release-type": "python",
-      "package-name": "agentium-sdk",
+      "package-name": "agentium-sdk-python",
       "bump-minor-pre-major": true
     }
   }
