@@ -79,7 +79,19 @@ jobs:
           pip install ../target/wheels/*.whl
 
       - name: Install test dependencies
-        run: pip install pytest pytest-asyncio httpx respx
+        run: pip install pytest pytest-asyncio httpx respx ruff mypy
+
+      - name: Check Python formatting
+        working-directory: packages/agentium-native/python
+        run: ruff format --check .
+
+      - name: Lint Python
+        working-directory: packages/agentium-native/python
+        run: ruff check .
+
+      - name: Type check Python
+        working-directory: packages/agentium-native/python
+        run: mypy agentium_sdk
 
       - name: Run Python tests
         working-directory: packages/agentium-native/python
