@@ -18,6 +18,8 @@ from agentium_sdk import (
     generate_keypair,
     get_public_key,
     parse_jwt_header,
+    sign_challenge,
+    validate_caip2,
     verify_jwt,
 )
 
@@ -205,3 +207,88 @@ class TestExtractPublicKeyJwk:
 
         with pytest.raises(ValueError):
             extract_public_key_jwk('{"id": "did:web:x", "verificationMethod": []}')
+
+
+class TestSignChallenge:
+    """Tests for sign_challenge function."""
+
+    # Test private key (never use in production)
+    TEST_PRIVATE_KEY = bytes.fromhex(
+        "ac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcbf5e9341ad332d3e"
+    )
+
+    def test_sign_challenge_evm(self) -> None:
+        """Test EVM challenge signing."""
+        message = b"Test challenge message"
+        chain_id = "eip155:84532"
+
+        signature = sign_challenge(message, chain_id, self.TEST_PRIVATE_KEY)
+
+        assert signature.startswith("0x")
+        # 65 bytes = 130 hex chars + "0x" = 132, or 134 with padded v
+        assert len(signature) in (132, 134)
+
+    def test_sign_challenge_deterministic(self) -> None:
+        """Same message and key should produce same signature."""
+        message = b"Deterministic test"
+        chain_id = "eip155:1"
+
+        sig1 = sign_challenge(message, chain_id, self.TEST_PRIVATE_KEY)
+        sig2 = sign_challenge(message, chain_id, self.TEST_PRIVATE_KEY)
+
+        assert sig1 == sig2
+
+    def test_sign_challenge_different_messages(self) -> None:
+        """Different messages should produce different signatures."""
+        chain_id = "eip155:1"
+
+        sig1 = sign_challenge(b"Message A", chain_id, self.TEST_PRIVATE_KEY)
+        sig2 = sign_challenge(b"Message B", chain_id, self.TEST_PRIVATE_KEY)
+
+        assert sig1 != sig2
+
+    def test_sign_challenge_unsupported_namespace(self) -> None:
+        """Test signing with unsupported chain namespace."""
+        with pytest.raises(ValueError, match="not supported"):
+            sign_challenge(b"test", "solana:mainnet", bytes(32))
+
+    def test_sign_challenge_invalid_caip2(self) -> None:
+        """Test signing with invalid CAIP-2 string."""
+        with pytest.raises(ValueError, match="CAIP-2"):
+            sign_challenge(b"test", "invalid", bytes(32))
+
+    def test_sign_challenge_invalid_key_length(self) -> None:
+        """Test signing with wrong key length."""
+        with pytest.raises(ValueError, match="key length"):
+            sign_challenge(b"test", "eip155:1", bytes(16))  # 16 bytes, not 32
+
+
+class TestValidateCaip2:
+    """Tests for validate_caip2 function."""
+
+    def test_validate_caip2_valid(self) -> None:
+        """Test valid CAIP-2 identifiers."""
+        assert validate_caip2("eip155:1")
+        assert validate_caip2("eip155:84532")
+        assert validate_caip2("cosmos:cosmoshub-4")
+        assert validate_caip2("solana:mainnet")
+
+    def test_validate_caip2_invalid_missing_colon(self) -> None:
+        """Test invalid CAIP-2 - missing colon."""
+        with pytest.raises(ValueError):
+            validate_caip2("eip155")
+
+    def test_validate_caip2_invalid_empty_reference(self) -> None:
+        """Test invalid CAIP-2 - empty reference."""
+        with pytest.raises(ValueError):
+            validate_caip2("eip155:")
+
+    def test_validate_caip2_invalid_namespace_too_short(self) -> None:
+        """Test invalid CAIP-2 - namespace too short."""
+        with pytest.raises(ValueError):
+            validate_caip2("ab:123")
+
+    def test_validate_caip2_invalid_uppercase_namespace(self) -> None:
+        """Test invalid CAIP-2 - uppercase in namespace."""
+        with pytest.raises(ValueError):
+            validate_caip2("EIP155:1")

@@ -85,6 +85,31 @@ impl From<agentium_sdk_core::JwtError> for VerificationError {
     }
 }
 
+impl From<agentium_sdk_core::SignError> for VerificationError {
+    fn from(err: agentium_sdk_core::SignError) -> Self {
+        use agentium_sdk_core::SignError;
+        let (code, message) = match err {
+            SignError::UnsupportedNamespace(ns) => (
+                "UNSUPPORTED_NAMESPACE".to_string(),
+                format!("Chain namespace not supported for signing: {ns}"),
+            ),
+            SignError::InvalidKeyLength { expected, got, chain } => (
+                "INVALID_KEY_LENGTH".to_string(),
+                format!("Invalid key length for {chain}: expected {expected}, got {got}"),
+            ),
+            SignError::InvalidKeyFormat { chain, reason } => (
+                "INVALID_KEY_FORMAT".to_string(),
+                format!("Invalid key format for {chain}: {reason}"),
+            ),
+            SignError::SigningFailed(e) => (
+                "SIGNING_FAILED".to_string(),
+                format!("Signing operation failed: {e}"),
+            ),
+        };
+        Self { code, message }
+    }
+}
+
 /// Result of JWT verification.
 #[pyclass]
 pub struct VerificationResult {
@@ -298,6 +323,62 @@ pub fn get_public_key(private_key_jwk: &str) -> PyResult<String> {
     serde_json::to_string(public_key.jwk_key()).map_err(|e| PyValueError::new_err(e.to_string()))
 }
 
+use tracing::instrument;
+
+/// Sign a challenge message for wallet authentication.
+///
+/// The signing algorithm is determined by the chain namespace in the CAIP-2 identifier.
+/// For example, `eip155:*` chains use secp256k1 ECDSA with EIP-191 message encoding.
+///
+/// Args:
+///     message: The challenge message bytes from the backend.
+///     chain_id: CAIP-2 chain identifier string (e.g., "eip155:84532").
+///         See: https://github.com/ChainAgnostic/CAIPs/blob/master/CAIPs/caip-2.md
+///     private_key: Raw private key bytes (format depends on chain, 32 bytes for EVM).
+///
+/// Returns:
+///     Hex-encoded signature string (format is chain-specific).
+///
+/// Raises:
+///     ValueError: If chain_id is not a valid CAIP-2 string, key is malformed,
+///         namespace is unsupported, or signing fails.
+#[pyfunction]
+#[instrument(skip(message, private_key), fields(chain_id = chain_id, message_len = message.len()))]
+pub fn sign_challenge(message: &[u8], chain_id: &str, private_key: &[u8]) -> PyResult<String> {
+    let caip2 = agentium_sdk_core::Caip2::new(chain_id)
+        .map_err(|e| PyValueError::new_err(format!("Invalid CAIP-2 chain_id: {e}")))?;
+
+    agentium_sdk_core::sign_challenge(message, &caip2, private_key)
+        .map(|sig| sig.into_string())
+        .map_err(|e| {
+            let err: VerificationError = e.into();
+            PyValueError::new_err(format!("[{}] {}", err.code, err.message))
+        })
+}
+
+/// Validate a CAIP-2 chain identifier string.
+///
+/// CAIP-2 defines a format for blockchain identifiers: `namespace:reference`
+/// - Namespace: 3-8 lowercase alphanumeric characters (e.g., "eip155", "solana")
+/// - Reference: 1-32 alphanumeric characters with hyphens/underscores (e.g., "1", "84532")
+///
+/// See: https://github.com/ChainAgnostic/CAIPs/blob/master/CAIPs/caip-2.md
+///
+/// Args:
+///     chain_id: String to validate (e.g., "eip155:84532", "cosmos:cosmoshub-4")
+///
+/// Returns:
+///     True if valid.
+///
+/// Raises:
+///     ValueError: If the format does not conform to CAIP-2 specification.
+#[pyfunction]
+pub fn validate_caip2(chain_id: &str) -> PyResult<bool> {
+    agentium_sdk_core::Caip2::new(chain_id)
+        .map(|_| true)
+        .map_err(|e| PyValueError::new_err(format!("Invalid CAIP-2: {e}")))
+}
+
 // ============================================================================
 // Telemetry Support
 // ============================================================================
@@ -418,5 +499,7 @@ fn _native(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(generate_keypair, m)?)?;
     m.add_function(wrap_pyfunction!(get_public_key, m)?)?;
     m.add_function(wrap_pyfunction!(init_tracing, m)?)?;
+    m.add_function(wrap_pyfunction!(sign_challenge, m)?)?;
+    m.add_function(wrap_pyfunction!(validate_caip2, m)?)?;
     Ok(())
 }
