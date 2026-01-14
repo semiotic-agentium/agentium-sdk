@@ -72,9 +72,10 @@ jobs:
           # Linux x86_64
           - os: ubuntu-latest
             target: x86_64-unknown-linux-gnu
-          # Linux aarch64
+          # Linux aarch64 (cross-compile with zig)
           - os: ubuntu-latest
             target: aarch64-unknown-linux-gnu
+            use_zig: true
           # macOS x86_64
           - os: macos-15-large
             target: x86_64-apple-darwin
@@ -98,14 +99,18 @@ jobs:
           target: ${{ matrix.target }}
           args: --release --out dist
           sccache: 'true'
-          manylinux: auto
+          manylinux: ${{ matrix.use_zig && 'off' || 'auto' }}
           working-directory: packages/agentium-native/python
+          # Use zig for cross-compilation (aarch64-linux from x86_64 host)
+          zig: ${{ matrix.use_zig || false }}
           before-script-linux: |
-            # Install OpenSSL development libraries
-            if command -v yum &> /dev/null; then
-              yum install -y openssl-devel perl-IPC-Cmd
-            elif command -v apt-get &> /dev/null; then
-              apt-get update && apt-get install -y libssl-dev pkg-config
+            # Install OpenSSL development libraries (only for non-zig builds)
+            if [ "${{ matrix.use_zig }}" != "true" ]; then
+              if command -v yum &> /dev/null; then
+                yum install -y openssl-devel perl-IPC-Cmd
+              elif command -v apt-get &> /dev/null; then
+                apt-get update && apt-get install -y libssl-dev pkg-config
+              fi
             fi
 
       - name: Upload wheels
