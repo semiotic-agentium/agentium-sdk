@@ -93,6 +93,7 @@ jobs:
           target: ${{ matrix.target }}
           args: --release --out dist
           sccache: 'true'
+          manylinux: auto
           working-directory: packages/agentium-native/python
 
       - name: Upload wheels
@@ -127,7 +128,7 @@ jobs:
   publish-python:
     name: Publish Python to PyPI
     needs: [release-please, build-python-wheels, build-python-sdist]
-    if: ${{ needs.release-please.outputs.python_release_created }}
+    if: ${{ needs.release-please.outputs.python_release_created && !cancelled() }}
     runs-on: ubuntu-latest
     environment:
       name: pypi
