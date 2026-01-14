@@ -13,6 +13,8 @@ Response types and data classes.
 
 ::: agentium_sdk.Badge
 
+::: agentium_sdk.WalletChallengeResponse
+
 ## Enums
 
 ::: agentium_sdk.GrantType

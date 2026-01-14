@@ -34,6 +34,30 @@ For synchronous code:
 wallet_address, did = agentium_sdk.connect_google_sync(google_id_token)
 ```
 
+### Wallet Authentication
+
+Authenticate using a blockchain wallet:
+
+```python
+import agentium_sdk
+
+async def handle_wallet_login(address: str, chain_id: str, private_key: bytes):
+    """Authenticate with wallet and get DID."""
+    # chain_id is in CAIP-2 format (e.g., "eip155:84532")
+    wallet_address, did = await agentium_sdk.connect_wallet(
+        address, chain_id, private_key
+    )
+    
+    print(f"Connected wallet: {wallet_address}")
+    print(f"DID: {did}")
+```
+
+For synchronous code:
+
+```python
+wallet, did = agentium_sdk.connect_wallet_sync(address, chain_id, private_key)
+```
+
 ### Using AgentiumClient
 
 For more control, use the `AgentiumClient` directly:

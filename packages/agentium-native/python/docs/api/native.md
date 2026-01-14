@@ -21,6 +21,12 @@ Low-level cryptographic operations powered by Rust.
 
 ::: agentium_sdk.get_public_key
 
+## Wallet Authentication
+
+::: agentium_sdk.sign_challenge
+
+::: agentium_sdk.validate_caip2
+
 ## Telemetry
 
 ::: agentium_sdk.init_tracing
