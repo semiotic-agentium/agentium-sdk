@@ -11,6 +11,14 @@ Python SDK for Agentium Network - DID and Verifiable Credentials.
 pip install agentium-sdk
 ```
 
+## Requirements
+
+- **Python**: 3.8 or higher
+- **For end users**: No additional dependencies (prebuilt wheels available for most platforms)
+- **For development/building from source**:
+  - Rust toolchain (1.70+) - [Install Rust](https://rustup.rs/)
+  - Maturin build tool: `pip install maturin`
+
 ## Quick Start
 
 ### Google Sign-In
@@ -25,16 +33,19 @@ wallet_address, did = await agentium_sdk.connect_google(google_id_token)
 wallet_address, did = agentium_sdk.connect_google_sync(google_id_token)
 ```
 
+**Note:** The `google_id_token` is obtained from Google's OAuth 2.0 authentication flow. See [Google Identity documentation](https://developers.google.com/identity/gsi/web/guides/overview) for implementation details.
+
 ### Wallet Sign-In (SIWE/EIP-4361)
 
 ```python
 import agentium_sdk
+import os
 
 # Connect with wallet using local signing (async)
 wallet_address, did = await agentium_sdk.connect_wallet(
     address="0x742d35Cc6634C0532925a3b844Bc9e7595f1b2b7",
     chain_id="eip155:84532",  # CAIP-2 format (Base Sepolia)
-    private_key="ac0974bfc...",  # hex string or bytes
+    private_key=os.getenv("WALLET_PRIVATE_KEY"),  # hex string or bytes
 )
 
 # Or use the sync version
@@ -42,6 +53,8 @@ wallet_address, did = agentium_sdk.connect_wallet_sync(
     address, chain_id, private_key
 )
 ```
+
+**Security Warning:** Never hardcode private keys in your source code. Always use environment variables, secure key management systems, or hardware wallets in production.
 
 ## AgentiumClient
 
@@ -147,15 +160,19 @@ print(response.refresh_token)
 Full wallet sign-in flow with local signing (challenge → sign → verify).
 
 ```python
+import os
+
 response = await client.connect_wallet(
     address="0x742d35Cc6634C0532925a3b844Bc9e7595f1b2b7",
     chain_id="eip155:84532",
-    private_key="ac0974bfc...",  # hex string or bytes
+    private_key=os.getenv("WALLET_PRIVATE_KEY"),  # hex string or bytes
 )
 print(response.did)           # did:pkh:eip155:84532:0x...
 print(response.access_token)  # JWT for authenticated calls
 print(response.is_new)        # True if newly created
 ```
+
+**Security Note:** Use secure key management practices. Never commit private keys to version control.
 
 ## Native Functions
 
@@ -226,11 +243,15 @@ Sign a wallet authentication challenge message.
 
 ```python
 from agentium_sdk import sign_challenge
+import os
+
+# Load private key securely from environment
+private_key = bytes.fromhex(os.getenv("WALLET_PRIVATE_KEY"))
 
 signature = sign_challenge(
     message=challenge_message.encode("utf-8"),
     chain_id="eip155:84532",
-    private_key=private_key_bytes,
+    private_key=private_key,
 )
 print(signature)  # 0x-prefixed hex signature
 ```
@@ -293,40 +314,58 @@ except AgentiumApiError as e:
     print(e.status_code)  # 401, 403, etc.
 ```
 
-## Python SDK Documentation
+## Development
 
-To build and serve docs locally:
+This SDK is a Python binding to native Rust code, providing high-performance cryptographic operations. Building from source requires the Rust toolchain.
+
+### Setup
+
+```bash
+# Install Rust toolchain (if not already installed)
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+
+# Install Maturin (build tool for Rust-based Python packages)
+pip install maturin
+
+# Build and install in development mode
+# This compiles the Rust code and creates a Python package
+maturin develop
+
+# Install development dependencies
+pip install -e ".[dev]"
+
+# Run tests
+pytest
+```
+
+### About Maturin
+
+[Maturin](https://github.com/PyO3/maturin) is the build tool that bridges Rust and Python, compiling the native Rust extensions and packaging them as a Python wheel. The `maturin develop` command builds the Rust code in debug mode and installs it in your current Python environment.
+
+## Building Documentation
+
+**Note:** This section is for SDK contributors who want to build and preview the documentation locally.
+
+To build and serve docs:
 
 ```bash
 # From the repository root, navigate to the Python SDK directory
 cd packages/agentium-native/python
 
-# Install docs dependencies
+# Install documentation dependencies
 pip install -e ".[docs]"
 
-# Build the SDK (required for mkdocstrings to inspect types)
+# Build the SDK first (required - mkdocstrings needs to import the package)
 maturin develop
 
-# Serve docs locally with hot-reload
+# Serve docs locally with hot-reload at http://127.0.0.1:8000
 mkdocs serve
 
-# Or build static site
+# Or build static site to site/ directory
 mkdocs build
 ```
 
-## Development
-
-```bash
-# Install build tool
-pip install maturin
-
-# Build and install in development mode
-maturin develop
-
-# Run tests
-pip install -e ".[dev]"
-pytest
-```
+The documentation uses [MkDocs](https://www.mkdocs.org/) with the [mkdocstrings](https://mkdocstrings.github.io/) plugin to auto-generate API docs from Python docstrings and type hints.
 
 ## License
 
