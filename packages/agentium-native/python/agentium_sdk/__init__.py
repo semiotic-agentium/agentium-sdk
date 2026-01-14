@@ -156,9 +156,7 @@ def connect_wallet_sync(
     base_url: str = "https://api.agentium.network",
 ) -> tuple[str, str]:
     """Synchronous version of connect_wallet."""
-    return asyncio.run(
-        connect_wallet(address, chain_id, private_key, base_url=base_url)
-    )
+    return asyncio.run(connect_wallet(address, chain_id, private_key, base_url=base_url))
 
 
 __all__ = [

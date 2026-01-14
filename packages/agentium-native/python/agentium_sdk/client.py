@@ -123,9 +123,7 @@ class AgentiumClient:
         except httpx.RequestError as e:
             raise AgentiumApiError(str(e)) from e
 
-    async def connect_google_identity(
-        self, google_token: str
-    ) -> ConnectIdentityResponse:
+    async def connect_google_identity(self, google_token: str) -> ConnectIdentityResponse:
         """Connect a Google identity to an Agentium identity.
 
         Args:
@@ -140,9 +138,7 @@ class AgentiumClient:
                 - 401: Unauthorized - invalid or expired JWT token.
                 - 500: Internal Server Error.
         """
-        token_response = await self._oauth_token_request(
-            "google_id_token", id_token=google_token
-        )
+        token_response = await self._oauth_token_request("google_id_token", id_token=google_token)
 
         did, is_new = _parse_scope_for_identity(token_response.scope)
 
@@ -181,9 +177,7 @@ class AgentiumClient:
         Raises:
             AgentiumApiError: If the request fails.
         """
-        return await self._oauth_token_request(
-            "refresh_token", refresh_token=refresh_token_value
-        )
+        return await self._oauth_token_request("refresh_token", refresh_token=refresh_token_value)
 
     async def fetch_membership_credential(self, token: str) -> str:
         """Fetch a membership credential from the backend.
@@ -293,9 +287,7 @@ class AgentiumClient:
         except httpx.RequestError as e:
             raise AgentiumApiError(str(e)) from e
 
-    async def verify_wallet_signature(
-        self, message: str, signature: str
-    ) -> OAuthTokenResponse:
+    async def verify_wallet_signature(self, message: str, signature: str) -> OAuthTokenResponse:
         """Verify wallet signature and obtain tokens.
 
         Args:
@@ -329,71 +321,70 @@ class AgentiumClient:
         except httpx.RequestError as e:
             raise AgentiumApiError(str(e)) from e
 
+
 async def connect_wallet(
-        self,
-        address: str,
-        chain_id: str,
-        private_key: bytes | str,
-    ) -> ConnectIdentityResponse:
-        """Connect a wallet identity using local signing.
+    self,
+    address: str,
+    chain_id: str,
+    private_key: bytes | str,
+) -> ConnectIdentityResponse:
+    """Connect a wallet identity using local signing.
 
-        This method handles the full wallet sign-in flow:
-        1. Request challenge from backend
-        2. Sign challenge with private key (locally)
-        3. Submit signature for verification
-        4. Return identity response with tokens
+    This method handles the full wallet sign-in flow:
+    1. Request challenge from backend
+    2. Sign challenge with private key (locally)
+    3. Submit signature for verification
+    4. Return identity response with tokens
 
-        Args:
-            address: Wallet address (format is chain-specific).
-            chain_id: CAIP-2 chain identifier (e.g., "eip155:84532").
-                See: https://github.com/ChainAgnostic/CAIPs/blob/master/CAIPs/caip-2.md
-            private_key: Raw private key bytes or hex string (with or without 0x prefix).
+    Args:
+        address: Wallet address (format is chain-specific).
+        chain_id: CAIP-2 chain identifier (e.g., "eip155:84532").
+            See: https://github.com/ChainAgnostic/CAIPs/blob/master/CAIPs/caip-2.md
+        private_key: Raw private key bytes or hex string (with or without 0x prefix).
 
-        Returns:
-            ConnectIdentityResponse with DID and tokens.
+    Returns:
+        ConnectIdentityResponse with DID and tokens.
 
-        Raises:
-            AgentiumApiError: If any API step fails.
-            ValueError: If signing fails (invalid key, unsupported chain).
+    Raises:
+        AgentiumApiError: If any API step fails.
+        ValueError: If signing fails (invalid key, unsupported chain).
 
-        Example:
-            >>> async with AgentiumClient() as client:
-            ...     response = await client.connect_wallet(
-            ...         address="0x742d35Cc6634C0532925a3b844Bc9e7595f1b2b7",
-            ...         chain_id="eip155:84532",
-            ...         private_key="ac0974...",  # hex string or bytes
-            ...     )
-            ...     print(response.did)
-        """
-        from agentium_sdk._native import sign_challenge
+    Example:
+        >>> async with AgentiumClient() as client:
+        ...     response = await client.connect_wallet(
+        ...         address="0x742d35Cc6634C0532925a3b844Bc9e7595f1b2b7",
+        ...         chain_id="eip155:84532",
+        ...         private_key="ac0974...",  # hex string or bytes
+        ...     )
+        ...     print(response.did)
+    """
+    from agentium_sdk._native import sign_challenge
 
-        # Normalize private key to bytes
-        if isinstance(private_key, str):
-            private_key = bytes.fromhex(private_key.removeprefix("0x"))
+    # Normalize private key to bytes
+    if isinstance(private_key, str):
+        private_key = bytes.fromhex(private_key.removeprefix("0x"))
 
-        # 1. Get challenge
-        challenge = await self.request_wallet_challenge(address, chain_id)
+    # 1. Get challenge
+    challenge = await self.request_wallet_challenge(address, chain_id)
 
-        # 2. Sign locally
-        signature = sign_challenge(
-            challenge.message.encode("utf-8"),
-            chain_id,
-            private_key,
-        )
+    # 2. Sign locally
+    signature = sign_challenge(
+        challenge.message.encode("utf-8"),
+        chain_id,
+        private_key,
+    )
 
-        # 3. Verify and get tokens
-        token_response = await self.verify_wallet_signature(
-            challenge.message, signature
-        )
+    # 3. Verify and get tokens
+    token_response = await self.verify_wallet_signature(challenge.message, signature)
 
-        # 4. Parse identity from scope
-        did, is_new = _parse_scope_for_identity(token_response.scope)
+    # 4. Parse identity from scope
+    did, is_new = _parse_scope_for_identity(token_response.scope)
 
-        return ConnectIdentityResponse(
-            did=did,
-            badge=Badge(status="Active" if is_new else "Existing"),
-            is_new=is_new,
-            access_token=token_response.access_token,
-            refresh_token=token_response.refresh_token,
-            expires_in=token_response.expires_in,
-        )
+    return ConnectIdentityResponse(
+        did=did,
+        badge=Badge(status="Active" if is_new else "Existing"),
+        is_new=is_new,
+        access_token=token_response.access_token,
+        refresh_token=token_response.refresh_token,
+        expires_in=token_response.expires_in,
+    )
