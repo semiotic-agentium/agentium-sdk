@@ -60,7 +60,9 @@ wallet, did = agentium_sdk.connect_wallet_sync(address, chain_id, private_key)
 
 ### Using AgentiumClient
 
-For more control, use the `AgentiumClient` directly:
+For more control, use the `AgentiumClient` directly. By default, it connects to `https://api.agentium.network`. You can override this with `AgentiumClient(base_url="https://your.endpoint")`.
+
+#### Google Sign-In with Client
 
 ```python
 from agentium_sdk import AgentiumClient
@@ -78,11 +80,51 @@ async with AgentiumClient() as client:
         print(result.claims)  # dict with JWT claims
 ```
 
-### Custom Endpoint
+#### Wallet Sign-In with Client
+
+The client provides three wallet authentication methods:
+
+**Option 1: Full flow with local signing (recommended)**
 
 ```python
-async with AgentiumClient(base_url="https://custom.api.endpoint") as client:
-    # ... use client
+from agentium_sdk import AgentiumClient
+
+async with AgentiumClient() as client:
+    # Complete wallet sign-in in one call
+    response = await client.connect_wallet(
+        address="0x742d35Cc6634C0532925a3b844Bc9e7595f1b2b7",
+        chain_id="eip155:84532",  # CAIP-2 format (Base Sepolia)
+        private_key="ac0974bfc...",  # hex string or bytes
+    )
+    
+    print(response.did)           # did:pkh:eip155:84532:0x...
+    print(response.access_token)  # JWT for authenticated calls
+    print(response.is_new)        # True if first time
+```
+
+**Option 2: Manual challenge-response flow**
+
+Useful when signing happens externally (e.g., browser wallet like MetaMask):
+
+```python
+from agentium_sdk import AgentiumClient
+
+async with AgentiumClient() as client:
+    # 1. Request challenge
+    challenge = await client.request_wallet_challenge(
+        address="0x742d35Cc6634C0532925a3b844Bc9e7595f1b2b7",
+        chain_id="eip155:84532",
+    )
+    print(challenge.message)  # SIWE message to sign
+    print(challenge.nonce)    # Unique nonce
+    
+    # 2. Sign externally (e.g., with MetaMask via personal_sign)
+    signature = "0x..."  # Get signature from wallet
+    
+    # 3. Verify and get tokens
+    tokens = await client.verify_wallet_signature(challenge.message, signature)
+    print(tokens.access_token)
+    print(tokens.refresh_token)
 ```
 
 ## Telemetry

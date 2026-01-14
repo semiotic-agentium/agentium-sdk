@@ -15,6 +15,8 @@ pip install agentium-sdk
 
 ## Quick Start
 
+### Google Sign-In
+
 ```python
 import agentium_sdk
 
@@ -23,6 +25,24 @@ wallet_address, did = await agentium_sdk.connect_google(google_id_token)
 
 # Or use the sync version
 wallet_address, did = agentium_sdk.connect_google_sync(google_id_token)
+```
+
+### Wallet Sign-In (SIWE/EIP-4361)
+
+```python
+import agentium_sdk
+
+# Connect with wallet using local signing (async)
+wallet_address, did = await agentium_sdk.connect_wallet(
+    address="0x742d35Cc6634C0532925a3b844Bc9e7595f1b2b7",
+    chain_id="eip155:84532",  # CAIP-2 format (Base Sepolia)
+    private_key="ac0974bfc...",  # hex string or bytes
+)
+
+# Or use the sync version
+wallet_address, did = agentium_sdk.connect_wallet_sync(
+    address, chain_id, private_key
+)
 ```
 
 ## AgentiumClient
@@ -101,6 +121,44 @@ if result.valid:
     print(result.claims)  # dict with JWT claims
 ```
 
+#### `request_wallet_challenge(address: str, chain_id: str) -> WalletChallengeResponse`
+
+Request a SIWE challenge message for wallet sign-in.
+
+```python
+challenge = await client.request_wallet_challenge(
+    address="0x742d35Cc6634C0532925a3b844Bc9e7595f1b2b7",
+    chain_id="eip155:84532",  # CAIP-2 format
+)
+print(challenge.message)  # SIWE message to sign
+print(challenge.nonce)    # Unique nonce for replay protection
+```
+
+#### `verify_wallet_signature(message: str, signature: str) -> OAuthTokenResponse`
+
+Verify a signed challenge and obtain JWT tokens.
+
+```python
+response = await client.verify_wallet_signature(challenge.message, signature)
+print(response.access_token)
+print(response.refresh_token)
+```
+
+#### `connect_wallet(address: str, chain_id: str, private_key: bytes | str) -> ConnectIdentityResponse`
+
+Full wallet sign-in flow with local signing (challenge → sign → verify).
+
+```python
+response = await client.connect_wallet(
+    address="0x742d35Cc6634C0532925a3b844Bc9e7595f1b2b7",
+    chain_id="eip155:84532",
+    private_key="ac0974bfc...",  # hex string or bytes
+)
+print(response.did)           # did:pkh:eip155:84532:0x...
+print(response.access_token)  # JWT for authenticated calls
+print(response.is_new)        # True if newly created
+```
+
 ## Native Functions
 
 Low-level cryptographic operations powered by Rust.
@@ -164,6 +222,32 @@ from agentium_sdk import get_public_key
 public_jwk = get_public_key(private_key_jwk_json)
 ```
 
+### `sign_challenge(message: bytes, chain_id: str, private_key: bytes) -> str`
+
+Sign a wallet authentication challenge message.
+
+```python
+from agentium_sdk import sign_challenge
+
+signature = sign_challenge(
+    message=challenge_message.encode("utf-8"),
+    chain_id="eip155:84532",
+    private_key=private_key_bytes,
+)
+print(signature)  # 0x-prefixed hex signature
+```
+
+### `validate_caip2(chain_id: str) -> bool`
+
+Validate a CAIP-2 chain identifier format.
+
+```python
+from agentium_sdk import validate_caip2
+
+if validate_caip2("eip155:84532"):
+    print("Valid chain ID")
+```
+
 ## Telemetry
 
 Enable structured tracing with a custom callback.
@@ -187,6 +271,8 @@ init_tracing(telemetry_handler, "debug")  # filter: "info", "debug", "agentium=t
 |------|-------------|
 | `ConnectIdentityResponse` | DID, tokens, badge status, `is_new` flag |
 | `OAuthTokenResponse` | `access_token`, `refresh_token`, `expires_in`, `scope` |
+| `WalletChallengeResponse` | `message`, `nonce` for wallet sign-in challenge |
+| `Caip2` | Parsed CAIP-2 chain identifier with `namespace` and `reference` |
 | `VerificationResult` | `valid`, `claims` (dict), `error` |
 | `VerificationError` | `code`, `message` |
 | `JwtHeader` | `alg`, `typ`, `kid` |
@@ -209,15 +295,14 @@ except AgentiumApiError as e:
     print(e.status_code)  # 401, 403, etc.
 ```
 
-## Documentation
-
-Full API documentation is available at:
-
-- **Online**: [semiotic-ai.github.io/agentium-sdk/python/](https://semiotic-ai.github.io/agentium-sdk/python/)
+## Python SDK Documentation
 
 To build and serve docs locally:
 
 ```bash
+# From the repository root, navigate to the Python SDK directory
+cd packages/agentium-native/python
+
 # Install docs dependencies
 pip install -e ".[docs]"
 

@@ -15,6 +15,12 @@ Response types and data classes.
 
 ::: agentium_sdk.WalletChallengeResponse
 
+## Chain Identifiers
+
+::: agentium_sdk.Caip2
+
+::: agentium_sdk.Caip2Error
+
 ## Enums
 
 ::: agentium_sdk.GrantType

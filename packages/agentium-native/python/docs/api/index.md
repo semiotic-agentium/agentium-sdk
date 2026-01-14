@@ -16,6 +16,14 @@ The Agentium SDK is organized into several modules:
 
 ## Top-Level Functions
 
+### Google Sign-In
+
 ::: agentium_sdk.connect_google
 
 ::: agentium_sdk.connect_google_sync
+
+### Wallet Sign-In
+
+::: agentium_sdk.connect_wallet
+
+::: agentium_sdk.connect_wallet_sync
