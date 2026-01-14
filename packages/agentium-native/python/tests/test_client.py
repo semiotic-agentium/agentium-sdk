@@ -50,9 +50,7 @@ class TestAgentiumClientConnectGoogle:
 
     @respx.mock
     @pytest.mark.asyncio
-    async def test_connect_google_identity_success(
-        self, mock_oauth_response: dict
-    ) -> None:
+    async def test_connect_google_identity_success(self, mock_oauth_response: dict) -> None:
         """Should successfully connect Google identity."""
         respx.post("https://api.agentium.network/oauth/token").mock(
             return_value=httpx.Response(200, json=mock_oauth_response)
