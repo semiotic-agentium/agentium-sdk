@@ -93,7 +93,11 @@ impl From<agentium_sdk_core::SignError> for VerificationError {
                 "UNSUPPORTED_NAMESPACE".to_string(),
                 format!("Chain namespace not supported for signing: {ns}"),
             ),
-            SignError::InvalidKeyLength { expected, got, chain } => (
+            SignError::InvalidKeyLength {
+                expected,
+                got,
+                chain,
+            } => (
                 "INVALID_KEY_LENGTH".to_string(),
                 format!("Invalid key length for {chain}: expected {expected}, got {got}"),
             ),

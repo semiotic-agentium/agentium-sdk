@@ -135,13 +135,12 @@ mod evm {
                     chain: "evm",
                 })?;
 
-        let signer =
-            PrivateKeySigner::from_bytes(&B256::from(key_bytes)).map_err(|e| {
-                SignError::InvalidKeyFormat {
-                    chain: "evm",
-                    reason: e.to_string(),
-                }
-            })?;
+        let signer = PrivateKeySigner::from_bytes(&B256::from(key_bytes)).map_err(|e| {
+            SignError::InvalidKeyFormat {
+                chain: "evm",
+                reason: e.to_string(),
+            }
+        })?;
 
         let signature = signer
             .sign_message_sync(message)
