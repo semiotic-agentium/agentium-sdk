@@ -6,6 +6,13 @@ SPDX-License-Identifier: MIT
 
 # Changelog
 
+## [0.9.9](https://github.com/semiotic-agentium/agentium-sdk/compare/agentium-sdk-v0.9.8...agentium-sdk-v0.9.9) (2026-01-15)
+
+
+### Bug Fixes
+
+* **python:** set CC flag to use zig for aarch64 builds ([94d6e01](https://github.com/semiotic-agentium/agentium-sdk/commit/94d6e016f7e6c7808947c1ea33a7c9689c38d0d6))
+
 ## [0.9.8](https://github.com/semiotic-agentium/agentium-sdk/compare/agentium-sdk-v0.9.7...agentium-sdk-v0.9.8) (2026-01-15)
 
 
