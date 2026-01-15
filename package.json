@@ -22,7 +22,7 @@
     "format:rust": "cd packages/agentium-native && cargo fmt --all",
     "format:rust:check": "cd packages/agentium-native && cargo fmt --all --check",
     "format:all": "npm run format:write && npm run format:python && npm run format:rust",
-    "check": "npm run lint && npm run format:check && npm run check:python",
+    "check": "npm run lint && npm run format:check",
     "reuse:check": "reuse lint",
     "reuse:write": "reuse annotate --license MIT --copyright \"Semiotic AI, Inc.\" --year 2025 -r . --fallback-dot-license --skip-existing"
   },

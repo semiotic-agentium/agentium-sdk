@@ -7,7 +7,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Literal
+from typing import ClassVar, Literal
 
 __all__ = [
     "GrantType",
@@ -103,9 +103,6 @@ class Caip2Error(ValueError):
     """Error raised when CAIP-2 parsing fails."""
 
     pass
-
-
-from typing import ClassVar
 
 
 @dataclass(frozen=True)
