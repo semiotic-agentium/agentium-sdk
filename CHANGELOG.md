@@ -6,6 +6,22 @@ SPDX-License-Identifier: MIT
 
 # Changelog
 
+## [0.10.0](https://github.com/semiotic-agentium/agentium-sdk/compare/agentium-sdk-v0.9.10...agentium-sdk-v0.10.0) (2026-01-15)
+
+
+### ⚠ BREAKING CHANGES
+
+* **python:** `connect_wallet` argument order changed from (address, chain_id, private_key) to (address, private_key, chain_id).
+
+### Features
+
+* **python:** add Caip2 type support and default chain for wallet auth ([54c75f0](https://github.com/semiotic-agentium/agentium-sdk/commit/54c75f003fd357d77e8875af1370ded3b79d16c3))
+
+
+### Bug Fixes
+
+* **python:** add constant to Caip class definition ([ee2a097](https://github.com/semiotic-agentium/agentium-sdk/commit/ee2a0970de8f56d18f2a8cfcd975558669be514f))
+
 ## [0.9.10](https://github.com/semiotic-agentium/agentium-sdk/compare/agentium-sdk-v0.9.9...agentium-sdk-v0.9.10) (2026-01-15)
 
 
