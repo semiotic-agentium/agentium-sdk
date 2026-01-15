@@ -105,6 +105,9 @@ class Caip2Error(ValueError):
     pass
 
 
+from typing import ClassVar
+
+
 @dataclass(frozen=True)
 class Caip2:
     """CAIP-2 chain identifier (e.g., "eip155:84532", "eip155:1").
@@ -130,6 +133,12 @@ class Caip2:
         >>> str(Caip2.BASE_SEPOLIA)
         'eip155:84532'
     """
+
+    BASE_SEPOLIA: ClassVar[Caip2]
+    """Base Sepolia testnet (chain ID 84532)."""
+
+    BASE_MAINNET: ClassVar[Caip2]
+    """Base mainnet (chain ID 8453)."""
 
     namespace: str
     """Chain namespace (e.g., "eip155", "solana", "cosmos")."""
@@ -204,10 +213,7 @@ class Caip2:
 
 # Pre-defined constants for supported chains
 Caip2.BASE_SEPOLIA = Caip2(namespace="eip155", reference="84532")
-"""Base Sepolia testnet (chain ID 84532)."""
-
 Caip2.BASE_MAINNET = Caip2(namespace="eip155", reference="8453")
-"""Base mainnet (chain ID 8453)."""
 
 
 def _parse_scope_for_identity(scope: str) -> tuple[str, bool]:
