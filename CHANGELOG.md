@@ -6,6 +6,13 @@ SPDX-License-Identifier: MIT
 
 # Changelog
 
+## [0.9.10](https://github.com/semiotic-agentium/agentium-sdk/compare/agentium-sdk-v0.9.9...agentium-sdk-v0.9.10) (2026-01-15)
+
+
+### Bug Fixes
+
+* **python:** install zig on container used for aarch64 wheels ([fde53d4](https://github.com/semiotic-agentium/agentium-sdk/commit/fde53d49c3141d5d3522d71145b8edd15fe5df8f))
+
 ## [0.9.9](https://github.com/semiotic-agentium/agentium-sdk/compare/agentium-sdk-v0.9.8...agentium-sdk-v0.9.9) (2026-01-15)
 
 
