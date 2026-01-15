@@ -1,14 +1,29 @@
 {
+  "separate-pull-requests": true,
   "packages": {
     ".": {
       "release-type": "node",
       "package-name": "@semiotic-labs/agentium-sdk",
-      "bump-minor-pre-major": true
+      "bump-minor-pre-major": true,
+      "exclude-paths": ["packages/agentium-native/python"]
     },
     "packages/agentium-native/python": {
       "release-type": "python",
       "package-name": "agentium-sdk-python",
-      "bump-minor-pre-major": true
+      "bump-minor-pre-major": true,
+      "exclude-paths": [
+        "src",
+        "package.json",
+        "package-lock.json",
+        "tsconfig.json",
+        "vitest.config.ts",
+        "vitest.setup.ts",
+        "eslint.config.js",
+        "typedoc.json",
+        ".prettierrc",
+        ".prettierignore",
+        "packages/agentium-native/wasm"
+      ]
     }
   }
 }
