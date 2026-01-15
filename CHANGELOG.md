@@ -6,6 +6,13 @@ SPDX-License-Identifier: MIT
 
 # Changelog
 
+## [0.9.8](https://github.com/semiotic-agentium/agentium-sdk/compare/agentium-sdk-v0.9.7...agentium-sdk-v0.9.8) (2026-01-15)
+
+
+### Bug Fixes
+
+* **python:** disable sccache for aarh64 builds ([ff33045](https://github.com/semiotic-agentium/agentium-sdk/commit/ff33045ccdc407446b9e80311c57516d2c0a2eae))
+
 ## [0.9.7](https://github.com/semiotic-agentium/agentium-sdk/compare/agentium-sdk-v0.9.6...agentium-sdk-v0.9.7) (2026-01-14)
 
 

@@ -1,6 +1,13 @@
 # Changelog
 
 
+## [0.4.6](https://github.com/semiotic-agentium/agentium-sdk/compare/agentium-sdk-python-v0.4.5...agentium-sdk-python-v0.4.6) (2026-01-15)
+
+
+### Bug Fixes
+
+* **python:** disable sccache for aarh64 builds ([ff33045](https://github.com/semiotic-agentium/agentium-sdk/commit/ff33045ccdc407446b9e80311c57516d2c0a2eae))
+
 ## [0.4.5](https://github.com/semiotic-agentium/agentium-sdk/compare/agentium-sdk-python-v0.4.4...agentium-sdk-python-v0.4.5) (2026-01-14)
 
 

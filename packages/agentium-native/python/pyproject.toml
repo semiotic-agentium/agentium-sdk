@@ -8,7 +8,7 @@ build-backend = "maturin"
 
 [project]
 name = "agentium-sdk"
-version = "0.4.5"
+version = "0.4.6"
 description = "Agentium SDK for Python - DID and Verifiable Credentials"
 readme = "README.md"
 license = { text = "MIT" }
