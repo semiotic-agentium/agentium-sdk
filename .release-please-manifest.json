@@ -1,4 +1,4 @@
 {
-  ".": "0.9.10",
-  "packages/agentium-native/python": "0.4.8"
+  ".": "0.10.0",
+  "packages/agentium-native/python": "0.5.0"
 }

@@ -1,6 +1,27 @@
 # Changelog
 
 
+## [0.5.0](https://github.com/semiotic-agentium/agentium-sdk/compare/agentium-sdk-python-v0.4.8...agentium-sdk-python-v0.5.0) (2026-01-15)
+
+
+### ⚠ BREAKING CHANGES
+
+* **python:** `connect_wallet` argument order changed from (address, chain_id, private_key) to (address, private_key, chain_id).
+
+### Features
+
+* **python:** add Caip2 type support and default chain for wallet auth ([54c75f0](https://github.com/semiotic-agentium/agentium-sdk/commit/54c75f003fd357d77e8875af1370ded3b79d16c3))
+
+
+### Bug Fixes
+
+* **python:** add constant to Caip class definition ([ee2a097](https://github.com/semiotic-agentium/agentium-sdk/commit/ee2a0970de8f56d18f2a8cfcd975558669be514f))
+
+
+### Documentation
+
+* Add documentation about supported/unsupported platforms ([0c18fae](https://github.com/semiotic-agentium/agentium-sdk/commit/0c18faee3b73e7e4d738d3a0a92865c701a9fc15))
+
 ## [0.4.8](https://github.com/semiotic-agentium/agentium-sdk/compare/agentium-sdk-python-v0.4.7...agentium-sdk-python-v0.4.8) (2026-01-15)
 
 
