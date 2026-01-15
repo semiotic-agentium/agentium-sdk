@@ -95,6 +95,9 @@ jobs:
 
       - name: Build wheels
         uses: PyO3/maturin-action@v1
+        env:
+          # Set CC for zig cross-compilation (cc crate needs this)
+          CC_aarch64_unknown_linux_gnu: ${{ matrix.use_zig && 'zig cc -target aarch64-linux-gnu' || '' }}
         with:
           target: ${{ matrix.target }}
           # For cross-compilation, specify Python versions explicitly
