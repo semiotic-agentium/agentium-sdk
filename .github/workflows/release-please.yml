@@ -99,7 +99,8 @@ jobs:
           target: ${{ matrix.target }}
           # For cross-compilation, specify Python versions explicitly
           args: --release --out dist ${{ matrix.use_zig && '-i python3.10 -i python3.11 -i python3.12 -i python3.13' || '' }}
-          sccache: 'true'
+          # Disable sccache for zig builds (conflicts with zig's CC wrapper)
+          sccache: ${{ !matrix.use_zig }}
           manylinux: ${{ matrix.use_zig && 'off' || 'auto' }}
           working-directory: packages/agentium-native/python
           # Use zig for cross-compilation (aarch64-linux from x86_64 host)
