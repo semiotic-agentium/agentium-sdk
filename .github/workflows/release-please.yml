@@ -93,11 +93,19 @@ jobs:
         with:
           python-version: '3.13'
 
+      - name: Install Zig (for aarch64 cross)
+        if: ${{ matrix.use_zig }}
+        uses: goto-bus-stop/setup-zig@v2
+        with:
+          zig-version: '0.12.x'
+
       - name: Build wheels
         uses: PyO3/maturin-action@v1
         env:
-          # Set CC for zig cross-compilation (cc crate needs this)
+          # Tell cargo/cc which tools to use for the aarch64 target
           CC_aarch64_unknown_linux_gnu: ${{ matrix.use_zig && 'zig cc -target aarch64-linux-gnu' || '' }}
+          AR_aarch64_unknown_linux_gnu: ${{ matrix.use_zig && 'zig ar' || '' }}
+          CARGO_TARGET_AARCH64_UNKNOWN_LINUX_GNU_LINKER: ${{ matrix.use_zig && 'zig' || '' }}
         with:
           target: ${{ matrix.target }}
           # For cross-compilation, specify Python versions explicitly
