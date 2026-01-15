@@ -13,11 +13,39 @@ pip install agentium-sdk
 
 ## Requirements
 
-- **Python**: 3.8 or higher
-- **For end users**: No additional dependencies (prebuilt wheels available for most platforms)
+- **Python**: 3.10 or higher
+- **For end users**: No additional dependencies (prebuilt wheels available for supported platforms)
 - **For development/building from source**:
   - Rust toolchain (1.70+) - [Install Rust](https://rustup.rs/)
   - Maturin build tool: `pip install maturin`
+
+## Platform Support
+
+Prebuilt wheels are available for the following platforms:
+
+| Platform | Architecture | Wheel Available |
+|----------|--------------|------------------|
+| Linux | x86_64 | ✅ |
+| Linux | aarch64 (ARM64) | ❌ (build from source) |
+| macOS | x86_64 (Intel) | ✅ |
+| macOS | aarch64 (Apple Silicon) | ✅ |
+| Windows | x86_64 | ✅ |
+
+### Installing on Unsupported Platforms
+
+For platforms without prebuilt wheels (e.g., Linux aarch64/ARM64), pip will automatically attempt to build from the source distribution. This requires:
+
+1. **Rust toolchain** (1.70+):
+   ```bash
+   curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+   ```
+
+2. **Install the SDK** (pip will compile from source):
+   ```bash
+   pip install agentium-sdk
+   ```
+
+The build process may take a few minutes as it compiles the native Rust code.
 
 ## Quick Start
 
