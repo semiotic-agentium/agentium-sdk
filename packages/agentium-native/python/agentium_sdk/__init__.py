@@ -125,8 +125,8 @@ def connect_google_sync(
 
 async def connect_wallet(
     address: str,
-    chain_id: str,
     private_key: bytes | str,
+    chain_id: Caip2 | str = Caip2.BASE_MAINNET,
     *,
     base_url: str = "https://api.agentium.network",
 ) -> tuple[str, str]:
@@ -134,35 +134,35 @@ async def connect_wallet(
 
     Args:
         address: Wallet address (format is chain-specific).
-        chain_id: CAIP-2 chain identifier (e.g., "eip155:84532").
-            See: https://github.com/ChainAgnostic/CAIPs/blob/master/CAIPs/caip-2.md
         private_key: Raw private key bytes or hex string (with or without 0x prefix).
+        chain_id: CAIP-2 chain identifier, either as a Caip2 object or string.
+            Defaults to Caip2.BASE_MAINNET (eip155:8453).
         base_url: The Agentium API base URL.
 
     Returns:
         Tuple of (wallet_address, did).
 
     Example:
+        >>> # Uses Base Sepolia by default
         >>> wallet, did = await agentium_sdk.connect_wallet(
         ...     "0x742d35Cc6634C0532925a3b844Bc9e7595f1b2b7",
-        ...     "eip155:84532",
         ...     "ac0974...",  # hex string or bytes
         ... )
     """
     async with AgentiumClient(base_url=base_url) as client:
-        response = await client.connect_wallet(address, chain_id, private_key)
+        response = await client.connect_wallet(address, private_key, chain_id)
         return address, response.did
 
 
 def connect_wallet_sync(
     address: str,
-    chain_id: str,
     private_key: bytes | str,
+    chain_id: Caip2 | str = Caip2.BASE_MAINNET,
     *,
     base_url: str = "https://api.agentium.network",
 ) -> tuple[str, str]:
     """Synchronous version of connect_wallet."""
-    return asyncio.run(connect_wallet(address, chain_id, private_key, base_url=base_url))
+    return asyncio.run(connect_wallet(address, private_key, chain_id, base_url=base_url))
 
 
 __all__ = [

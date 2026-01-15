@@ -115,6 +115,10 @@ class Caip2:
 
     See: https://github.com/ChainAgnostic/CAIPs/blob/master/CAIPs/caip-2.md
 
+    Pre-defined constants for supported chains:
+        - `Caip2.BASE_SEPOLIA`: Base Sepolia testnet (eip155:84532)
+        - `Caip2.BASE_MAINNET`: Base mainnet (eip155:8453)
+
     Example:
         >>> caip2 = Caip2.parse("eip155:84532")
         >>> caip2.namespace
@@ -123,6 +127,8 @@ class Caip2:
         '84532'
         >>> caip2.evm_chain_id()
         84532
+        >>> str(Caip2.BASE_SEPOLIA)
+        'eip155:84532'
     """
 
     namespace: str
@@ -194,6 +200,14 @@ class Caip2:
             return int(self.reference)
         except ValueError:
             raise Caip2Error(f"chain reference is not numeric: {self.reference}")
+
+
+# Pre-defined constants for supported chains
+Caip2.BASE_SEPOLIA = Caip2(namespace="eip155", reference="84532")
+"""Base Sepolia testnet (chain ID 84532)."""
+
+Caip2.BASE_MAINNET = Caip2(namespace="eip155", reference="8453")
+"""Base mainnet (chain ID 8453)."""
 
 
 def _parse_scope_for_identity(scope: str) -> tuple[str, bool]:

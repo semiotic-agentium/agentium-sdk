@@ -70,16 +70,23 @@ import agentium_sdk
 import os
 
 # Connect with wallet using local signing (async)
+# Uses Base mainnet (eip155:8453) by default
 wallet_address, did = await agentium_sdk.connect_wallet(
     address="0x742d35Cc6634C0532925a3b844Bc9e7595f1b2b7",
-    chain_id="eip155:84532",  # CAIP-2 format (Base Sepolia)
     private_key=os.getenv("WALLET_PRIVATE_KEY"),  # hex string or bytes
 )
 
-# Or use the sync version
-wallet_address, did = agentium_sdk.connect_wallet_sync(
-    address, chain_id, private_key
+# Or specify a different chain (e.g., testnet) using Caip2
+from agentium_sdk import Caip2
+
+wallet_address, did = await agentium_sdk.connect_wallet(
+    address="0x742d35Cc6634C0532925a3b844Bc9e7595f1b2b7",
+    private_key=os.getenv("WALLET_PRIVATE_KEY"),
+    chain_id=Caip2.BASE_SEPOLIA,  # or "eip155:84532" for testnet
 )
+
+# Sync version available
+wallet_address, did = agentium_sdk.connect_wallet_sync(address, private_key)
 ```
 
 **Security Warning:** Never hardcode private keys in your source code. Always use environment variables, secure key management systems, or hardware wallets in production.
@@ -160,17 +167,25 @@ if result.valid:
     print(result.claims)  # dict with JWT claims
 ```
 
-#### `request_wallet_challenge(address: str, chain_id: str) -> WalletChallengeResponse`
+#### `request_wallet_challenge(address: str, chain_id: Caip2 | str = Caip2.BASE_MAINNET) -> WalletChallengeResponse`
 
 Request a SIWE challenge message for wallet sign-in.
 
 ```python
+# Uses Base mainnet by default
 challenge = await client.request_wallet_challenge(
     address="0x742d35Cc6634C0532925a3b844Bc9e7595f1b2b7",
-    chain_id="eip155:84532",  # CAIP-2 format
 )
 print(challenge.message)  # SIWE message to sign
 print(challenge.nonce)    # Unique nonce for replay protection
+
+# Or specify testnet explicitly
+from agentium_sdk import Caip2
+
+challenge = await client.request_wallet_challenge(
+    address="0x742d35Cc6634C0532925a3b844Bc9e7595f1b2b7",
+    chain_id=Caip2.BASE_SEPOLIA,  # or "eip155:84532" for testnet
+)
 ```
 
 #### `verify_wallet_signature(message: str, signature: str) -> OAuthTokenResponse`
@@ -183,21 +198,30 @@ print(response.access_token)
 print(response.refresh_token)
 ```
 
-#### `connect_wallet(address: str, chain_id: str, private_key: bytes | str) -> ConnectIdentityResponse`
+#### `connect_wallet(address: str, private_key: bytes | str, chain_id: Caip2 | str = Caip2.BASE_MAINNET) -> ConnectIdentityResponse`
 
 Full wallet sign-in flow with local signing (challenge → sign → verify).
 
 ```python
 import os
 
+# Uses Base mainnet by default
 response = await client.connect_wallet(
     address="0x742d35Cc6634C0532925a3b844Bc9e7595f1b2b7",
-    chain_id="eip155:84532",
     private_key=os.getenv("WALLET_PRIVATE_KEY"),  # hex string or bytes
 )
-print(response.did)           # did:pkh:eip155:84532:0x...
+print(response.did)           # did:pkh:eip155:8453:0x...
 print(response.access_token)  # JWT for authenticated calls
 print(response.is_new)        # True if newly created
+
+# Or specify testnet explicitly
+from agentium_sdk import Caip2
+
+response = await client.connect_wallet(
+    address="0x742d35Cc6634C0532925a3b844Bc9e7595f1b2b7",
+    private_key=os.getenv("WALLET_PRIVATE_KEY"),
+    chain_id=Caip2.BASE_SEPOLIA,  # for testnet
+)
 ```
 
 **Security Note:** Use secure key management practices. Never commit private keys to version control.
@@ -319,7 +343,7 @@ init_tracing(telemetry_handler, "debug")  # filter: "info", "debug", "agentium=t
 | `ConnectIdentityResponse` | DID, tokens, badge status, `is_new` flag |
 | `OAuthTokenResponse` | `access_token`, `refresh_token`, `expires_in`, `scope` |
 | `WalletChallengeResponse` | `message`, `nonce` for wallet sign-in challenge |
-| `Caip2` | Parsed CAIP-2 chain identifier with `namespace` and `reference` |
+| `Caip2` | Parsed CAIP-2 chain identifier with `namespace` and `reference`. Constants: `Caip2.BASE_SEPOLIA`, `Caip2.BASE_MAINNET` |
 | `VerificationResult` | `valid`, `claims` (dict), `error` |
 | `VerificationError` | `code`, `message` |
 | `JwtHeader` | `alg`, `typ`, `kid` |
@@ -340,6 +364,19 @@ try:
 except AgentiumApiError as e:
     print(e.message)
     print(e.status_code)  # 401, 403, etc.
+```
+
+### `Caip2Error`
+
+Raised when CAIP-2 chain identifier parsing fails.
+
+```python
+from agentium_sdk import Caip2, Caip2Error
+
+try:
+    caip2 = Caip2.parse("invalid-chain-id")
+except Caip2Error as e:
+    print(e)  # CAIP-2 identifier must contain a colon separator
 ```
 
 ## Development

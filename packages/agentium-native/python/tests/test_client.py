@@ -389,8 +389,8 @@ class TestConnectWallet:
         async with AgentiumClient() as client:
             response = await client.connect_wallet(
                 self.TEST_ADDRESS,
-                "eip155:84532",
                 self.TEST_PRIVATE_KEY,
+                "eip155:84532",
             )
 
         assert response.did == f"did:pkh:eip155:84532:{self.TEST_ADDRESS}"
@@ -432,8 +432,8 @@ class TestTopLevelConnectWallet:
 
         wallet_address, did = await connect_wallet(
             self.TEST_ADDRESS,
-            "eip155:84532",
             self.TEST_PRIVATE_KEY,
+            "eip155:84532",
         )
 
         assert wallet_address == self.TEST_ADDRESS

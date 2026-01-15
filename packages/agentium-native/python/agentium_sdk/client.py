@@ -20,6 +20,7 @@ from agentium_sdk._native import (
 from agentium_sdk.exceptions import AgentiumApiError
 from agentium_sdk.types import (
     Badge,
+    Caip2,
     ConnectIdentityResponse,
     GrantType,
     OAuthTokenResponse,
@@ -255,27 +256,29 @@ class AgentiumClient:
         return verify_jwt(jwt, public_key_jwk)
 
     async def request_wallet_challenge(
-        self, address: str, chain_id: str
+        self, address: str, chain_id: Caip2 | str = Caip2.BASE_MAINNET
     ) -> WalletChallengeResponse:
         """Request a challenge message for wallet sign-in.
 
         Args:
             address: Wallet address (format is chain-specific, 0x-prefixed for EVM).
-            chain_id: CAIP-2 chain identifier (e.g., "eip155:84532").
-                See: https://github.com/ChainAgnostic/CAIPs/blob/master/CAIPs/caip-2.md
+            chain_id: CAIP-2 chain identifier, either as a Caip2 object or string.
+                Defaults to Caip2.BASE_MAINNET (eip155:8453).
 
         Returns:
             WalletChallengeResponse with message to sign and nonce.
 
         Raises:
+            Caip2Error: If chain_id string is not valid CAIP-2 format.
             AgentiumApiError: If chain not supported or request fails.
         """
+        caip2 = chain_id if isinstance(chain_id, Caip2) else Caip2.parse(chain_id)
         client = await self._get_client()
 
         try:
             response = await client.get(
                 WALLET_CHALLENGE_PATH,
-                params={"address": address, "chain_id": chain_id},
+                params={"address": address, "chain_id": str(caip2)},
             )
             response.raise_for_status()
             data = response.json()
@@ -325,8 +328,8 @@ class AgentiumClient:
     async def connect_wallet(
         self,
         address: str,
-        chain_id: str,
         private_key: bytes | str,
+        chain_id: Caip2 | str = Caip2.BASE_MAINNET,
     ) -> ConnectIdentityResponse:
         """Connect a wallet identity using local signing.
 
@@ -336,41 +339,48 @@ class AgentiumClient:
         3. Submit signature for verification
         4. Return identity response with tokens
 
+        Note: Argument order is (address, private_key, chain_id) to allow
+        omitting chain_id when using the default Base mainnet.
+
         Args:
             address: Wallet address (format is chain-specific).
-            chain_id: CAIP-2 chain identifier (e.g., "eip155:84532").
-                See: https://github.com/ChainAgnostic/CAIPs/blob/master/CAIPs/caip-2.md
             private_key: Raw private key bytes or hex string (with or without 0x prefix).
+            chain_id: CAIP-2 chain identifier, either as a Caip2 object or string.
+                Defaults to Caip2.BASE_MAINNET (eip155:8453).
 
         Returns:
             ConnectIdentityResponse with DID and tokens.
 
         Raises:
+            Caip2Error: If chain_id string is not valid CAIP-2 format.
             AgentiumApiError: If any API step fails.
             ValueError: If signing fails (invalid key, unsupported chain).
 
         Example:
             >>> async with AgentiumClient() as client:
+            ...     # Uses Base mainnet by default
             ...     response = await client.connect_wallet(
             ...         address="0x742d35Cc6634C0532925a3b844Bc9e7595f1b2b7",
-            ...         chain_id="eip155:84532",
-            ...         private_key="ac0974...",  # hex string or bytes
+            ...         private_key="ac0974...",
             ...     )
             ...     print(response.did)
         """
         from agentium_sdk._native import sign_challenge
 
+        # Parse and validate chain_id early
+        caip2 = chain_id if isinstance(chain_id, Caip2) else Caip2.parse(chain_id)
+
         # Normalize private key to bytes
         if isinstance(private_key, str):
             private_key = bytes.fromhex(private_key.removeprefix("0x"))
 
-        # 1. Get challenge
-        challenge = await self.request_wallet_challenge(address, chain_id)
+        # 1. Get challenge (pass Caip2 object, request_wallet_challenge handles it)
+        challenge = await self.request_wallet_challenge(address, caip2)
 
         # 2. Sign locally
         signature = sign_challenge(
             challenge.message.encode("utf-8"),
-            chain_id,
+            str(caip2),
             private_key,
         )
 

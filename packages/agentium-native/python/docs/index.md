@@ -33,14 +33,23 @@ wallet_address, did = agentium_sdk.connect_google_sync(google_id_token)
 import agentium_sdk
 
 # Authenticate with wallet (SIWE/EIP-4361)
+# Uses Base mainnet (eip155:8453) by default
 wallet_address, did = await agentium_sdk.connect_wallet(
     address="0x742d35Cc6634C0532925a3b844Bc9e7595f1b2b7",
-    chain_id="eip155:84532",  # CAIP-2 format (Base Sepolia)
     private_key="ac0974bfc...",
 )
 
+# Or specify testnet explicitly
+from agentium_sdk import Caip2
+
+wallet_address, did = await agentium_sdk.connect_wallet(
+    address="0x742d35Cc6634C0532925a3b844Bc9e7595f1b2b7",
+    private_key="ac0974bfc...",
+    chain_id=Caip2.BASE_SEPOLIA,  # or "eip155:84532" for testnet
+)
+
 # Sync wrapper available
-wallet_address, did = agentium_sdk.connect_wallet_sync(address, chain_id, private_key)
+wallet_address, did = agentium_sdk.connect_wallet_sync(address, private_key)
 ```
 
 ## Installation
