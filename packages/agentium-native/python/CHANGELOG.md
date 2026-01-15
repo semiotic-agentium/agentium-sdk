@@ -1,6 +1,13 @@
 # Changelog
 
 
+## [0.4.8](https://github.com/semiotic-agentium/agentium-sdk/compare/agentium-sdk-python-v0.4.7...agentium-sdk-python-v0.4.8) (2026-01-15)
+
+
+### Bug Fixes
+
+* **python:** install zig on container used for aarch64 wheels ([fde53d4](https://github.com/semiotic-agentium/agentium-sdk/commit/fde53d49c3141d5d3522d71145b8edd15fe5df8f))
+
 ## [0.4.7](https://github.com/semiotic-agentium/agentium-sdk/compare/agentium-sdk-python-v0.4.6...agentium-sdk-python-v0.4.7) (2026-01-15)
 
 
