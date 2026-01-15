@@ -1,6 +1,13 @@
 # Changelog
 
 
+## [0.4.7](https://github.com/semiotic-agentium/agentium-sdk/compare/agentium-sdk-python-v0.4.6...agentium-sdk-python-v0.4.7) (2026-01-15)
+
+
+### Bug Fixes
+
+* **python:** set CC flag to use zig for aarch64 builds ([94d6e01](https://github.com/semiotic-agentium/agentium-sdk/commit/94d6e016f7e6c7808947c1ea33a7c9689c38d0d6))
+
 ## [0.4.6](https://github.com/semiotic-agentium/agentium-sdk/compare/agentium-sdk-python-v0.4.5...agentium-sdk-python-v0.4.6) (2026-01-15)
 
 
