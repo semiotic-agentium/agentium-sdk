@@ -58,6 +58,54 @@ export interface AgentiumClientOptions {
 }
 
 /**
+ * Options for initiating OIDC login.
+ */
+export interface OidcLoginOptions {
+  /**
+   * The URL where Google will redirect after authentication.
+   * Must be registered in the backend's Google Cloud Console.
+   * Must use http or https protocol.
+   */
+  redirectUri: string;
+}
+
+/**
+ * Parameters received from the OIDC callback.
+ */
+export interface OidcCallbackParams {
+  /**
+   * Authorization code from Google.
+   */
+  code: string;
+  /**
+   * State token for CSRF validation.
+   */
+  state: string;
+}
+
+/**
+ * Parsed permissions from the OAuth scope string.
+ */
+export interface ParsedPermissions {
+  /**
+   * Whether the user has base user permission.
+   */
+  isUser: boolean;
+  /**
+   * Whether this is a newly created user.
+   */
+  isNewUser: boolean;
+  /**
+   * The user's blockchain DID (did:pkh:...), if present.
+   */
+  did: string | null;
+  /**
+   * The user's profile ID, if present.
+   */
+  profileId: string | null;
+}
+
+/**
  * Supported OAuth grant types for token exchange.
  */
 export type GrantType =
@@ -174,8 +222,11 @@ function parseScopeForIdentity(scope: string): { did: string; isNew: boolean } {
  */
 export class AgentiumClient {
   private readonly axiosInstance: AxiosInstance;
+  private readonly baseURL: string;
   private readonly DEFAULT_BASE_URL = 'https://api.agentium.network';
   private readonly OAUTH_TOKEN_PATH = '/oauth/token';
+  private readonly OIDC_LOGIN_PATH = '/auth/oidc/login';
+  private readonly OIDC_CALLBACK_PATH = '/auth/oidc/callback';
   private readonly wasmReady: Promise<void>;
   private vcStorage: VcStorage | null = null;
 
@@ -184,9 +235,9 @@ export class AgentiumClient {
    * @param options - Configuration options for the client.
    */
   constructor(options: AgentiumClientOptions = {}) {
-    const baseURL = options.baseURL || this.DEFAULT_BASE_URL;
+    this.baseURL = options.baseURL || this.DEFAULT_BASE_URL;
     this.axiosInstance = axios.create({
-      baseURL: baseURL,
+      baseURL: this.baseURL,
     });
     this.wasmReady = ensureWasmReady(options.wasmUrl);
   }
@@ -275,9 +326,144 @@ export class AgentiumClient {
     }
   }
 
-  // ─────────────────────────────────────────────────────────────────────────────
-  // Verifiable Credentials (VC) Methods
-  // ─────────────────────────────────────────────────────────────────────────────
+  /**
+   * Generates the OIDC login URL for redirecting users to Google authentication.
+   * Use this when you need the URL without performing the redirect (e.g., for custom UI).
+   *
+   * @param options - Login options including the redirect URI
+   * @returns The full URL to redirect the user to
+   * @throws {Error} If redirect_uri is not http or https
+   */
+  getOidcLoginUrl(options: OidcLoginOptions): string {
+    const url = new URL(options.redirectUri);
+    if (!['http:', 'https:'].includes(url.protocol)) {
+      throw new Error('redirect_uri must use http or https protocol');
+    }
+    return `${this.baseURL}${this.OIDC_LOGIN_PATH}?redirect_uri=${encodeURIComponent(options.redirectUri)}`;
+  }
+
+  /**
+   * Initiates OIDC login by redirecting to the backend's login endpoint.
+   * The backend will redirect to Google OAuth, and after authentication,
+   * Google will redirect back to the specified redirect_uri with code and state parameters.
+   *
+   * Note: This method only works in browser environments.
+   *
+   * @param options - Login options including the redirect URI
+   * @throws {Error} If redirect_uri is not http or https, or if not in a browser environment
+   *
+   * @example
+   * ```typescript
+   * // Redirect user to Google login
+   * client.startOidcLogin({ redirectUri: 'https://myapp.com/auth/callback' });
+   * ```
+   */
+  startOidcLogin(options: OidcLoginOptions): void {
+    if (typeof window === 'undefined') {
+      throw new Error('startOidcLogin can only be used in browser environments');
+    }
+    const loginUrl = this.getOidcLoginUrl(options);
+    window.location.href = loginUrl;
+  }
+
+  /**
+   * Exchanges the authorization code from the OIDC callback for tokens.
+   * Call this after receiving the redirect from Google with code and state parameters.
+   *
+   * @param params - The code and state parameters from the callback URL
+   * @returns OAuth token response with access_token, refresh_token, etc.
+   * @throws {AgentiumApiError} If the exchange fails (invalid code, expired state, etc.)
+   *
+   * @example
+   * ```typescript
+   * // In your callback handler
+   * const urlParams = new URLSearchParams(window.location.search);
+   * const tokens = await client.exchangeOidcCode({
+   *   code: urlParams.get('code')!,
+   *   state: urlParams.get('state')!,
+   * });
+   * ```
+   */
+  async exchangeOidcCode(params: OidcCallbackParams): Promise<OAuthTokenResponse> {
+    try {
+      const searchParams = new URLSearchParams({
+        code: params.code,
+        state: params.state,
+      });
+
+      const response = await this.axiosInstance.get<OAuthTokenResponse>(
+        `${this.OIDC_CALLBACK_PATH}?${searchParams.toString()}`,
+        {
+          headers: {
+            Accept: 'application/json',
+          },
+        },
+      );
+      return response.data;
+    } catch (error) {
+      if (isAxiosError(error)) {
+        throw new AgentiumApiError(error.message, error.response?.status);
+      }
+      throw error;
+    }
+  }
+
+  /**
+   * Parses the OAuth scope string to extract permissions.
+   *
+   * @param scope - The scope string from the token response
+   * @returns Parsed permissions object
+   *
+   * @example
+   * ```typescript
+   * const tokens = await client.exchangeOidcCode({ code, state });
+   * const permissions = client.parseScope(tokens.scope);
+   * if (permissions.isNewUser) {
+   *   // Show onboarding
+   * }
+   * ```
+   */
+  parseScope(scope: string): ParsedPermissions {
+    const parts = scope.split(/\s+/);
+    return {
+      isUser: parts.includes('user'),
+      isNewUser: parts.includes('new_user'),
+      did: parts.find((p) => p.startsWith('did:pkh:')) ?? null,
+      profileId: parts.find((p) => p.startsWith('profile:'))?.replace('profile:', '') ?? null,
+    };
+  }
+
+  /**
+   * Helper to extract OIDC callback parameters from a URL.
+   * Useful for parsing the current URL after redirect.
+   *
+   * @param url - The URL to parse (defaults to current window.location.href in browser)
+   * @returns The callback parameters, or null if code/state are missing
+   *
+   * @example
+   * ```typescript
+   * const params = client.parseOidcCallbackUrl();
+   * if (params) {
+   *   const tokens = await client.exchangeOidcCode(params);
+   * }
+   * ```
+   */
+  parseOidcCallbackUrl(url?: string): OidcCallbackParams | null {
+    const targetUrl = url ?? (typeof window !== 'undefined' ? window.location.href : '');
+    if (!targetUrl) {
+      return null;
+    }
+
+    const parsedUrl = new URL(targetUrl);
+    const code = parsedUrl.searchParams.get('code');
+    const state = parsedUrl.searchParams.get('state');
+
+    if (!code || !state) {
+      return null;
+    }
+
+    return { code, state };
+  }
 
   /**
    * Configures VC storage for persisting membership credentials.
