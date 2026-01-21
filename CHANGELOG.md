@@ -6,6 +6,13 @@ SPDX-License-Identifier: MIT
 
 # Changelog
 
+## [0.11.0](https://github.com/semiotic-agentium/agentium-sdk/compare/agentium-sdk-v0.10.0...agentium-sdk-v0.11.0) (2026-01-21)
+
+
+### Features
+
+* **auth:** add OIDC login flow methods to AgentiumClient ([d296278](https://github.com/semiotic-agentium/agentium-sdk/commit/d2962785318d50ea600fd101f8cffc93aba6813a))
+
 ## [0.10.0](https://github.com/semiotic-agentium/agentium-sdk/compare/agentium-sdk-v0.9.10...agentium-sdk-v0.10.0) (2026-01-15)
 
 
