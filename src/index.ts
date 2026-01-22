@@ -9,6 +9,8 @@ import {
   extract_public_key_jwk as wasmExtractPublicKeyJwk,
 } from '../packages/agentium-native/wasm/pkg/agentium_sdk_wasm.js';
 import type { VcStorage, VerificationResult, DidDocument, JwtHeader } from './vc/index.js';
+import { Caip2, Caip2Error, assertSupportedChain } from './caip2.js';
+import type { WalletChallengeResponse, MessageSigner } from './types/wallet.js';
 
 // Re-export VC module types and utilities
 export * from './vc/index.js';
@@ -35,6 +37,12 @@ export {
   type TelemetrySink,
   type InitTelemetryOptions,
 } from './telemetry.js';
+
+// Re-export CAIP-2 utilities
+export { Caip2, Caip2Error, assertSupportedChain } from './caip2.js';
+
+// Re-export wallet types
+export type { WalletChallengeResponse, MessageSigner } from './types/wallet.js';
 
 /**
  * Options for configuring the AgentiumClient.
@@ -227,6 +235,8 @@ export class AgentiumClient {
   private readonly OAUTH_TOKEN_PATH = '/oauth/token';
   private readonly OIDC_LOGIN_PATH = '/auth/oidc/login';
   private readonly OIDC_CALLBACK_PATH = '/auth/oidc/callback';
+  private readonly WALLET_CHALLENGE_PATH = '/auth/wallet/challenge';
+  private readonly WALLET_VERIFY_PATH = '/auth/wallet/verify';
   private readonly wasmReady: Promise<void>;
   private vcStorage: VcStorage | null = null;
 
@@ -464,6 +474,144 @@ export class AgentiumClient {
 
     return { code, state };
   }
+
+  // ─────────────────────────────────────────────────────────────────────────────
+  // Wallet Authentication Methods
+  // ─────────────────────────────────────────────────────────────────────────────
+
+  /**
+   * Request a SIWE challenge message for wallet sign-in.
+   *
+   * @param address - Wallet address (0x-prefixed for EVM)
+   * @param caip2 - CAIP-2 chain identifier (default: Base Mainnet)
+   * @returns Challenge message and nonce
+   * @throws {Caip2Error} If chain is not supported (only Base Mainnet and Base Sepolia allowed)
+   * @throws {AgentiumApiError} If the API request fails
+   *
+   * @example
+   * ```typescript
+   * const challenge = await client.requestWalletChallenge(
+   *   '0x742d35Cc6634C0532925a3b844Bc9e7595f1b2b7',
+   *   Caip2.BASE_MAINNET
+   * );
+   * ```
+   */
+  async requestWalletChallenge(
+    address: string,
+    caip2: Caip2 = Caip2.BASE_MAINNET,
+  ): Promise<WalletChallengeResponse> {
+    assertSupportedChain(caip2);
+
+    try {
+      const params = new URLSearchParams({
+        address,
+        chain_id: caip2.toString(),
+      });
+
+      const response = await this.axiosInstance.get<WalletChallengeResponse>(
+        `${this.WALLET_CHALLENGE_PATH}?${params.toString()}`,
+      );
+      return response.data;
+    } catch (error) {
+      if (isAxiosError(error)) {
+        throw new AgentiumApiError(error.message, error.response?.status);
+      }
+      throw error;
+    }
+  }
+
+  /**
+   * Verify a signed SIWE message and obtain JWT tokens.
+   *
+   * @param message - The challenge message that was signed
+   * @param signature - Hex-encoded signature from wallet (0x-prefixed)
+   * @returns OAuth tokens (access_token, refresh_token, etc.)
+   * @throws {AgentiumApiError} If signature is invalid or verification fails
+   */
+  async verifyWalletSignature(message: string, signature: string): Promise<OAuthTokenResponse> {
+    try {
+      const response = await this.axiosInstance.post<OAuthTokenResponse>(this.WALLET_VERIFY_PATH, {
+        message,
+        signature,
+      });
+      return response.data;
+    } catch (error) {
+      if (isAxiosError(error)) {
+        throw new AgentiumApiError(error.message, error.response?.status);
+      }
+      throw error;
+    }
+  }
+
+  /**
+   * Full wallet sign-in flow with user-provided signer.
+   *
+   * This is the recommended method for browser wallet authentication.
+   * The SDK handles the challenge/verify flow; you provide the signing function.
+   *
+   * @param address - Wallet address (0x-prefixed for EVM)
+   * @param caip2 - CAIP-2 chain identifier (only Base Mainnet and Base Sepolia supported)
+   * @param signMessage - Function that signs via user's wallet (triggers wallet popup)
+   * @returns Identity response with DID and tokens
+   * @throws {Caip2Error} If chain is not supported
+   * @throws {AgentiumApiError} If any API step fails
+   *
+   * @example
+   * ```typescript
+   * // With raw window.ethereum (MetaMask)
+   * const response = await client.connectWallet(
+   *   address,
+   *   Caip2.BASE_MAINNET,
+   *   async (msg) => window.ethereum.request({
+   *     method: 'personal_sign',
+   *     params: [msg, address]
+   *   })
+   * );
+   * ```
+   *
+   * @example
+   * ```typescript
+   * // With wagmi
+   * const { signMessageAsync } = useSignMessage();
+   * const response = await client.connectWallet(
+   *   address,
+   *   Caip2.BASE_MAINNET,
+   *   (msg) => signMessageAsync({ message: msg })
+   * );
+   * ```
+   */
+  async connectWallet(
+    address: string,
+    caip2: Caip2,
+    signMessage: MessageSigner,
+  ): Promise<ConnectIdentityResponse> {
+    assertSupportedChain(caip2);
+
+    // 1. Get challenge from backend
+    const challenge = await this.requestWalletChallenge(address, caip2);
+
+    // 2. Request signature from user's wallet (triggers popup)
+    const signature = await signMessage(challenge.message);
+
+    // 3. Verify signature and get tokens
+    const tokenResponse = await this.verifyWalletSignature(challenge.message, signature);
+
+    // 4. Parse identity from scope
+    const { did, isNew } = parseScopeForIdentity(tokenResponse.scope);
+
+    return {
+      did,
+      badge: { status: isNew ? 'Active' : 'Existing' },
+      isNew,
+      accessToken: tokenResponse.access_token,
+      refreshToken: tokenResponse.refresh_token,
+      expiresIn: tokenResponse.expires_in,
+    };
+  }
+
+  // ─────────────────────────────────────────────────────────────────────────────
+  // Verifiable Credentials Methods
+  // ─────────────────────────────────────────────────────────────────────────────
 
   /**
    * Configures VC storage for persisting membership credentials.
