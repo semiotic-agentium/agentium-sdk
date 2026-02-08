@@ -1,13 +1,13 @@
-# SPDX-FileCopyrightText: 2025 Semiotic AI, Inc.
+# SPDX-FileCopyrightText: 2026 Semiotic AI, Inc.
 #
-# SPDX-License-Identifier: MIT
+# SPDX-License-Identifier: BUSL-1.1
 
 [package]
 name = "agentium-sdk-python"
 version = "0.1.0"
 edition = "2024"
 description = "Python bindings for Agentium SDK - JWT-VC verification"
-license = "MIT"
+license = "BUSL-1.1"
 
 [lib]
 name = "_native"

@@ -1,6 +1,6 @@
-// SPDX-FileCopyrightText: 2025 Semiotic AI, Inc.
+// SPDX-FileCopyrightText: 2026 Semiotic AI, Inc.
 //
-// SPDX-License-Identifier: MIT
+// SPDX-License-Identifier: BUSL-1.1
 
 import { init_tracing as wasmInitTracing } from '../packages/agentium-native/wasm/pkg/agentium_sdk_wasm.js';
 import { ensureWasmReady } from './wasm.js';

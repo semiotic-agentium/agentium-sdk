@@ -1,5 +1,9 @@
-<!-- SPDX-FileCopyrightText: 2025 Semiotic AI, Inc. -->
-<!-- SPDX-License-Identifier: MIT -->
+<!--
+SPDX-FileCopyrightText: 2026 Semiotic AI, Inc.
+
+SPDX-License-Identifier: BUSL-1.1
+-->
+
 
 # Agentium SDK for Python
 
@@ -434,4 +438,4 @@ The documentation uses [MkDocs](https://www.mkdocs.org/) with the [mkdocstrings]
 
 ## License
 
-MIT License - see LICENSE file for details.
+This project is licensed under the Business Source License 1.1. See the [LICENSE](./LICENSE) file for details.
