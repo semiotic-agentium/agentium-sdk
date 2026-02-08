@@ -1,69 +1,72 @@
 {
-	"name": "@semiotic-labs/agentium-sdk",
-	"version": "0.11.0",
-	"type": "module",
-	"description": "",
-	"main": "dist/index.js",
-	"types": "dist/index.d.ts",
-	"files": ["dist", "packages/agentium-native/wasm/pkg"],
-	"scripts": {
-		"test": "vitest",
-		"build:wasm": "cd packages/agentium-native/wasm && wasm-pack build --target web --scope semiotic-labs && rm -f pkg/.gitignore",
-		"build": "npm run build:wasm && tsc",
-		"docs": "typedoc",
-		"lint": "eslint src/**/*.ts",
-		"format:check": "prettier --check .",
-		"format:write": "prettier --write .",
-		"format:python": "cd packages/agentium-native/python && ruff check . --fix && ruff format .",
-		"check:python": "cd packages/agentium-native/python && mypy agentium_sdk",
-		"format:rust": "cd packages/agentium-native && cargo fmt --all",
-		"format:rust:check": "cd packages/agentium-native && cargo fmt --all --check",
-		"format:all": "npm run format:write && npm run format:python && npm run format:rust",
-		"check": "npm run lint && npm run format:check",
-		"reuse:check": "reuse lint",
-		"reuse:write": "reuse annotate --license BUSL-1.1 --copyright \"Semiotic AI, Inc.\" --year 2026 -r . --fallback-dot-license --skip-existing"
-	},
-	"repository": {
-		"type": "git",
-		"url": "git+https://github.com/semiotic-agentium/agentium-sdk.git"
-	},
-	"keywords": [],
-	"author": "",
-	"exports": {
-		".": {
-			"types": "./dist/index.d.ts",
-			"import": "./dist/index.js",
-			"require": "./dist/index.js"
-		},
-		"./wasm": "./packages/agentium-native/wasm/pkg/agentium_sdk_wasm_bg.wasm",
-		"./wasm-url": {
-			"types": "./dist/wasm-url.d.ts",
-			"import": "./dist/wasm-url.js"
-		}
-	},
-	"license": "BUSL-1.1",
-	"bugs": {
-		"url": "https://github.com/semiotic-agentium/agentium-sdk/issues"
-	},
-	"homepage": "https://github.com/semiotic-agentium/agentium-sdk#readme",
-	"engines": {
-		"node": ">=22.0.0"
-	},
-	"devDependencies": {
-		"@types/node": "^24.10.1",
-		"axios-mock-adapter": "^2.1.0",
-		"jose": "^6.0.10",
-		"eslint": "^9.39.1",
-		"eslint-config-prettier": "^10.1.8",
-		"eslint-plugin-prettier": "^5.5.4",
-		"prettier": "^3.7.4",
-		"ts-node": "^10.9.2",
-		"typedoc": "^0.28.15",
-		"typescript": "^5.9.3",
-		"typescript-eslint": "^8.48.1",
-		"vitest": "^4.0.15"
-	},
-	"dependencies": {
-		"axios": "^1.13.2"
-	}
+  "name": "@semiotic-labs/agentium-sdk",
+  "version": "0.11.0",
+  "type": "module",
+  "description": "",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "packages/agentium-native/wasm/pkg"
+  ],
+  "scripts": {
+    "test": "vitest",
+    "build:wasm": "cd packages/agentium-native/wasm && wasm-pack build --target web --scope semiotic-labs && rm -f pkg/.gitignore",
+    "build": "npm run build:wasm && tsc",
+    "docs": "typedoc",
+    "lint": "eslint src/**/*.ts",
+    "format:check": "prettier --check .",
+    "format:write": "prettier --write .",
+    "format:python": "cd packages/agentium-native/python && ruff check . --fix && ruff format .",
+    "check:python": "cd packages/agentium-native/python && mypy agentium_sdk",
+    "format:rust": "cd packages/agentium-native && cargo fmt --all",
+    "format:rust:check": "cd packages/agentium-native && cargo fmt --all --check",
+    "format:all": "npm run format:write && npm run format:python && npm run format:rust",
+    "check": "npm run lint && npm run format:check",
+    "reuse:check": "reuse lint",
+    "reuse:write": "reuse annotate --license BUSL-1.1 --copyright \"Semiotic AI, Inc.\" --year 2026 -r . --fallback-dot-license --skip-existing"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/semiotic-agentium/agentium-sdk.git"
+  },
+  "keywords": [],
+  "author": "",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.js"
+    },
+    "./wasm": "./packages/agentium-native/wasm/pkg/agentium_sdk_wasm_bg.wasm",
+    "./wasm-url": {
+      "types": "./dist/wasm-url.d.ts",
+      "import": "./dist/wasm-url.js"
+    }
+  },
+  "license": "BUSL-1.1",
+  "bugs": {
+    "url": "https://github.com/semiotic-agentium/agentium-sdk/issues"
+  },
+  "homepage": "https://github.com/semiotic-agentium/agentium-sdk#readme",
+  "engines": {
+    "node": ">=22.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^24.10.1",
+    "axios-mock-adapter": "^2.1.0",
+    "jose": "^6.0.10",
+    "eslint": "^9.39.1",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-prettier": "^5.5.4",
+    "prettier": "^3.7.4",
+    "ts-node": "^10.9.2",
+    "typedoc": "^0.28.15",
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.48.1",
+    "vitest": "^4.0.15"
+  },
+  "dependencies": {
+    "axios": "^1.13.2"
+  }
 }
